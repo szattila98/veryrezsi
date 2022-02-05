@@ -3,43 +3,40 @@ title ER model of the application
 ' avoid problems with angled crows feet
 skinparam linetype ortho
 
-entity "User" as user {
-  * id : number <<generated>>
-  ---
-  * username : string
-  * password : string
-  * email : string
-}
-
-entity "Expense" as exp {
+entity "Predifined Expenses" as pexp {
   * id : number <<generated>>
   ---
   * name : string
   description : string
 }
 
+entity "User" as user {
+  * id : number <<generated>>
+  ---
+  * email : string
+  * username : string
+  * password : string
+}
+
 entity "User Expense" as uexp {
   * id : number <<generated>>
   ---
   * value : number
+  * name: string
+  description: string
   ---
-  * expense_id : number <<fk>>
   * user_id : number <<fk>>
 }
 
-entity "User Transaction" as utran {
+entity "Transaction" as utran {
   * id : number <<generated>>
   ---
+  * donor_name : string
   * value : number
   ---
-  * donor_user_id : number <<fk>>
-  * recipient_user_id : number <<fk>>
-  * expense_id : number <<fk>>
+  * user_expense_id : number <<fk>>
 }
 
 uexp }o--|| user
-uexp }o--|| exp
-utran }o--|| exp
-utran }o--|| user
-utran }o--|| user
+utran }o--|| uexp
 @enduml

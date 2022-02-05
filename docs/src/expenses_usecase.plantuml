@@ -1,6 +1,5 @@
 @startuml expenses_usecase
-title Expenses use-case
-actor "User" as user
+title User actions use-case
 "Add or remove expense" as (add_exp)
 "List predefined expenses" as (list_pred)
 "Save expenses" as (save_exp)
@@ -9,7 +8,9 @@ add_exp ..> save_exp : include
 "List expenses" as (list_exp_all)
 "Show connected user transactions" as (show_tr)
 list_exp_all ..> show_tr : include
-
+"Add transaction to expenses" as (add_tr)
+actor "User" as user
 user --> add_exp
 user --> list_exp_all
+user --> add_tr
 @enduml
