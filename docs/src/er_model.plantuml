@@ -1,6 +1,5 @@
 @startuml er_model
 title ER model of the application
-
 ' avoid problems with angled crows feet
 skinparam linetype ortho
 

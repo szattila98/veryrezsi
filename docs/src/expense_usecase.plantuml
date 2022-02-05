@@ -1,0 +1,14 @@
+@startuml expense_usecase
+actor "User" as user
+"Add or remove expense" as (add_exp)
+"List predefined expenses" as (list_pred)
+"Save expenses" as (save_exp)
+add_exp ..> list_pred : include
+add_exp ..> save_exp : include
+"List expenses" as (list_exp_all)
+"Show connected user transactions" as (show_tr)
+list_exp_all ..> show_tr : include
+
+user --> add_exp
+user --> list_exp_all
+@enduml

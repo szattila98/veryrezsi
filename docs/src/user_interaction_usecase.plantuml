@@ -1,0 +1,13 @@
+@startuml user_interaction_usecase
+actor "User" as user
+actor "Other user" as other_user
+"Add other user" as (add_user)
+"Request transaction from user" as (request_tr)
+"Accept or Decline" as (aod)
+
+user --> add_user
+user --> request_tr
+add_user -- aod
+request_tr -- aod
+other_user ---> aod
+@enduml
