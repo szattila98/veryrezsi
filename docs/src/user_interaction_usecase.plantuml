@@ -1,4 +1,5 @@
 @startuml user_interaction_usecase
+title User interactions use-case
 actor "User" as user
 actor "Other user" as other_user
 "Add other user" as (add_user)

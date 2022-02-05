@@ -1,4 +1,5 @@
-@startuml expense_usecase
+@startuml expenses_usecase
+title Expenses use-case
 actor "User" as user
 "Add or remove expense" as (add_exp)
 "List predefined expenses" as (list_pred)
