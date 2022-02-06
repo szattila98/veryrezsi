@@ -1,0 +1,42 @@
+@startuml er_model
+title ER model of the application
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "Predifined Expenses" as pexp {
+  * id : number <<generated>>
+  ---
+  * name : string
+  description : string
+}
+
+entity "User" as user {
+  * id : number <<generated>>
+  ---
+  * email : string
+  * username : string
+  * password : string
+}
+
+entity "User Expense" as uexp {
+  * id : number <<generated>>
+  ---
+  * value : number
+  * name: string
+  description: string
+  ---
+  * user_id : number <<fk>>
+}
+
+entity "Transaction" as utran {
+  * id : number <<generated>>
+  ---
+  * donor_name : string
+  * value : number
+  ---
+  * user_expense_id : number <<fk>>
+}
+
+uexp }o--|| user
+utran }o--|| uexp
+@enduml
