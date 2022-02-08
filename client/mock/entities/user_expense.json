@@ -1,0 +1,83 @@
+[
+	{
+		"id": 0,
+		"name": "Netflix for my little family",
+		"description": "Cheapest monthly plan of Netflix - Maybe upgrade later'",
+		"recurrence_id": 0,
+		"currency_id": 0,
+		"startDate": "03-15-2020",
+		"value": "2490",
+		"user_id": 10
+	},
+	{
+		"id": 1,
+		"name": "Synology C2 backup",
+		"description": "Its not much but it keeps our photos safe",
+		"recurrence_id": 1,
+		"currency_id": 1,
+		"startDate": "08-29-2019",
+		"value": "34.99",
+		"user_id": 10
+	},
+	{
+		"id": 2,
+		"name": "Gáz általány",
+		"description": "Fűtés, melegvíz és sütő",
+		"recurrence_id": 0,
+		"currency_id": 0,
+		"startDate": "01-01-2010",
+		"value": "11200",
+		"user_id": 20
+	},
+	{
+		"id": 3,
+		"name": "Villany általány",
+		"description": "Autó töltés + háztartás",
+		"recurrence_id": 0,
+		"currency_id": 0,
+		"startDate": "01-12-2010",
+		"value": "22000",
+		"user_id": 20
+	},
+	{
+		"id": 4,
+		"name": "Netflix - megosztott ^-^",
+		"description": "Hogy mindenkinek jó legyen",
+		"recurrence_id": 0,
+		"currency_id": 0,
+		"startDate": "06-07-2021",
+		"value": "4490",
+		"user_id": 30
+	},
+
+	{
+		"id": 5,
+		"name": "YT Premium - Reklám gyilkos",
+		"description": "Hogy mindenkinek jó legyen",
+		"recurrence_id": 0,
+		"currency_id": 0,
+		"startDate": "12-19-2021",
+		"value": "1690",
+		"user_id": 30
+	},
+	{
+		"id": 6,
+		"name": "HBO GO - Sárkányos sorozat folytatásra",
+		"description": "HODOR",
+		"recurrence_id": 0,
+		"currency_id": 0,
+		"startDate": "11-17-2021",
+		"value": "2490",
+		"user_id": 30
+	},
+	{
+		"id": 7,
+		"name": "Adobe Photography (PS + LR)",
+		"description": "Need for work",
+		"recurrence_id": 0,
+		"currency_id": 1,
+		"startDate": "09-10-2019",
+		"value": "19.99",
+		"user_id": 30
+	}
+]

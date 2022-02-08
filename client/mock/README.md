@@ -14,5 +14,5 @@ These can be used to test frontend code and demo its functionality. (Used for De
 
 # How it was created
 
-- These are based on the _initial_ version of ER diagram
-- Used [Mockaroo|https://www.mockaroo.com/] to generate repetitive data in creative manner.
+- These are based on the _initial_ version of ER diagram.
+- Used [Mockaroo|https://www.mockaroo.com/] to generate repetitive data in a creative manner.
