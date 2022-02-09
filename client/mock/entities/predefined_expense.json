@@ -3,32 +3,32 @@
 		"id": 0,
 		"name": "Netflix Basic",
 		"description": "Cheapest monthly plan of Netflix",
-		"recurrence_id": 0,
-		"currency_id": 0,
+		"recurrence_type_id": 0,
+		"currency_type_id": 0,
 		"value": "2490" 
 	},
 	{
 		"id": 1,
 		"name": "Netflix Standard",
 		"description": "Budget monthly plan of Netflix",
-		"recurrence_id": 0,
-		"currency_id": 0,
+		"recurrence_type_id": 0,
+		"currency_type_id": 0,
 		"value": "3490" 
 	},
 	{
 		"id": 2,
 		"name": "Netflix Premium",
 		"description": "Fully flashed monthly plan of Netflix",
-		"recurrence_id": 0,
-		"currency_id": 0,
+		"recurrence_type_id": 0,
+		"currency_type_id": 0,
 		"value": "4490" 
 	},
 	{
 		"id": 3,
 		"name": "IntelliJ IDEA Ultimate",
 		"description": "The most popular IDE of JetBrains with all of its features",
-		"recurrence_id": 1,
-		"currency_id": 1,
+		"recurrence_type_id": 1,
+		"currency_type_id": 1,
 		"value": "499" 
 	}
 ]
