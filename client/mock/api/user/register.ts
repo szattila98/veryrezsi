@@ -1,11 +1,7 @@
-import { AxiosResponse, response } from '../_common/axios_response'; 
+import { response } from '../_common/axios_response';
+import type { RegisterRequestData, RegisterResponse } from '../models/register_model';
 
-/**
- * 
- * @param {Object} data 
- * @returns {AxiosResponse}
- */
-let mockRegister = (data) => {
+const mockRegister = (data: RegisterRequestData) : RegisterResponse  => {
 		return response(200);
 }
 

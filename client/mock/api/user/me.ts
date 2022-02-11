@@ -1,4 +1,5 @@
-import { AxiosResponse, response } from '../_common/axios_response';
+import { response } from '../_common/axios_response';
+import type { MeRequestData, MeResponse } from '../models/me_model';
 
 import users from '../../entities/user.json';
 
@@ -7,12 +8,17 @@ import users from '../../entities/user.json';
  * @param {Object} data 
  * @returns {AxiosResponse}
  */
-let mockWhoAmI = (data) => {
-		// TODO: Check presence of cookie?
-		let currentUser = users[9];
-		
-		return response(200, {user: currentUser});
+const mockWhoAmI = (data: MeRequestData) : MeResponse => {
+		const userId = getUserIdFromSessionId(data.sessionId);
+		const currentUser = users[userId];
+		return response(200, { user: currentUser });
 }
+
+const getUserIdFromSessionId = (sessionId: string): number => {
+	const decodedSessionId = atob(sessionId);
+	const splitSessionId = decodedSessionId.split('_');
+	return parseInt(splitSessionId[splitSessionId.length - 1]);
+} 
 
 export {
 	mockWhoAmI as me,

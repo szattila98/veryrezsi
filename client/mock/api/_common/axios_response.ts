@@ -1,25 +1,18 @@
 
-interface AxiosResponse {
-  status: Number;
-  statusText: String;
-	data: Object;
-	headers: Object;
-	config: Object;
-	request: Object;
+type AxiosResponse = {
+  status: number;
+  statusText: string;
+	data: object;
+	headers: object;
+	config: object;
+	request: object;
 }
-
 
 /**
  * Generates mock axios response objects
  * @see https://axios-http.com/docs/res_schema
- * @param {AxiosResponse.status} status 
- * @param {AxiosResponse.data} data 
- * @param {AxiosResponse.headers} headers 
- * @param {AxiosResponse.config} conf 
- * @param {AxiosResponse.request} req 
- * @returns {AxiosResponse}
  */
-let axios_response = (status = 200, data = {}, headers = {}, conf = {}, req = {}) => {
+let axios_response = (status = 200, data = {}, headers = {}, conf = {}, req = {}) : AxiosResponse => {
 	let statusText;
 	switch (status) {
 		case 200: {
@@ -62,7 +55,5 @@ let axios_response = (status = 200, data = {}, headers = {}, conf = {}, req = {}
 	};
 };
 
-export {
-	AxiosResponse,
-	axios_response as response,
-};
+export type { AxiosResponse };
+export { axios_response as response };
