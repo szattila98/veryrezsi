@@ -5,7 +5,7 @@
 		"description": "Cheapest monthly plan of Netflix",
 		"recurrence_type_id": 0,
 		"currency_type_id": 0,
-		"value": "2490" 
+		"value": "2490"
 	},
 	{
 		"id": 1,
@@ -13,7 +13,7 @@
 		"description": "Budget monthly plan of Netflix",
 		"recurrence_type_id": 0,
 		"currency_type_id": 0,
-		"value": "3490" 
+		"value": "3490"
 	},
 	{
 		"id": 2,
@@ -21,7 +21,7 @@
 		"description": "Fully flashed monthly plan of Netflix",
 		"recurrence_type_id": 0,
 		"currency_type_id": 0,
-		"value": "4490" 
+		"value": "4490"
 	},
 	{
 		"id": 3,
@@ -29,6 +29,6 @@
 		"description": "The most popular IDE of JetBrains with all of its features",
 		"recurrence_type_id": 1,
 		"currency_type_id": 1,
-		"value": "499" 
+		"value": "499"
 	}
 ]
