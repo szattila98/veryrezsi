@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./client/veryrezsi
+        working-directory: ./client/
 
     strategy:
       matrix:
@@ -30,8 +30,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      #      - name: Run tests
-      #        run: npm test
+      - name: Check Styling
+        run: npm run lint
 
       - name: Build
         run: npm run build
+
+#      - name: Run tests
+#        run: npm test

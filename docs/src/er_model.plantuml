@@ -3,11 +3,29 @@ title ER model of the application
 ' avoid problems with angled crows feet
 skinparam linetype ortho
 
-entity "Predifined Expenses" as pexp {
+entity "Currency Type" as currtp {
+  * id : number <<generated>>
+  ---
+  * abbreviation : string
+  * name : string
+}
+
+entity "Recurrence Type" as recurrtp {
   * id : number <<generated>>
   ---
   * name : string
-  description : string
+  * perYear : number
+}
+
+entity "Predifined Expense" as pexp {
+  * id : number <<generated>>
+  ---
+  * name : string
+  * description : string
+  * value : number
+  ---
+  * recurrence_type_id : number <<fk>>
+  * currency_type_id : number <<fk>>
 }
 
 entity "User" as user {
@@ -22,10 +40,14 @@ entity "User Expense" as uexp {
   * id : number <<generated>>
   ---
   * value : number
-  * name: string
-  description: string
+  * name : string
+  * description : string
+  * startDate : date
   ---
   * user_id : number <<fk>>
+  * predefined_expense_id : number <<fk>>
+  * recurrence_type_id : number <<fk>>
+  * currency_type_id : number <<fk>>
 }
 
 entity "Transaction" as utran {
@@ -33,10 +55,19 @@ entity "Transaction" as utran {
   ---
   * donor_name : string
   * value : number
+  * date : date
   ---
   * user_expense_id : number <<fk>>
+  * currency_type_id : number <<fk>>
 }
 
 uexp }o--|| user
+uexp }o--|| currtp
+uexp }o--|| recurrtp
+
 utran }o--|| uexp
+utran }o--|| currtp
+uexp }o--o| pexp
+pexp }o--|| currtp
+pexp }o--|| recurrtp
 @enduml

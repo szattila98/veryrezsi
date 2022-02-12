@@ -1,0 +1,12 @@
+[
+	{
+		"id": 0,
+		"abbreviation": "HUF",
+		"name": "base.currencies.huf"
+	},
+	{
+		"id": 1,
+		"abbreviation": "EUR",
+		"name": "base.currencies.eur"
+	}
+]
