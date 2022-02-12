@@ -17,7 +17,7 @@ entity "Recurrence Type" as recurrtp {
   * perYear : number
 }
 
-entity "Predifined Expenses" as pexp {
+entity "Predifined Expense" as pexp {
   * id : number <<generated>>
   ---
   * name : string
@@ -45,6 +45,7 @@ entity "User Expense" as uexp {
   * startDate : date
   ---
   * user_id : number <<fk>>
+  * predefined_expense_id : number <<fk>>
   * recurrence_type_id : number <<fk>>
   * currency_type_id : number <<fk>>
 }
@@ -66,7 +67,7 @@ uexp }o--|| recurrtp
 
 utran }o--|| uexp
 utran }o--|| currtp
-uexp }o--|| pexp
+uexp }o--o| pexp
 pexp }o--|| currtp
 pexp }o--|| recurrtp
 @enduml
