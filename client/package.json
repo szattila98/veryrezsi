@@ -17,6 +17,7 @@
 	"devDependencies": {
 		"@smui/button": "^6.0.0-beta.14",
 		"@smui/layout-grid": "^6.0.0-beta.14",
+		"@smui/snackbar": "^6.0.0-beta.14",
 		"@smui/textfield": "^6.0.0-beta.14",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
