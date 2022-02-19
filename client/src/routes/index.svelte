@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Welcomponent from '$lib/Welcomponent.svelte';
+	import RegistrationForm from '$lib/RegistrationForm.svelte';
 </script>
 
 <svelte:head>
 	<title>VeryRezsi</title>
 </svelte:head>
 
-<Welcomponent />
+<RegistrationForm />
