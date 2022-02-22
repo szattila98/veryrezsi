@@ -12,36 +12,37 @@
 		password: string;
 	}
 
-	// TODO other validators, write correct helper line errrors
-	// TODO helper lines should go next to the text fields
-	const mail = field('email', '', [required(), email()]);
-	const username = field('username', '', [required(), between(6, 30)]);
-	const password = field('password', '', [required(), between(8, 30)]);
-	const confirmPassword = field('confirmPassword', '', [required(), matchField(password)]);
-	const regForm = form(mail, username, password, confirmPassword);
+	// Between 8-30, at least one uppercase letter, one lowercase letter, one number and one special character
+	const passwordRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
 
 	let failureSnackbar: SnackbarComponentDev;
 
+	const mail = field('email', '', [email()]);
+	const username = field('username', '', [between(8, 30)]);
+	const password = field('password', '', [pattern(passwordRegexp)]);
+	const confirmPassword = field('confirmPassword', '', [matchField(password)]);
+	const regForm = form(mail, username, password, confirmPassword);
+
 	function register(rf: RegistrationForm) {
 		if (
-			!$regForm.valid ||
-			!$mail.value ||
-			!$username.value ||
-			!$password.value ||
-			!$confirmPassword.value
+			$regForm.valid &&
+			$mail.value &&
+			$username.value &&
+			$password.value &&
+			$confirmPassword.value
 		) {
-			failureSnackbar.close();
-			failureSnackbar.open();
-		} else {
 			// TODO interaction with mock
 			alert(JSON.stringify(rf));
+		} else {
+			failureSnackbar.close();
+			failureSnackbar.open();
 		}
 	}
 </script>
 
 <LayoutGrid>
-	<Cell />
-	<Cell>
+	<Cell span={2} />
+	<Cell span={8} align="middle">
 		<div class="form-container">
 			<Textfield
 				variant="outlined"
@@ -49,9 +50,12 @@
 				label="Email address"
 				bind:dirty={$mail.dirty}
 				bind:invalid={$mail.invalid}
+				class="form-field"
 				><svelte:fragment slot="helper">
 					{#if !$mail.valid}
-						<HelperLine>Not a valid email address.</HelperLine>
+						<dev class="helper-text">
+							<HelperLine>Not a valid email address</HelperLine>
+						</dev>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -64,7 +68,7 @@
 				bind:invalid={$username.invalid}
 				><svelte:fragment slot="helper">
 					{#if !$username.valid}
-						<HelperLine>Not a valid username.</HelperLine>
+						<HelperLine>Not a valid username</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -78,7 +82,7 @@
 				bind:invalid={$password.invalid}
 				><svelte:fragment slot="helper">
 					{#if !$password.valid}
-						<HelperLine>Not a valid password.</HelperLine>
+						<HelperLine>Not a valid password</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -92,7 +96,7 @@
 				bind:invalid={$confirmPassword.invalid}
 				><svelte:fragment slot="helper">
 					{#if !$confirmPassword.valid}
-						<HelperLine>Not the same as the password, or empty.</HelperLine>
+						<HelperLine>Not the same as the password</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -107,10 +111,10 @@
 			</Button>
 		</div>
 	</Cell>
-	<Cell />
+	<Cell span={2} />
 </LayoutGrid>
 <Snackbar bind:this={failureSnackbar}>
-	<SnackbarLabel>Error: Please specify valid credentials!</SnackbarLabel>
+	<SnackbarLabel>Please specify valid credentials!</SnackbarLabel>
 </Snackbar>
 
 <style lang="scss">
@@ -118,7 +122,18 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: space-around;
-		height: 300px;
+	}
+
+	* :global(.mdc-text-field) {
+		width: 30%;
+		margin: 1em 2em 0em;
+	}
+
+	* :global(.mdc-button) {
+		margin: 1em 2em 0em;
+	}
+
+	* :global(.mdc-text-field-helper-line) {
+		justify-content: center;
 	}
 </style>
