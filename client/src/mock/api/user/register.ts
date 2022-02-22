@@ -5,4 +5,4 @@ const mockRegister = (data: RegisterRequestData): RegisterResponse => {
 	return response(200);
 };
 
-export { mockRegister as register };
+export { mockRegister };

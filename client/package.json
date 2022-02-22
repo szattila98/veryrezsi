@@ -2,8 +2,8 @@
 	"name": "veryrezsi",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "npm run prepare && svelte-kit dev",
-		"build": "npm run prepare && svelte-kit build",
+		"dev": "svelte-kit dev",
+		"build": "svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",

@@ -4,35 +4,28 @@
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';
 	import { form, field } from 'svelte-forms';
-	import { required, email, between, matchField, pattern } from 'svelte-forms/validators';
-
-	interface RegistrationForm {
-		email: string;
-		username: string;
-		password: string;
-	}
+	import { email, between, matchField, pattern } from 'svelte-forms/validators';
+	import { user_api } from '../api/user';
 
 	// Between 8-30, at least one uppercase letter, one lowercase letter, one number and one special character
 	const passwordRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,30}$/;
 
 	let failureSnackbar: SnackbarComponentDev;
+	let successSnackbar: SnackbarComponentDev;
 
 	const mail = field('email', '', [email()]);
-	const username = field('username', '', [between(8, 30)]);
+	const user = field('user', '', [between(8, 30)]);
 	const password = field('password', '', [pattern(passwordRegexp)]);
 	const confirmPassword = field('confirmPassword', '', [matchField(password)]);
-	const regForm = form(mail, username, password, confirmPassword);
+	const regForm = form(mail, user, password, confirmPassword);
 
-	function register(rf: RegistrationForm) {
-		if (
-			$regForm.valid &&
-			$mail.value &&
-			$username.value &&
-			$password.value &&
-			$confirmPassword.value
-		) {
-			// TODO interaction with mock
-			alert(JSON.stringify(rf));
+	function register() {
+		if ($regForm.valid && $mail.value && $user.value && $password.value && $confirmPassword.value) {
+			user_api
+				.register({ email: $mail.value, user: $user.value, password: $password.value })
+				.then((_res) => {
+					successSnackbar.open();
+				});
 		} else {
 			failureSnackbar.close();
 			failureSnackbar.open();
@@ -62,12 +55,12 @@
 
 			<Textfield
 				variant="outlined"
-				bind:value={$username.value}
+				bind:value={$user.value}
 				label="Username"
-				bind:dirty={$username.dirty}
-				bind:invalid={$username.invalid}
+				bind:dirty={$user.dirty}
+				bind:invalid={$user.invalid}
 				><svelte:fragment slot="helper">
-					{#if !$username.valid}
+					{#if !$user.valid}
 						<HelperLine>Not a valid username</HelperLine>
 					{/if}
 				</svelte:fragment>
@@ -101,12 +94,7 @@
 				</svelte:fragment>
 			</Textfield>
 
-			<Button
-				type="submit"
-				on:click={() =>
-					register({ email: $mail.value, username: $username.value, password: $password.value })}
-				variant="raised"
-			>
+			<Button type="submit" on:click={register} variant="raised">
 				<ButtonLabel>Register</ButtonLabel>
 			</Button>
 		</div>
@@ -115,6 +103,9 @@
 </LayoutGrid>
 <Snackbar bind:this={failureSnackbar}>
 	<SnackbarLabel>Please specify valid credentials!</SnackbarLabel>
+</Snackbar>
+<Snackbar bind:this={successSnackbar}>
+	<SnackbarLabel>Registration successful!</SnackbarLabel>
 </Snackbar>
 
 <style lang="scss">
