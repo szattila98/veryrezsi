@@ -1,9 +1,14 @@
 <script lang="ts">
 </script>
 
-<svelte:head>
-	<title>VeryRezsi</title>
-</svelte:head>
+<div class="content">
+	<p>Hello index!</p>
+</div>
 
-<p>Hello World!</p>
-<a href="/register">New account!</a>
+<style lang="scss">
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+</style>

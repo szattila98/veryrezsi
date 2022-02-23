@@ -30,4 +30,4 @@ const getUserIdFromUsername = (username: string): number => {
 	return parseInt(splitUser[splitUser.length - 1]);
 };
 
-export { mockLogin as login };
+export { mockLogin };
