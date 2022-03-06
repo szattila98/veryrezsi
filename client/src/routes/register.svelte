@@ -1,14 +1,16 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';
 	import { form, field } from 'svelte-forms';
 	import { email, between, matchField, pattern } from 'svelte-forms/validators';
+
 	import { PASSWORD_REGEXP } from '$lib/const';
 	import { user_api } from '../api/user';
 
 	let failureSnackbar: SnackbarComponentDev;
-	let successSnackbar: SnackbarComponentDev;
 
 	const mail = field('email', '', [email()]);
 	const user = field('user', '', [between(8, 30)]);
@@ -21,7 +23,7 @@
 			user_api
 				.register({ email: $mail.value, user: $user.value, password: $password.value })
 				.then((_res) => {
-					successSnackbar.open();
+					goto('/home');
 				});
 		} else {
 			failureSnackbar.close();
@@ -95,9 +97,6 @@
 
 <Snackbar bind:this={failureSnackbar}>
 	<SnackbarLabel>Please specify valid credentials!</SnackbarLabel>
-</Snackbar>
-<Snackbar bind:this={successSnackbar}>
-	<SnackbarLabel>Registration successful!</SnackbarLabel>
 </Snackbar>
 
 <style lang="scss">

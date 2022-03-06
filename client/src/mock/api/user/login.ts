@@ -1,4 +1,8 @@
+import { serialize } from 'cookie';
+
 import { response } from '../_common/axios_response';
+import { response_message } from '../_common/response_body';
+
 import type { LoginRequestData, LoginResponse } from '../models/login_model';
 
 const mockLogin = (data: LoginRequestData): LoginResponse => {
@@ -12,10 +16,16 @@ const mockLogin = (data: LoginRequestData): LoginResponse => {
 	const sessionId = btoa(mockSessionIdBase + userId);
 
 	const header = {
-		'Set-Cookie': `JSESSIONID:${sessionId}`,
+		'Set-Cookie': serialize('JSESSIONID', sessionId, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'strict',
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 * 7, // one week
+		}),
 	};
 
-	return success ? response(200, {}, header) : response(401);
+	return (success ? response(200, response_message('Login succeeded.'), header) : response(401, response_message('Failed to login.'))) as LoginResponse;
 };
 
 /**

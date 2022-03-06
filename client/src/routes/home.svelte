@@ -2,7 +2,7 @@
 </script>
 
 <div class="content">
-	<p>Hello index!</p>
+	<p>Very Rezsi, So Profit!</p>
 </div>
 
 <style lang="scss">

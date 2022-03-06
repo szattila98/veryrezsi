@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';
 	import { form, field } from 'svelte-forms';
+
 	import { required } from 'svelte-forms/validators';
 	import { user_api } from '../api/user';
 
@@ -16,17 +19,20 @@
 		if ($loginForm.valid && $user.value && $password.value) {
 			user_api
 				.login({ user: $user.value, password: $password.value })
-				.then((res) => {
-					// TODO something
-					alert('Success - ' + JSON.stringify(res.headers));
+				.then((_res) => {
+					goto('/home');
 				})
 				.catch((_err) => {
-					alert('Error');
+					openFailedLoginAlert();
 				});
 		} else {
-			failureSnackbar.close();
-			failureSnackbar.open();
+			openFailedLoginAlert();
 		}
+	}
+
+	function openFailedLoginAlert() {
+		failureSnackbar.close();
+		failureSnackbar.open();
 	}
 </script>
 

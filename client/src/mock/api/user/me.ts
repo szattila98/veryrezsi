@@ -1,17 +1,17 @@
 import { response } from '../_common/axios_response';
-import type { MeRequestData, MeResponse } from '../models/me_model';
+import { response_user } from '../models/me_model';
 
 import users from '../../entities/user.json';
 
+import type { MeRequestData, MeResponse } from '../models/me_model';
+
 /**
  * Returns a mock response to the - me / whoami / currently authenticated user - request.
- * @param {Object} data
- * @returns {AxiosResponse}
  */
 const mockWhoAmI = (data: MeRequestData): MeResponse => {
 	const userId = getUserIdFromSessionId(data.sessionId);
 	const currentUser = users[userId];
-	return response(200, { user: currentUser });
+	return response(200, response_user(currentUser.id, currentUser.email, currentUser.username)) as MeResponse;
 };
 
 const getUserIdFromSessionId = (sessionId: string): number => {
@@ -20,4 +20,4 @@ const getUserIdFromSessionId = (sessionId: string): number => {
 	return parseInt(splitSessionId[splitSessionId.length - 1]);
 };
 
-export { mockWhoAmI as me };
+export { mockWhoAmI };

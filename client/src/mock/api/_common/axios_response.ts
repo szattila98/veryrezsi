@@ -61,4 +61,4 @@ const axios_response = (
 };
 
 export type { AxiosResponse };
-export { axios_response as response };
+export { axios_response as response};

@@ -1,16 +1,18 @@
 import type { AxiosResponse } from '../_common/axios_response';
-import type { MessageResponseBody } from '../_common/response_body';
 
-export type LoginRequestData = {
-	user: string;
-	password: string;
+type LogoutHeaders = {
+	cookie: string
+}
+
+export type LogoutRequest = {
+	header: LogoutHeaders
 };
 
-type LoginResponseData = MessageResponseBody;
+type LogoutResponseData = object;
 
 // Specializing common Axios response to use response data type for its data field
 // This can be safely reused for every concrete response.
 // There is no chance 'data' field name will change in Axios
-export type LoginResponse = Omit<AxiosResponse, 'data'> & {
-	data: LoginResponseData;
+export type LogoutResponse = Omit<AxiosResponse, 'data'> & {
+	data: LogoutResponseData;
 };
