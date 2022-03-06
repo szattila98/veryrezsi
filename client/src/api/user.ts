@@ -1,5 +1,5 @@
 import type { LoginRequestData, LoginResponse } from '../mock/api/models/login_model';
-import type { LogoutRequest, LogoutResponse  } from '../mock/api/models/logout_model';
+import type { LogoutRequest, LogoutResponse } from '../mock/api/models/logout_model';
 import type { RegisterRequestData, RegisterResponse } from '../mock/api/models/register_model';
 import type { MeRequestData, MeResponse } from '../mock/api/models/me_model';
 

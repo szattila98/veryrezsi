@@ -25,7 +25,13 @@
 		"checkJs": true,
 		"paths": {
 			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"]
+			"$lib/*": ["src/lib/*"],
+			"$mock": ["src/mock"],
+			"$mock/*": ["src/mock/*"],
+			"$routes": ["src/routes"],
+			"$routes/*": ["src/routes/*"],
+			"$api": ["src/routes/api"],
+			"$api/*": ["src/routes/api/*"]
 		}
 	},
 	"include": [

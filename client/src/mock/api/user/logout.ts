@@ -4,7 +4,7 @@ import { LogoutRequest, LogoutResponse } from '../models/logout_model';
 import { response } from '../_common/axios_response';
 import { response_message } from '../_common/response_body';
 
-const mockLogout = (req : LogoutRequest): LogoutResponse => {
+const mockLogout = (req: LogoutRequest): LogoutResponse => {
 	const cookies = parse(req.header.cookie || '');
 
 	if (!cookies.JSESSIONID) {
@@ -16,7 +16,7 @@ const mockLogout = (req : LogoutRequest): LogoutResponse => {
 	const header = {
 		'Set-Cookie': serialize('JSESSIONID', '', {
 			path: '/',
-            expires: new Date(0),
+			expires: new Date(0),
 		}),
 	};
 

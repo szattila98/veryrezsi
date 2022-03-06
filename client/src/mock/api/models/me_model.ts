@@ -5,13 +5,13 @@ export type MeRequestData = {
 };
 
 type User = {
-	id: number,
-	email: string,
-	username: string,
-}
+	id: number;
+	email: string;
+	username: string;
+};
 
 type MeResponseData = {
-	user: User
+	user: User;
 };
 
 // Specializing common Axios response to use response data type for its data field
@@ -21,12 +21,12 @@ export type MeResponse = Omit<AxiosResponse, 'data'> & {
 	data: MeResponseData;
 };
 
-export const response_user = (id: number, email: string, username: string) : MeResponseData => {
- return {
-	 user: {
-		 id,
-		 email,
-		 username,
-		}
-	}
-}
+export const response_user = (id: number, email: string, username: string): MeResponseData => {
+	return {
+		user: {
+			id,
+			email,
+			username,
+		},
+	};
+};

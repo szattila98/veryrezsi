@@ -8,7 +8,7 @@
 	import { email, between, matchField, pattern } from 'svelte-forms/validators';
 
 	import { PASSWORD_REGEXP } from '$lib/const';
-	import { user_api } from '../api/user';
+	import { RegisterRequestData } from '$mock/api/models/register_model';
 
 	let failureSnackbar: SnackbarComponentDev;
 
@@ -20,15 +20,25 @@
 
 	function register() {
 		if ($regForm.valid && $mail.value && $user.value && $password.value && $confirmPassword.value) {
-			user_api
-				.register({ email: $mail.value, user: $user.value, password: $password.value })
-				.then((_res) => {
-					goto('/home');
-				});
+			handleRegister({ email: $mail.value, user: $user.value, password: $password.value }).then(
+				(_res) => {
+					goto('/');
+				}
+			);
 		} else {
 			failureSnackbar.close();
 			failureSnackbar.open();
 		}
+	}
+
+	async function handleRegister(data: RegisterRequestData) {
+		return fetch('/api/register', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
 	}
 </script>
 

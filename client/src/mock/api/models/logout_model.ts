@@ -1,11 +1,11 @@
 import type { AxiosResponse } from '../_common/axios_response';
 
 type LogoutHeaders = {
-	cookie: string
-}
+	cookie: string;
+};
 
 export type LogoutRequest = {
-	header: LogoutHeaders
+	header: LogoutHeaders;
 };
 
 type LogoutResponseData = object;

@@ -7,7 +7,7 @@
 	import { form, field } from 'svelte-forms';
 
 	import { required } from 'svelte-forms/validators';
-	import { user_api } from '../api/user';
+	import { LoginRequestData } from '$mock/api/models/login_model';
 
 	let failureSnackbar: SnackbarComponentDev;
 
@@ -17,10 +17,9 @@
 
 	function login() {
 		if ($loginForm.valid && $user.value && $password.value) {
-			user_api
-				.login({ user: $user.value, password: $password.value })
+			handleLogin({ user: $user.value, password: $password.value })
 				.then((_res) => {
-					goto('/home');
+					goto('/');
 				})
 				.catch((_err) => {
 					openFailedLoginAlert();
@@ -28,6 +27,16 @@
 		} else {
 			openFailedLoginAlert();
 		}
+	}
+
+	async function handleLogin(data: LoginRequestData) {
+		return fetch('/api/login', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
 	}
 
 	function openFailedLoginAlert() {
