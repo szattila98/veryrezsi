@@ -38,6 +38,7 @@
 		"src/**/*.d.ts",
 		"src/**/*.js",
 		"src/**/*.ts",
+		"src/**/*.json",
 		"src/**/*.svelte",
 		"mock/**/*.js",
 		"mock/**/*.ts"
