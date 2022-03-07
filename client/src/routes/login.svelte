@@ -18,18 +18,26 @@
 	function login() {
 		if ($loginForm.valid && $user.value && $password.value) {
 			handleLogin({ user: $user.value, password: $password.value })
-				.then((_res) => {
-					goto('/');
+				.then((res) => {
+					if (!res.ok) {
+						openFailedLoginAlert();
+						return;
+					}
+
+					// Just a hack to use instead goto(), goto refused to load session in some cases
+					// TODO
+					window.location = '/';
 				})
 				.catch((_err) => {
 					openFailedLoginAlert();
+					return;
 				});
 		} else {
 			openFailedLoginAlert();
 		}
 	}
 
-	async function handleLogin(data: LoginRequestData) {
+	function handleLogin(data: LoginRequestData) {
 		return fetch('/api/login', {
 			method: 'POST',
 			body: JSON.stringify(data),
@@ -76,6 +84,8 @@
 	<Button type="submit" on:click={login} variant="raised">
 		<ButtonLabel>Login</ButtonLabel>
 	</Button>
+
+	<a href="/register">Sign me up.</a>
 </div>
 
 <Snackbar bind:this={failureSnackbar}>

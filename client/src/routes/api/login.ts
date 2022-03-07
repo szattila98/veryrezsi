@@ -2,11 +2,9 @@ import type { LoginRequestData, LoginResponse } from '$mock/api/models/login_mod
 
 import { mockLogin } from '$mock/api/user/login';
 
-export async function post(loginRequestData: LoginRequestData): Promise<LoginResponse> {
-	const res = mockLogin(loginRequestData);
-	if (res.status === 401) {
-		return Promise.reject(res);
-	} else {
-		return Promise.resolve(res);
-	}
+/** @type {import('@sveltejs/kit').RequestHandler} */
+export async function post({ request }: { request: Request }): Promise<LoginResponse> {
+	const body: LoginRequestData = await request.json();
+
+	return mockLogin(body);
 }

@@ -21,13 +21,18 @@
 	function register() {
 		if ($regForm.valid && $mail.value && $user.value && $password.value && $confirmPassword.value) {
 			handleRegister({ email: $mail.value, user: $user.value, password: $password.value }).then(
-				(_res) => {
-					goto('/');
+				(res) => {
+					if (!res.ok) {
+						openFailedRegisterAlert();
+					}
+
+					// Just a hack to use instead goto(), goto refused to load session in some cases
+					// TODO
+					window.location = '/';
 				}
 			);
 		} else {
-			failureSnackbar.close();
-			failureSnackbar.open();
+			openFailedRegisterAlert();
 		}
 	}
 
@@ -39,6 +44,11 @@
 				'Content-Type': 'application/json',
 			},
 		});
+	}
+
+	function openFailedRegisterAlert() {
+		failureSnackbar.close();
+		failureSnackbar.open();
 	}
 </script>
 
@@ -103,6 +113,7 @@
 	<Button type="submit" on:click={register} variant="raised">
 		<ButtonLabel>Register</ButtonLabel>
 	</Button>
+	<a href="/login">Log me in.</a>
 </div>
 
 <Snackbar bind:this={failureSnackbar}>

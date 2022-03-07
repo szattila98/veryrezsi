@@ -1,6 +1,5 @@
 <script context="module">
 	export async function load({ session }) {
-		console.log(session.user);
 		if (!session?.user) {
 			return {
 				status: 302,
@@ -16,10 +15,16 @@
 </script>
 
 <script lang="ts">
+	export let user;
+
+	// If you want to get user without the ugly context="module" block
+	// import { session } from '$app/stores';
+	// export let user = $session.user;
 </script>
 
 <div class="content">
-	<p>Very Rezsi, So Profit!</p>
+	<h1>Very Rezsi, So Profit!</h1>
+	<p>Your email: {user.email}</p>
 </div>
 
 <style lang="scss">

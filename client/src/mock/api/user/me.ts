@@ -14,6 +14,14 @@ const mockWhoAmI = (data: MeRequestData): MeResponse => {
 	}
 
 	const userId = getUserIdFromSessionId(data.sessionId);
+
+	if (isNaN(userId)) {
+		console.warn(
+			'Invalid username (no user number), you authenticated via mock register, dont you?'
+		);
+		return response(400, {}) as MeResponse;
+	}
+
 	const currentUser = users[userId];
 	return response(
 		200,

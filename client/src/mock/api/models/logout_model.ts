@@ -1,14 +1,15 @@
 import type { AxiosResponse } from '../_common/axios_response';
+import type { MessageResponseBody } from '../_common/response_body';
 
 type LogoutHeaders = {
-	cookie: string;
+	get(headerName: string): string | null;
 };
 
 export type LogoutRequest = {
-	header: LogoutHeaders;
+	headers: LogoutHeaders;
 };
 
-type LogoutResponseData = object;
+type LogoutResponseData = MessageResponseBody;
 
 // Specializing common Axios response to use response data type for its data field
 // This can be safely reused for every concrete response.
