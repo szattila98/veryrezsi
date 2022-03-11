@@ -6,9 +6,7 @@
 	import '../style/app.scss';
 
 	async function signout() {
-		try {
-			await fetch('/api/logout', { method: 'POST' });
-		} catch {}
+		await fetch('/api/logout', { method: 'POST' });
 
 		location.reload();
 	}

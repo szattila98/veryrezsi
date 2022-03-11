@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';

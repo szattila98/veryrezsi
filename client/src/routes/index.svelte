@@ -18,7 +18,7 @@
 </script>
 
 <script lang="ts">
-	export let user: Profile.User;
+	export let user;
 
 	// If you want to get user without the ugly context="module" block
 	// import { session } from '$app/stores';

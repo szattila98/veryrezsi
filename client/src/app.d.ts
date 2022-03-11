@@ -23,9 +23,7 @@ declare namespace App {
 	}
 
 	interface Stuff {}
-}
 
-declare namespace Profile {
 	interface User {
 		id: number;
 		email: string;

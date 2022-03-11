@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';
@@ -26,9 +24,9 @@
 
 					// Just a hack to use instead goto(), goto refused to load session in some cases
 					// TODO
-					window.location = '/';
+					window.location.href = '/';
 				})
-				.catch((_err) => {
+				.catch(() => {
 					openFailedLoginAlert();
 					return;
 				});
