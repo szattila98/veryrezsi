@@ -1,4 +1,7 @@
 <script context="module">
+	/** @type {import('@sveltejs/kit').Load<{
+	 * 		session: App.Session
+	 * }>} */
 	export async function load({ session }) {
 		if (!session?.user) {
 			return {
@@ -15,7 +18,7 @@
 </script>
 
 <script lang="ts">
-	export let user;
+	export let user: Profile.User;
 
 	// If you want to get user without the ugly context="module" block
 	// import { session } from '$app/stores';
