@@ -9,7 +9,7 @@ declare namespace App {
 			id: number;
 			email: string;
 			username: string;
-		}
+		};
 	}
 
 	interface Platform {}
@@ -19,7 +19,7 @@ declare namespace App {
 			id: number;
 			email: string;
 			username: string;
-		}
+		};
 	}
 
 	interface Stuff {}

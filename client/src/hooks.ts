@@ -37,7 +37,7 @@ export function getSession(event: RequestEvent) {
 		? {
 				// Only publish public data here. Do not mix it up with event.locals.user
 				user: {
-					id : event.locals.user.id,
+					id: event.locals.user.id,
 					email: event.locals.user.email,
 					username: event.locals.user.username,
 				},
