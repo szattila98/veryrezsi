@@ -1,5 +1,8 @@
 <script context="module">
-	export async function load({ session, fetch }) {
+	/** @type {import('@sveltejs/kit').Load<{
+	 * 		session: App.Session
+	 * }>} */
+	export async function load({ session }) {
 		if (!session?.user) {
 			return {
 				status: 302,
@@ -21,7 +24,7 @@
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
-	import { getExpenses } from './api/dashboard';
+	import { getExpenses } from '$api/dashboard';
 
 	export let expenses: Expense[] = [];
 	let clickedExpense: Expense | null = null;
