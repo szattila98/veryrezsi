@@ -7,7 +7,7 @@
 				redirect: '/login',
 			};
 		}
-		const res = await getExpenses(session.user.id);
+		const res = await getExpenses({ userId: session.user.id });
 		return {
 			status: res.status,
 			props: {

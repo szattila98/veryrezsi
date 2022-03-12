@@ -5,27 +5,27 @@ export type ExpensesRequestData = {
 };
 
 export interface RecurrenceType {
-    id: number,
-    name: string,
-    perYear: number
+	id: number;
+	name: string;
+	perYear: number;
 }
 
 export interface CurrencyType {
-    id: number,
-    abbreviation: string,
-    name: string
+	id: number;
+	abbreviation: string;
+	name: string;
 }
 
 export interface Expense {
-    id: number,
-    name: string,
-    description: string,
-    recurrence_type: RecurrenceType
-    currency_type: CurrencyType,
-    predefined_expense_id: number | null,
-    startDate: string,
-    value: string,
-    user_id: number
+	id: number;
+	name: string;
+	description: string;
+	recurrence_type: RecurrenceType;
+	currency_type: CurrencyType;
+	predefined_expense_id: number | null;
+	startDate: string;
+	value: string;
+	user_id: number;
 }
 
 type ExpensesResponseData = {
@@ -38,4 +38,3 @@ type ExpensesResponseData = {
 export type ExpensesResponse = Omit<AxiosResponse, 'data'> & {
 	data: ExpensesResponseData;
 };
-
