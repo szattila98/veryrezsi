@@ -4,12 +4,24 @@ export type ExpensesRequestData = {
 	userId: number;
 };
 
+export interface RecurrenceType {
+    id: number,
+    name: string,
+    perYear: number
+}
+
+export interface CurrencyType {
+    id: number,
+    abbreviation: string,
+    name: string
+}
+
 export interface Expense {
     id: number,
     name: string,
     description: string,
-    recurrence_type_id: number
-    currency_type_id: number,
+    recurrence_type: RecurrenceType
+    currency_type: CurrencyType,
     predefined_expense_id: number | null,
     startDate: string,
     value: string,

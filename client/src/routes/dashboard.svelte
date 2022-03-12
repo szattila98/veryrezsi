@@ -55,7 +55,11 @@
 				<h2>{clickedExpense.name}</h2>
 				<pre>{clickedExpense.startDate}</pre>
 				<p>{clickedExpense.description}</p>
-				<p>Cost: {clickedExpense.value}</p>
+				<p>
+					{clickedExpense.recurrence_type.name} recurrence, {clickedExpense.recurrence_type.perYear}
+					per year
+				</p>
+				<p>Cost: {clickedExpense.value} {clickedExpense.currency_type.abbreviation}</p>
 			{:else}
 				<p>Nothing selected!</p>
 			{/if}
