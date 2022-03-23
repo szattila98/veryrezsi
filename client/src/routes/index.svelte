@@ -1,8 +1,7 @@
-<script context="module">
-	/** @type {import('@sveltejs/kit').Load<{
-	 * 		session: App.Session
-	 * }>} */
-	export async function load({ session }) {
+<script context="module" lang="ts">
+	import type { Load } from '@sveltejs/kit';
+
+	export const load: Load = async ({ session }) => {
 		if (!session?.user) {
 			return {
 				status: 302,
@@ -14,7 +13,7 @@
 				user: session.user,
 			},
 		};
-	}
+	};
 </script>
 
 <script lang="ts">

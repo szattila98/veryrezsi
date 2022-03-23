@@ -35,7 +35,7 @@ export async function handle({
 export function getSession(event: RequestEvent) {
 	return event.locals.user
 		? {
-				// Only publish public data here. Do not mix it up with event.locals.user
+				// Only publish public data here. You might not need everything from event.locals.user.
 				user: {
 					id: event.locals.user.id,
 					email: event.locals.user.email,
