@@ -4,11 +4,11 @@
 	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';
 	import { form, field } from 'svelte-forms';
 	import { email, between, matchField, pattern } from 'svelte-forms/validators';
+
 	import { PASSWORD_REGEXP } from '$lib/const';
-	import { user_api } from '../api/user';
+	import { RegisterRequestData } from '$mock/api/models/register_model';
 
 	let failureSnackbar: SnackbarComponentDev;
-	let successSnackbar: SnackbarComponentDev;
 
 	const mail = field('email', '', [email()]);
 	const user = field('user', '', [between(8, 30)]);
@@ -18,15 +18,35 @@
 
 	function register() {
 		if ($regForm.valid && $mail.value && $user.value && $password.value && $confirmPassword.value) {
-			user_api
-				.register({ email: $mail.value, user: $user.value, password: $password.value })
-				.then((_res) => {
-					successSnackbar.open();
-				});
+			handleRegister({ email: $mail.value, user: $user.value, password: $password.value }).then(
+				(res) => {
+					if (!res.ok) {
+						openFailedRegisterAlert();
+					}
+
+					// Just a hack to use instead goto(), goto refused to load session in some cases
+					// TODO
+					window.location = '/';
+				}
+			);
 		} else {
-			failureSnackbar.close();
-			failureSnackbar.open();
+			openFailedRegisterAlert();
 		}
+	}
+
+	async function handleRegister(data: RegisterRequestData) {
+		return fetch('/api/register', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+	}
+
+	function openFailedRegisterAlert() {
+		failureSnackbar.close();
+		failureSnackbar.open();
 	}
 </script>
 
@@ -91,13 +111,11 @@
 	<Button type="submit" on:click={register} variant="raised">
 		<ButtonLabel>Register</ButtonLabel>
 	</Button>
+	<a href="/login">Log me in.</a>
 </div>
 
 <Snackbar bind:this={failureSnackbar}>
 	<SnackbarLabel>Please specify valid credentials!</SnackbarLabel>
-</Snackbar>
-<Snackbar bind:this={successSnackbar}>
-	<SnackbarLabel>Registration successful!</SnackbarLabel>
 </Snackbar>
 
 <style lang="scss">

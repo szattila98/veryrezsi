@@ -4,11 +4,23 @@
 // See https://kit.svelte.dev/docs#typescript
 // for information about these interfaces
 declare namespace App {
-	interface Locals {}
+	interface Locals {
+		user: null | {
+			id: number;
+			email: string;
+			username: string;
+		};
+	}
 
 	interface Platform {}
 
-	interface Session {}
+	interface Session {
+		user: {
+			id: number;
+			email: string;
+			username: string;
+		};
+	}
 
 	interface Stuff {}
 }

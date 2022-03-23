@@ -1,21 +1,24 @@
+import { serialize } from 'cookie';
+
 import { response } from '../_common/axios_response';
+import { response_message } from '../_common/response_body';
+
 import type { LoginRequestData, LoginResponse } from '../models/login_model';
 
 const mockLogin = (data: LoginRequestData): LoginResponse => {
-	const mockSessionIdBase = 'itsjustacookiefor_';
-
 	// You can login only with the same username - password.
 	const success = data.user === data.password;
-	const userId = getUserIdFromUsername(data.user);
+	let header = {};
 
-	// Base64 encode - btoa: Binary to ASCII
-	const sessionId = btoa(mockSessionIdBase + userId);
+	if (success) {
+		header = generateSessionCookieForUser(data.user);
+	}
 
-	const header = {
-		'Set-Cookie': `JSESSIONID:${sessionId}`,
-	};
-
-	return success ? response(200, {}, header) : response(401);
+	return (
+		success
+			? response(200, response_message('Login succeeded.'), header)
+			: response(401, response_message('Failed to login.'))
+	) as LoginResponse;
 };
 
 /**
@@ -30,4 +33,22 @@ const getUserIdFromUsername = (username: string): number => {
 	return parseInt(splitUser[splitUser.length - 1]);
 };
 
-export { mockLogin };
+const generateSessionCookieForUser = (user: string): object => {
+	const mockSessionIdBase = 'itsjustacookiefor_';
+	const userId = getUserIdFromUsername(user);
+
+	// Base64 encode - btoa: Binary to ASCII
+	const sessionId = btoa(mockSessionIdBase + userId);
+
+	return {
+		'Set-Cookie': serialize('JSESSIONID', sessionId, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'strict',
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 * 7, // one week
+		}),
+	};
+};
+
+export { mockLogin, generateSessionCookieForUser };

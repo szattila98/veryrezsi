@@ -1,14 +1,30 @@
 <script>
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
+	import Button, { Label as ButtonLabel } from '@smui/button';
+	import { session } from '$app/stores';
+
 	import '../style/app.scss';
+
+	async function signout() {
+		await fetch('/api/logout', { method: 'POST' });
+
+		location.reload();
+	}
+
+	const isLoggedIn = () => {
+		return !!$session.user;
+	};
 </script>
 
 <svelte:head>
 	<title>VeryRezsi</title>
 </svelte:head>
 
-<a href="/register">Sign up!</a>
-<a href="/login">Sign in!</a>
+{#if isLoggedIn()}
+	<Button on:click={signout} variant="raised">
+		<ButtonLabel>Sign out</ButtonLabel>
+	</Button>
+{/if}
 
 <LayoutGrid>
 	<Cell span={2} />

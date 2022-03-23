@@ -3,8 +3,9 @@
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';
 	import { form, field } from 'svelte-forms';
+
 	import { required } from 'svelte-forms/validators';
-	import { user_api } from '../api/user';
+	import { LoginRequestData } from '$mock/api/models/login_model';
 
 	let failureSnackbar: SnackbarComponentDev;
 
@@ -14,19 +15,39 @@
 
 	function login() {
 		if ($loginForm.valid && $user.value && $password.value) {
-			user_api
-				.login({ user: $user.value, password: $password.value })
+			handleLogin({ user: $user.value, password: $password.value })
 				.then((res) => {
-					// TODO something
-					alert('Success - ' + JSON.stringify(res.headers));
+					if (!res.ok) {
+						openFailedLoginAlert();
+						return;
+					}
+
+					// Just a hack to use instead goto(), goto refused to load session in some cases
+					// TODO
+					window.location.href = '/';
 				})
-				.catch((_err) => {
-					alert('Error');
+				.catch(() => {
+					openFailedLoginAlert();
+					return;
 				});
 		} else {
-			failureSnackbar.close();
-			failureSnackbar.open();
+			openFailedLoginAlert();
 		}
+	}
+
+	function handleLogin(data: LoginRequestData) {
+		return fetch('/api/login', {
+			method: 'POST',
+			body: JSON.stringify(data),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+	}
+
+	function openFailedLoginAlert() {
+		failureSnackbar.close();
+		failureSnackbar.open();
 	}
 </script>
 
@@ -61,6 +82,8 @@
 	<Button type="submit" on:click={login} variant="raised">
 		<ButtonLabel>Login</ButtonLabel>
 	</Button>
+
+	<a href="/register">Sign me up.</a>
 </div>
 
 <Snackbar bind:this={failureSnackbar}>
