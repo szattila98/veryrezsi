@@ -5,7 +5,6 @@ import { mockWhoAmI } from '$mock/api/user/me';
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function get({ request }: { request: Request }): Promise<MeResponse> {
 	const body: MeRequestData = await request.json();
-
 	return mockWhoAmI(body);
 }
 
