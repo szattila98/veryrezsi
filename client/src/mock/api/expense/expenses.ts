@@ -15,18 +15,18 @@ const mockGetExpenses = (data: ExpensesRequestData): ExpensesResponse => {
 	}
 
 	const userExpenses = expenses
-		.filter((e) => e.user_id === data.userId)
-		.map((e) => {
+		.filter((expense) => expense.user_id === data.userId)
+		.map((expense) => {
 			return {
-				id: e.id,
-				name: e.name,
-				description: e.description,
-				recurrence_type: recurrenceTypes.find((rt) => rt.id === e.recurrence_type_id),
-				currency_type: currencyTypes.find((ct) => ct.id === e.currency_type_id),
-				predefined_expense_id: e.predefined_expense_id,
-				startDate: e.startDate,
-				value: e.value,
-				user_id: e.user_id,
+				id: expense.id,
+				name: expense.name,
+				description: expense.description,
+				recurrence_type: recurrenceTypes.find((rt) => rt.id === expense.recurrence_type_id),
+				currency_type: currencyTypes.find((ct) => ct.id === expense.currency_type_id),
+				predefined_expense_id: expense.predefined_expense_id,
+				startDate: expense.startDate,
+				value: expense.value,
+				user_id: expense.user_id,
 			} as Expense;
 		});
 	return response(200, userExpenses) as ExpensesResponse;

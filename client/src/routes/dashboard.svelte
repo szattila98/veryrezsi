@@ -25,12 +25,8 @@
 	import { getExpenses } from '$api/dashboard';
 
 	export let expenses: Expense[] = [];
-	let clickedExpense: Expense | null = null;
-	// is this allowed? im not sure
-	if (clickedExpense === null && expenses) {
-		clickedExpense = expenses[0];
-	}
 
+	let clickedExpense: Expense | null = expenses && expenses[0] ? expenses[0] : null;
 	function onDrawerClick(expense: Expense) {
 		clickedExpense = expense;
 	}
@@ -41,7 +37,7 @@
 		<Content>
 			<List>
 				{#each expenses as expense, i (i)}
-					<Item href="javascript:void(0)" on:click={() => onDrawerClick(expense)}>
+					<Item on:click={() => onDrawerClick(expense)}>
 						<Text>{expense.name}</Text>
 					</Item>
 				{/each}
