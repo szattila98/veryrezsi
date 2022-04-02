@@ -5,7 +5,7 @@
 		"currency_type_id": 0,
 		"value": "500",
 		"date": "01-12-2022",
-		"user_expense_id": 0
+		"expense_id": 0
 	},
 	{
 		"id": 1,
@@ -13,7 +13,7 @@
 		"currency_type_id": 0,
 		"value": "700",
 		"date": "01-17-2022",
-		"user_expense_id": 0
+		"expense_id": 0
 	},
 	{
 		"id": 2,
@@ -21,7 +21,7 @@
 		"currency_type_id": 0,
 		"value": "5000",
 		"date": "02-05-2022",
-		"user_expense_id": 2
+		"expense_id": 2
 	},
 	{
 		"id": 3,
@@ -29,6 +29,6 @@
 		"currency_type_id": 0,
 		"value": "1000",
 		"date": "01-28-2021",
-		"user_expense_id": 7
+		"expense_id": 7
 	}
 ]

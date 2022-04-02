@@ -23,6 +23,9 @@
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
 	import { getExpenses } from '$api/dashboard';
+	import TransactionList from '$lib/components/TransactionList.svelte';
+	import Separator from '@smui/list/src/Separator.svelte';
+	import Button from '@smui/button/src/Button.svelte';
 
 	export let expenses: Expense[] = [];
 
@@ -48,14 +51,19 @@
 	<AppContent class="app-content">
 		<main class="main-content">
 			{#if clickedExpense}
-				<h2>{clickedExpense.name}</h2>
+				<div class="expenseHeader">
+					<h2>{clickedExpense.name}</h2>
+					<Button>New Transaction</Button>
+				</div>
 				<pre>{clickedExpense.startDate}</pre>
 				<p>{clickedExpense.description}</p>
 				<p>
-					{clickedExpense.recurrence_type.name} recurrence, {clickedExpense.recurrence_type.perYear}
+					{clickedExpense.recurrenceType.name} recurrence, {clickedExpense.recurrenceType.perYear}
 					per year
 				</p>
-				<p>Cost: {clickedExpense.value} {clickedExpense.currency_type.abbreviation}</p>
+				<p>Cost: {clickedExpense.value} {clickedExpense.currencyType.abbreviation}</p>
+				<Separator />
+				<TransactionList transactions={clickedExpense.transactions} />
 			{:else}
 				<p>Nothing selected!</p>
 			{/if}
@@ -85,5 +93,11 @@
 		padding: 16px;
 		height: 100%;
 		box-sizing: border-box;
+	}
+
+	.expenseHeader {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 </style>

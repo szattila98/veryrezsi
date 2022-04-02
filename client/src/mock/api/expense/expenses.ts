@@ -3,6 +3,7 @@ import { response } from '../_common/axios_response';
 import expenses from '$mock/entities/user_expense.json';
 import recurrenceTypes from '$mock/entities/recurrence_type.json';
 import currencyTypes from '$mock/entities/currency_type.json';
+import transactions from '$mock/entities/transaction.json';
 
 import type { Expense, ExpensesRequestData, ExpensesResponse } from '../models/expense_model';
 
@@ -21,12 +22,30 @@ const mockGetExpenses = (data: ExpensesRequestData): ExpensesResponse => {
 				id: expense.id,
 				name: expense.name,
 				description: expense.description,
-				recurrence_type: recurrenceTypes.find((rt) => rt.id === expense.recurrence_type_id),
-				currency_type: currencyTypes.find((ct) => ct.id === expense.currency_type_id),
-				predefined_expense_id: expense.predefined_expense_id,
+				recurrenceType: recurrenceTypes.find(
+					(recurrenceType) => recurrenceType.id === expense.recurrence_type_id
+				),
+				currencyType: currencyTypes.find(
+					(currencyType) => currencyType.id === expense.currency_type_id
+				),
+				predefinedExpenseId: expense.predefined_expense_id,
 				startDate: expense.startDate,
 				value: expense.value,
-				user_id: expense.user_id,
+				userId: expense.user_id,
+				transactions: transactions
+					.filter((transaction) => expense.id === transaction.expense_id)
+					.map((transaction) => {
+						return {
+							id: transaction.id,
+							donorName: transaction.donor_name,
+							currencyType: currencyTypes.find(
+								(currencyType) => currencyType.id === transaction.currency_type_id
+							),
+							value: transaction.value,
+							date: transaction.date,
+							expenseId: transaction.expense_id,
+						};
+					}),
 			} as Expense;
 		});
 	return response(200, userExpenses) as ExpensesResponse;
