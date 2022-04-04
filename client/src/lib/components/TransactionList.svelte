@@ -2,6 +2,7 @@
 	import type { Transaction } from '$mock/api/models/expense_model';
 
 	import List, { Group, Subheader } from '@smui/list';
+	import { createEventDispatcher } from 'svelte';
 	import TransactionItem from './TransactionItem.svelte';
 
 	export let transactions: Transaction[];
@@ -13,7 +14,7 @@
 			<Subheader>Transactions</Subheader>
 			<List class="transactionList">
 				{#each transactions as transaction}
-					<TransactionItem {transaction} />
+					<TransactionItem {transaction} on:deleteTransaction />
 				{/each}
 			</List>
 		</Group>

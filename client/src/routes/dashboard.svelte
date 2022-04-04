@@ -33,6 +33,10 @@
 	function onDrawerClick(expense: Expense) {
 		clickedExpense = expense;
 	}
+
+	function deleteTransactionHandle(event: CustomEvent<{ transactionId: number }>) {
+		alert(event.detail.transactionId);
+	}
 </script>
 
 <div class="drawer-container">
@@ -63,7 +67,10 @@
 				</p>
 				<p>Cost: {clickedExpense.value} {clickedExpense.currencyType.abbreviation}</p>
 				<Separator />
-				<TransactionList transactions={clickedExpense.transactions} />
+				<TransactionList
+					transactions={clickedExpense.transactions}
+					on:deleteTransaction={deleteTransactionHandle}
+				/>
 			{:else}
 				<p>Nothing selected!</p>
 			{/if}
