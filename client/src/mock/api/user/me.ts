@@ -30,7 +30,7 @@ const mockWhoAmI = (data: MeRequestData): MeResponse => {
 };
 
 const getUserIdFromSessionId = (sessionId: string): number => {
-	const decodedSessionId = atob(sessionId);
+	const decodedSessionId = Buffer.from(sessionId, 'base64').toString('binary');
 	const splitSessionId = decodedSessionId.split('_');
 	return parseInt(splitSessionId[splitSessionId.length - 1]);
 };

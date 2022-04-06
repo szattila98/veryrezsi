@@ -38,7 +38,7 @@ const generateSessionCookieForUser = (user: string): object => {
 	const userId = getUserIdFromUsername(user);
 
 	// Base64 encode - btoa: Binary to ASCII
-	const sessionId = btoa(mockSessionIdBase + userId);
+	const sessionId = Buffer.from(mockSessionIdBase + userId, 'binary').toString('base64');
 
 	return {
 		'Set-Cookie': serialize('JSESSIONID', sessionId, {
