@@ -5,14 +5,17 @@ import recurrenceTypes from '$mock/entities/recurrence_type.json';
 import currencyTypes from '$mock/entities/currency_type.json';
 import transactions from '$mock/entities/transaction.json';
 
-import type { Expense, ExpensesRequestData, ExpensesResponse } from '../models/expense_model';
+import type {
+	DeleteTransactionRequestData,
+	DeleteTransactionResponse,
+	Expense,
+	GetExpensesRequestData,
+	GetExpensesResponse,
+} from '../models/expense_model';
 
-/**
- * Returns a mock response to the - me / whoami / currently authenticated user - request.
- */
-const mockGetExpenses = (data: ExpensesRequestData): ExpensesResponse => {
+const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
 	if (!data.userId) {
-		return response(400, []) as ExpensesResponse;
+		return response(400, []) as GetExpensesResponse;
 	}
 
 	const userExpenses = expenses
@@ -48,7 +51,11 @@ const mockGetExpenses = (data: ExpensesRequestData): ExpensesResponse => {
 					}),
 			} as Expense;
 		});
-	return response(200, userExpenses) as ExpensesResponse;
+	return response(200, userExpenses) as GetExpensesResponse;
 };
 
-export { mockGetExpenses };
+const mockDeleteTransaction = (data: DeleteTransactionRequestData): DeleteTransactionResponse => {
+	return response(200) as DeleteTransactionResponse;
+};
+
+export { mockGetExpenses, mockDeleteTransaction };

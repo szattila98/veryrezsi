@@ -1,9 +1,5 @@
 import type { AxiosResponse } from '../_common/axios_response';
 
-export type ExpensesRequestData = {
-	userId: number;
-};
-
 export interface RecurrenceType {
 	id: number;
 	name: string;
@@ -38,13 +34,20 @@ export interface Expense {
 	transactions: Transaction[];
 }
 
-type ExpensesResponseData = {
+export type GetExpensesRequestData = {
+	userId: number;
+};
+
+type GetExpensesResponseData = {
 	expenses: Expense[];
 };
 
-// Specializing common Axios response to use response data type for its data field
-// This can be safely reused for every concrete response.
-// There is no chance 'data' field name will change in Axios
-export type ExpensesResponse = Omit<AxiosResponse, 'data'> & {
-	data: ExpensesResponseData;
+export type GetExpensesResponse = Omit<AxiosResponse, 'data'> & {
+	data: GetExpensesResponseData;
 };
+
+export type DeleteTransactionRequestData = {
+	transactionId: number;
+};
+
+export type DeleteTransactionResponse = Omit<AxiosResponse, 'data'>;

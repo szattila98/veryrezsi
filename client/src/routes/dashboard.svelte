@@ -35,7 +35,14 @@
 	}
 
 	function deleteTransactionHandle(event: CustomEvent<{ transactionId: number }>) {
-		alert(event.detail.transactionId);
+		fetch(`/api/transaction/${event.detail.transactionId}/delete`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+			.then(() => alert('success'))
+			.catch(() => alert('error'));
 	}
 </script>
 
