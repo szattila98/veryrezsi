@@ -11,6 +11,7 @@
 		return {
 			status: res.status,
 			props: {
+				userId: session.user.id,
 				expenses: res.data,
 			},
 		};
@@ -22,11 +23,14 @@
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
-	import { getExpenses } from '$api/dashboard';
 	import TransactionList from '$lib/components/TransactionList.svelte';
 	import Separator from '@smui/list/src/Separator.svelte';
 	import Button from '@smui/button/src/Button.svelte';
+	import { getExpenses } from './api/expense/[userId]';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
+	export let userId: number;
 	export let expenses: Expense[] = [];
 
 	let clickedExpense: Expense | null = expenses && expenses[0] ? expenses[0] : null;
@@ -40,9 +44,18 @@
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		})
-			.then(() => alert('success'))
-			.catch(() => alert('error'));
+		}).then(() => {
+			fetch(`/api/expense/${userId}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}).then((res) => {
+				res.json().then((res) => {
+					expenses = res.data;
+				});
+			});
+		});
 	}
 </script>
 
