@@ -7,18 +7,16 @@
 				redirect: '/login',
 			};
 		}
-		const res = await getExpenses({ userId: session.user.id });
 		return {
-			status: res.status,
 			props: {
 				userId: session.user.id,
-				expenses: res.data,
 			},
 		};
 	};
 </script>
 
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Expense } from '$mock/api/models/expense_model';
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
@@ -32,8 +30,27 @@
 
 	export let userId: number;
 	export let expenses: Expense[] = [];
+	let clickedExpense: Expense | null;
 
-	let clickedExpense: Expense | null = expenses && expenses[0] ? expenses[0] : null;
+	onMount(() => {
+		fetch(`/api/expense/${userId}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}).then((res) => {
+			res.json().then((res) => {
+				expenses = res.data.expenses as Expense[];
+				clickedExpense = expenses && expenses[0] ? expenses[0] : null;
+			});
+		});
+	});
+
+	$: clickedExpense = clickedExpense ? expenses.filter(expense => {
+		return expense.id === clickedExpense?.id;
+	})[0] || null : null;
+
+
 	function onDrawerClick(expense: Expense) {
 		clickedExpense = expense;
 	}
@@ -52,7 +69,7 @@
 				},
 			}).then((res) => {
 				res.json().then((res) => {
-					expenses = res.data;
+					expenses = res.data.expenses;
 				});
 			});
 		});

@@ -20,7 +20,7 @@ const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
 	loadTransactions();
 
 	if (!data.userId) {
-		return response(400, []) as GetExpensesResponse;
+		return response(400, { expenses: [] }) as GetExpensesResponse;
 	}
 
 	const userExpenses = expenses
@@ -43,7 +43,7 @@ const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
 				transactions: transactions?.filter((transaction) => expense.id === transaction.expenseId),
 			} as Expense;
 		});
-	return response(200, userExpenses) as GetExpensesResponse;
+	return response(200, { expenses: userExpenses }) as GetExpensesResponse;
 };
 
 const mockDeleteTransaction = (data: DeleteTransactionRequestData): DeleteTransactionResponse => {
