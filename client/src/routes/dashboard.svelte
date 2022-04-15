@@ -46,13 +46,20 @@
 		});
 	});
 
-	$: clickedExpense = clickedExpense ? expenses.filter(expense => {
-		return expense.id === clickedExpense?.id;
-	})[0] || null : null;
-
+	$: clickedExpense = clickedExpense
+		? expenses.filter((expense) => {
+				return expense.id === clickedExpense?.id;
+		  })[0] || null
+		: null;
 
 	function onDrawerClick(expense: Expense) {
 		clickedExpense = expense;
+	}
+
+	function toNewTransactionForm() {
+		if (clickedExpense) {
+			goto(`/transaction/${clickedExpense.id}/new`);
+		}
 	}
 
 	function deleteTransactionHandle(event: CustomEvent<{ transactionId: number }>) {
@@ -94,7 +101,7 @@
 			{#if clickedExpense}
 				<div class="expenseHeader">
 					<h2>{clickedExpense.name}</h2>
-					<Button>New Transaction</Button>
+					<Button on:click={toNewTransactionForm}>New Transaction</Button>
 				</div>
 				<pre>{clickedExpense.startDate}</pre>
 				<p>{clickedExpense.description}</p>

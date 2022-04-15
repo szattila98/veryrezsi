@@ -11,12 +11,14 @@ import type {
 	Expense,
 	GetExpensesRequestData,
 	GetExpensesResponse,
+	NewTransactionRequestData,
+	NewTransactionResponse,
 	Transaction,
 } from '../models/expense_model';
 
 let transactions: Transaction[] | null = null;
 
-const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
+export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
 	loadTransactions();
 
 	if (!data.userId) {
@@ -46,7 +48,28 @@ const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
 	return response(200, { expenses: userExpenses }) as GetExpensesResponse;
 };
 
-const mockDeleteTransaction = (data: DeleteTransactionRequestData): DeleteTransactionResponse => {
+export const mockNewTransaction = (data: NewTransactionRequestData): NewTransactionResponse => {
+	loadTransactions();
+	if (transactions) {
+		const newTransaction = {
+			id: Math.floor(Math.random() * 100000),
+			donorName: data.newTransaction.donorName,
+			currencyType: data.newTransaction.currencyType,
+			value: data.newTransaction.value,
+			date: data.newTransaction.date,
+			expenseId: data.newTransaction.expenseId,
+		};
+		transactions.push(newTransaction);
+		return response(200) as NewTransactionResponse;
+	}
+	console.log('Transactions not initialized!');
+	return response(500) as NewTransactionResponse;
+};
+
+export const mockDeleteTransaction = (
+	data: DeleteTransactionRequestData
+): DeleteTransactionResponse => {
+	loadTransactions();
 	if (transactions) {
 		const toDeleteIndex = transactions.findIndex(
 			(transaction) => transaction.id === data.transactionId
@@ -75,5 +98,3 @@ function loadTransactions() {
 		});
 	}
 }
-
-export { mockGetExpenses, mockDeleteTransaction };

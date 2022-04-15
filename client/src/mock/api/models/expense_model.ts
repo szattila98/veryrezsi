@@ -34,6 +34,8 @@ export interface Expense {
 	transactions: Transaction[];
 }
 
+export type NewTransaction = Omit<Transaction, 'id'>;
+
 export type GetExpensesRequestData = {
 	userId: number;
 };
@@ -45,6 +47,12 @@ type GetExpensesResponseData = {
 export type GetExpensesResponse = Omit<AxiosResponse, 'data'> & {
 	data: GetExpensesResponseData;
 };
+
+export type NewTransactionRequestData = {
+	newTransaction: NewTransaction;
+};
+
+export type NewTransactionResponse = Omit<AxiosResponse, 'data'>;
 
 export type DeleteTransactionRequestData = {
 	transactionId: number;
