@@ -1,7 +1,4 @@
-import {
-	NewTransaction,
-	NewTransactionResponse,
-} from '$mock/api/models/expense_model';
+import { NewTransaction, NewTransactionResponse } from '$mock/api/models/expense_model';
 import { RequestEvent } from '@sveltejs/kit';
 import { mockNewTransaction } from '$mock/api/expense/expenses';
 

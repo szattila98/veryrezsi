@@ -17,20 +17,19 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Expense } from '$mock/api/models/expense_model';
+	import { Expense, NewTransaction } from '$mock/api/models/expense_model';
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
 	import TransactionList from '$lib/components/TransactionList.svelte';
 	import Separator from '@smui/list/src/Separator.svelte';
 	import Button from '@smui/button/src/Button.svelte';
-	import { getExpenses } from './api/expense/[userId]';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import NewTransactionDialog from '$lib/components/NewTransactionDialog.svelte';
 
 	export let userId: number;
 	export let expenses: Expense[] = [];
 	let clickedExpense: Expense | null;
+	let newTransactionDialog: NewTransactionDialog;
 
 	onMount(() => {
 		fetch(`/api/expense/${userId}`, {
@@ -56,10 +55,14 @@
 		clickedExpense = expense;
 	}
 
-	function toNewTransactionForm() {
-		if (clickedExpense) {
-			goto(`/transaction/${clickedExpense.id}/new`);
-		}
+	function newTransactionHandle(event: CustomEvent<{ transaction: NewTransaction }>) {
+		fetch('/api/transaction', {
+			method: 'POST',
+			body: JSON.stringify(event.detail.transaction),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}).then(() => location.reload());
 	}
 
 	function deleteTransactionHandle(event: CustomEvent<{ transactionId: number }>) {
@@ -101,7 +104,7 @@
 			{#if clickedExpense}
 				<div class="expenseHeader">
 					<h2>{clickedExpense.name}</h2>
-					<Button on:click={toNewTransactionForm}>New Transaction</Button>
+					<Button on:click={newTransactionDialog.show}>New Transaction</Button>
 				</div>
 				<pre>{clickedExpense.startDate}</pre>
 				<p>{clickedExpense.description}</p>
@@ -121,6 +124,14 @@
 		</main>
 	</AppContent>
 </div>
+
+{#if clickedExpense}
+	<NewTransactionDialog
+		expenseId={clickedExpense.id}
+		on:newTransaction={newTransactionHandle}
+		bind:this={newTransactionDialog}
+	/>
+{/if}
 
 <style lang="scss">
 	.drawer-container {

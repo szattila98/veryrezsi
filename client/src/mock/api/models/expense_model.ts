@@ -16,7 +16,7 @@ export type Transaction = {
 	id: number;
 	donorName: string;
 	currencyType: CurrencyType;
-	value: string;
+	value: number;
 	date: string;
 	expenseId: number;
 };
