@@ -82,6 +82,7 @@
 				label="Value"
 				bind:dirty={$value.dirty}
 				bind:invalid={$value.invalid}
+				type="number"
 				><svelte:fragment slot="helper">
 					{#if !$value.valid}
 						<HelperLine>Not a valid value</HelperLine>

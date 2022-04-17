@@ -34,8 +34,8 @@ export interface Expense {
 	transactions: Transaction[];
 }
 
-export type NewTransaction = Omit<Transaction, 'id'|'currencyType'> & {
-	currencyTypeId: number
+export type NewTransaction = Omit<Transaction, 'id' | 'currencyType'> & {
+	currencyTypeId: number;
 };
 
 export type GetExpensesRequestData = {

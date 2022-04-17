@@ -50,7 +50,7 @@ export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesRespon
 };
 
 export const mockGetCurrencyTypes = (): GetCurrencyTypesResponse => {
-	return response(200, currencyTypes ) as GetCurrencyTypesResponse;
+	return response(200, currencyTypes) as GetCurrencyTypesResponse;
 };
 
 export const mockNewTransaction = (data: NewTransactionRequestData): NewTransactionResponse => {
