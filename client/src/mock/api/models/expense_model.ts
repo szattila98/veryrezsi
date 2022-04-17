@@ -34,7 +34,9 @@ export interface Expense {
 	transactions: Transaction[];
 }
 
-export type NewTransaction = Omit<Transaction, 'id'>;
+export type NewTransaction = Omit<Transaction, 'id'|'currencyType'> & {
+	currencyTypeId: number
+};
 
 export type GetExpensesRequestData = {
 	userId: number;
@@ -46,6 +48,12 @@ type GetExpensesResponseData = {
 
 export type GetExpensesResponse = Omit<AxiosResponse, 'data'> & {
 	data: GetExpensesResponseData;
+};
+
+type GetCurrencyTypesResponseData = CurrencyType[];
+
+export type GetCurrencyTypesResponse = Omit<AxiosResponse, 'data'> & {
+	data: GetCurrencyTypesResponseData;
 };
 
 export type NewTransactionRequestData = {

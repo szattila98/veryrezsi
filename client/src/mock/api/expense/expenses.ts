@@ -9,6 +9,7 @@ import type {
 	DeleteTransactionRequestData,
 	DeleteTransactionResponse,
 	Expense,
+	GetCurrencyTypesResponse,
 	GetExpensesRequestData,
 	GetExpensesResponse,
 	NewTransactionRequestData,
@@ -48,13 +49,19 @@ export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesRespon
 	return response(200, { expenses: userExpenses }) as GetExpensesResponse;
 };
 
+export const mockGetCurrencyTypes = (): GetCurrencyTypesResponse => {
+	return response(200, currencyTypes ) as GetCurrencyTypesResponse;
+};
+
 export const mockNewTransaction = (data: NewTransactionRequestData): NewTransactionResponse => {
 	loadTransactions();
 	if (transactions) {
 		const newTransaction = {
 			id: Math.floor(Math.random() * 100000),
 			donorName: data.newTransaction.donorName,
-			currencyType: data.newTransaction.currencyType,
+			currencyType: currencyTypes.find(
+				(currencyType) => currencyType.id === data.newTransaction.currencyTypeId
+			),
 			value: data.newTransaction.value,
 			date: data.newTransaction.date,
 			expenseId: data.newTransaction.expenseId,
@@ -91,7 +98,7 @@ function loadTransactions() {
 				currencyType: currencyTypes.find(
 					(currencyType) => currencyType.id === transaction.currency_type_id
 				),
-				value: transaction.value,
+				value: parseInt(transaction.value),
 				date: transaction.date,
 				expenseId: transaction.expense_id,
 			} as Transaction;

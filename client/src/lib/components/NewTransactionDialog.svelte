@@ -4,18 +4,20 @@
 	import { form, field } from 'svelte-forms';
 	import { required } from 'svelte-forms/validators';
 	import Dialog, { Content, Title } from '@smui/dialog';
-	import { NewTransaction } from '$mock/api/models/expense_model';
+	import { CurrencyType, NewTransaction } from '$mock/api/models/expense_model';
 	import { createEventDispatcher } from 'svelte';
+	import Select, { Option } from '@smui/select';
 
 	export let expenseId: number;
+	export let currencyTypes: CurrencyType[];
 
 	let open = false;
 
 	const dispatch = createEventDispatcher<{ newTransaction: { transaction: NewTransaction } }>();
 
 	const donorName = field('donorName', '', [required()]);
-	let currencyType = { id: 0, abbreviation: 'HUF', name: 'base.currencies.huf' };
-	const value = field('value', '', [required()]);
+	const selectedCurrencyTypeId = field('selectedCurrencyTypeId', -1, [required()]);
+	const value = field<number | undefined>('value', 0, [required()]); // select component makes this undefined when nothing is selected
 	const date = field('date', '', [required()]);
 	const newTransactionForm = form(donorName, value, date);
 
@@ -23,15 +25,15 @@
 		if (
 			$newTransactionForm.valid &&
 			$donorName.value &&
-			currencyType &&
+			selectedCurrencyTypeId &&
 			$value.value &&
 			$date.value
 		) {
 			dispatch('newTransaction', {
 				transaction: {
 					donorName: $donorName.value,
-					currencyType: currencyType,
-					value: parseInt($value.value),
+					currencyTypeId: $selectedCurrencyTypeId.value,
+					value: $value.value,
 					date: $date.value,
 					expenseId: expenseId,
 				},
@@ -63,7 +65,16 @@
 				</svelte:fragment>
 			</Textfield>
 
-			<p>drop down placeholder</p>
+			<Select bind:value={$selectedCurrencyTypeId.value} label="Currency">
+				{#each currencyTypes as currency}
+					<Option value={currency.id}>{currency.abbreviation}</Option>
+				{/each}
+				<svelte:fragment slot="helperText">
+					{#if !$selectedCurrencyTypeId.valid}
+						<HelperLine>Not a valid currency</HelperLine>
+					{/if}
+				</svelte:fragment>
+			</Select>
 
 			<Textfield
 				variant="outlined"
@@ -112,6 +123,11 @@
 
 	* :global(.mdc-text-field-helper-line) {
 		justify-content: center;
+	}
+
+	* :global(.mdc-select) {
+		margin: 1em 2em 0em;
+		width: 100%;
 	}
 
 	* :global(.mdc-button) {

@@ -7,9 +7,11 @@
 				redirect: '/login',
 			};
 		}
+		const currencyTypes = (await getCurrencyTypes()).data;
 		return {
 			props: {
 				userId: session.user.id,
+				currencyTypes,
 			},
 		};
 	};
@@ -17,7 +19,7 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Expense, NewTransaction } from '$mock/api/models/expense_model';
+	import { CurrencyType, Expense, NewTransaction } from '$mock/api/models/expense_model';
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
@@ -25,9 +27,12 @@
 	import Separator from '@smui/list/src/Separator.svelte';
 	import Button from '@smui/button/src/Button.svelte';
 	import NewTransactionDialog from '$lib/components/NewTransactionDialog.svelte';
+	import { getCurrencyTypes } from './api/currency';
 
 	export let userId: number;
-	export let expenses: Expense[] = [];
+	export let currencyTypes: CurrencyType[] = [];
+
+	let expenses: Expense[] = [];
 	let clickedExpense: Expense | null;
 	let newTransactionDialog: NewTransactionDialog;
 
@@ -128,6 +133,7 @@
 {#if clickedExpense}
 	<NewTransactionDialog
 		expenseId={clickedExpense.id}
+		{currencyTypes}
 		on:newTransaction={newTransactionHandle}
 		bind:this={newTransactionDialog}
 	/>
