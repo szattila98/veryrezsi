@@ -36,18 +36,17 @@
 	let clickedExpense: Expense | null;
 	let newTransactionDialog: NewTransactionDialog;
 
-	onMount(() => {
-		fetch(`/api/expense/${userId}`, {
+	onMount(async () => {
+		const res = await fetch(`/api/expense/${userId}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		}).then((res) => {
-			res.json().then((res) => {
-				expenses = res.data.expenses as Expense[];
-				clickedExpense = expenses && expenses[0] ? expenses[0] : null;
-			});
 		});
+		const data = (await res.json()).data;
+		console.log(data);
+		expenses = data.expenses as Expense[];
+		clickedExpense = expenses && expenses[0] ? expenses[0] : null;
 	});
 
 	$: clickedExpense = clickedExpense

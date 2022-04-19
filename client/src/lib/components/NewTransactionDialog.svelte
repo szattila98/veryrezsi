@@ -16,19 +16,15 @@
 	const dispatch = createEventDispatcher<{ newTransaction: { transaction: NewTransaction } }>();
 
 	const donorName = field('donorName', '', [required()]);
-	const selectedCurrencyTypeId = field('selectedCurrencyTypeId', -1, [required()]);
-	const value = field<number | undefined>('value', 0, [required()]); // select component makes this undefined when nothing is selected
+	const selectedCurrencyTypeId = field('selectedCurrencyTypeId', 0, [required()]);
+	const value = field('value', 0, [required()]);
 	const date = field('date', '', [required()]);
 	const newTransactionForm = form(donorName, value, date);
 
-	function onSubmit() {
-		if (
-			$newTransactionForm.valid &&
-			$donorName.value &&
-			selectedCurrencyTypeId &&
-			$value.value &&
-			$date.value
-		) {
+	async function onSubmit() {
+		await newTransactionForm.validate();
+		if ($newTransactionForm.valid) {
+			console.log('nein');
 			dispatch('newTransaction', {
 				transaction: {
 					donorName: $donorName.value,
@@ -38,8 +34,6 @@
 					expenseId: expenseId,
 				},
 			});
-		} else {
-			newTransactionForm.validate();
 		}
 	}
 
