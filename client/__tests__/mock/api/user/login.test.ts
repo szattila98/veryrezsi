@@ -1,4 +1,4 @@
-import { generateSessionCookieForUser } from '$mock/api/user/login';
+import { generateSessionCookieForUser, USERID_IS_NOT_A_NUMBER_MESSGE } from '$mock/api/user/login';
 import { Cookie, cookieToObject} from './util/CookieTestUtil';
 
 describe('Session cookie generation', () => {
@@ -11,7 +11,12 @@ describe('Session cookie generation', () => {
 
 		expect(result.JSESSIONID).toEqual('aXRzanVzdGFjb29raWVmb3JfOQ%3D%3D');
 		expect(result2.JSESSIONID).toEqual('aXRzanVzdGFjb29raWVmb3JfOQ%3D%3D');
-	})
+	});
+
+	test('should throw an error when the last part of the username is not a number', () => {
+		const username = 'admin_mf';
+		expect(() => getGeneratedSessionCookieObject(username)).toThrowError(USERID_IS_NOT_A_NUMBER_MESSGE);
+	});
 })
 
 const getGeneratedSessionCookieObject = (username: string) : SessionCookieContent => {
