@@ -1,5 +1,6 @@
 module.exports = {
 	transform: {
+		'^.+\\.svelte$': ['svelte-jester', { preprocess: './svelte.config.test.cjs' }],
 		'^.+\\.ts$': 'ts-jest',
 		'^.+\\.js$': 'ts-jest',
 	},
@@ -12,5 +13,6 @@ module.exports = {
 		],
 		'^\\$mock(.*)$': '<rootDir>/src/mock$1',
 	},
+	setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
 	collectCoverageFrom: ['src/**/*.{ts,tsx,svelte,js,jsx}'],
 };
