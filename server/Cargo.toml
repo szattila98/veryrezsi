@@ -1,0 +1,25 @@
+[package]
+authors = ["Attila Szőke <szokeattila9801@gmail.com>"]
+name = "veryrezsi"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+homepage = "https://github.com/szattila98/veryrezsi"
+repository = "https://github.com/szattila98/veryrezsi"
+documentation = "https://github.com/szattila98/veryrezsi"
+
+description = """
+Expense and subscription calculator web-server.
+"""
+readme = "README.md"
+keywords = ["api", "calculator", "web-app", "expenses-manager", "rocket"]
+categories = ["web-programming"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = { version = "0.5.0-rc.2", features = ["json", "secrets"] }
+serde = {version = "1.0.137", features = ["derive"] }
+serde_json = "1.0.81"
+dotenv = "0.15.0"

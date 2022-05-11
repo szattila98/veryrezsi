@@ -1,0 +1,1 @@
+# veryrezsi server
