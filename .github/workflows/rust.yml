@@ -15,10 +15,6 @@ jobs:
   check:
     name: Check
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ../server
-    
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -34,14 +30,11 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --manifest-path server/Cargo.toml
 
   test:
     name: Test Suite
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ../server
-    
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -57,14 +50,11 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
+          args: --manifest-path server/Cargo.toml
 
   lints:
     name: Lints
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ../server
-    
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -81,10 +71,10 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check
+          args: --all --manifest-path server/Cargo.toml -- --check
 
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings
+          args: --manifest-path server/Cargo.toml -- -D warnings
