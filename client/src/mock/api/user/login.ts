@@ -5,7 +5,8 @@ import { response_message } from '../_common/response_body';
 
 import type { LoginRequestData, LoginResponse } from '../models/login_model';
 
-const USERID_IS_NOT_A_NUMBER_MESSGE = 'UserId is not a number. Use "randomName_1" username format to provide userId';
+const USERID_IS_NOT_A_NUMBER_MESSGE =
+	'UserId is not a number. Use "randomName_1" username format to provide userId';
 
 const mockLogin = (data: LoginRequestData): LoginResponse => {
 	// You can login only with the same username - password.
@@ -18,7 +19,7 @@ const mockLogin = (data: LoginRequestData): LoginResponse => {
 
 	try {
 		header = generateSessionCookieForUser(data.user);
-		return buildSuccessResponseWithHeader(header)
+		return buildSuccessResponseWithHeader(header);
 	} catch (e) {
 		return buildFailedResponse();
 	}
@@ -50,7 +51,7 @@ const generateSessionCookieForUser = (user: string): object => {
  * - admin_denis_12 -> 12
  * @throws Error, if userId part is not a valid number
  */
- const getUserIdFromUsername = (username: string): number => {
+const getUserIdFromUsername = (username: string): number => {
 	const splitUser = username.split('_');
 	const userIdPart = splitUser[splitUser.length - 1];
 	const userId = parseInt(userIdPart);
@@ -63,10 +64,10 @@ const generateSessionCookieForUser = (user: string): object => {
 
 const buildSuccessResponseWithHeader = (header: object): LoginResponse => {
 	return response(200, response_message('Login succeeded.'), header) as LoginResponse;
-}
+};
 
 const buildFailedResponse = (): LoginResponse => {
 	return response(401, response_message('Failed to login.')) as LoginResponse;
-}
+};
 
 export { USERID_IS_NOT_A_NUMBER_MESSGE, mockLogin, generateSessionCookieForUser };

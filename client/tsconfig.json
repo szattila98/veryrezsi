@@ -33,6 +33,7 @@
 			"$api": ["src/routes/api"],
 			"$api/*": ["src/routes/api/*"]
 		},
+		"types": ["jest"]
 	},
 	"include": [
 		"src/**/*.d.ts",
@@ -41,6 +42,6 @@
 		"src/**/*.json",
 		"src/**/*.svelte",
 		"mock/**/*.js",
-		"mock/**/*.ts",
-	],
+		"mock/**/*.ts"
+	]
 }

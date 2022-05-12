@@ -1,5 +1,5 @@
 import { generateSessionCookieForUser, USERID_IS_NOT_A_NUMBER_MESSGE } from '$mock/api/user/login';
-import { Cookie, cookieToObject} from './util/CookieTestUtil';
+import { Cookie, cookieToObject } from './util/CookieTestUtil';
 
 describe('Session cookie generation', () => {
 	test('should result in the same session id, for the same user ids', () => {
@@ -15,17 +15,21 @@ describe('Session cookie generation', () => {
 
 	test('should throw an error when the last part of the username is not a number', () => {
 		const username = 'admin_mf';
-		expect(() => getGeneratedSessionCookieObject(username)).toThrowError(USERID_IS_NOT_A_NUMBER_MESSGE);
+		expect(() => getGeneratedSessionCookieObject(username)).toThrowError(
+			USERID_IS_NOT_A_NUMBER_MESSGE
+		);
 	});
-})
+});
 
-const getGeneratedSessionCookieObject = (username: string) : SessionCookieContent => {
-	return cookieToObject((generateSessionCookieForUser(username) as Cookie)['Set-Cookie']) as SessionCookieContent
-}
+const getGeneratedSessionCookieObject = (username: string): SessionCookieContent => {
+	return cookieToObject(
+		(generateSessionCookieForUser(username) as Cookie)['Set-Cookie']
+	) as SessionCookieContent;
+};
 
 type SessionCookieContent = {
-	'JSESSIONID': string;
+	JSESSIONID: string;
 	'Max-Age': number;
-	'SameSite': string;
-	'Path': string;
-}
+	SameSite: string;
+	Path: string;
+};
