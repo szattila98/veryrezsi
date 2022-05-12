@@ -12,5 +12,6 @@ mod routes;
 #[launch]
 pub fn rocket() -> _ {
     dotenv().ok();
-    rocket::build().mount("/api/user", routes![routes::user::auth, routes::user::me])
+    rocket::custom(config::from_env())
+        .mount("/api/user", routes![routes::user::auth, routes::user::me])
 }
