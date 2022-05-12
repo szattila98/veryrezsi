@@ -4,7 +4,7 @@
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"clean": "rm -rf ./node_modules",
-    	"clean:install": "npm run clean && npm i",
+		"clean:install": "npm run clean && npm i",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
@@ -20,6 +20,8 @@
 		"smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/theme/dark"
 	},
 	"devDependencies": {
+		"@babel/core": "^7.17.10",
+		"@babel/preset-env": "^7.17.10",
 		"@smui/button": "^6.0.0-beta.14",
 		"@smui/drawer": "^6.0.0-beta.15",
 		"@smui/layout-grid": "^6.0.0-beta.14",

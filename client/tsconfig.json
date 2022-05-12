@@ -32,7 +32,7 @@
 			"$routes/*": ["src/routes/*"],
 			"$api": ["src/routes/api"],
 			"$api/*": ["src/routes/api/*"]
-		}
+		},
 	},
 	"include": [
 		"src/**/*.d.ts",
@@ -42,8 +42,5 @@
 		"src/**/*.svelte",
 		"mock/**/*.js",
 		"mock/**/*.ts",
-		"__tests__/**/*.js",
-		"__tests__/**/*.ts",
-		"__tests__/**/*.json"
-	]
+	],
 }
