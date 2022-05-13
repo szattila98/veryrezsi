@@ -1,9 +1,5 @@
 import type { AxiosResponse } from '../_common/axios_response';
 
-export type ExpensesRequestData = {
-	userId: number;
-};
-
 export interface RecurrenceType {
 	id: number;
 	name: string;
@@ -16,25 +12,58 @@ export interface CurrencyType {
 	name: string;
 }
 
+export type Transaction = {
+	id: number;
+	donorName: string;
+	currencyType: CurrencyType;
+	value: number;
+	date: string;
+	expenseId: number;
+};
+
 export interface Expense {
 	id: number;
 	name: string;
 	description: string;
-	recurrence_type: RecurrenceType;
-	currency_type: CurrencyType;
-	predefined_expense_id: number | null;
+	recurrenceType: RecurrenceType;
+	currencyType: CurrencyType;
+	predefinedExpenseId: number | null;
 	startDate: string;
 	value: string;
-	user_id: number;
+	userId: number;
+	transactions: Transaction[];
 }
 
-type ExpensesResponseData = {
+export type NewTransaction = Omit<Transaction, 'id' | 'currencyType'> & {
+	currencyTypeId: number;
+};
+
+export type GetExpensesRequestData = {
+	userId: number;
+};
+
+type GetExpensesResponseData = {
 	expenses: Expense[];
 };
 
-// Specializing common Axios response to use response data type for its data field
-// This can be safely reused for every concrete response.
-// There is no chance 'data' field name will change in Axios
-export type ExpensesResponse = Omit<AxiosResponse, 'data'> & {
-	data: ExpensesResponseData;
+export type GetExpensesResponse = Omit<AxiosResponse, 'data'> & {
+	data: GetExpensesResponseData;
 };
+
+type GetCurrencyTypesResponseData = CurrencyType[];
+
+export type GetCurrencyTypesResponse = Omit<AxiosResponse, 'data'> & {
+	data: GetCurrencyTypesResponseData;
+};
+
+export type NewTransactionRequestData = {
+	newTransaction: NewTransaction;
+};
+
+export type NewTransactionResponse = Omit<AxiosResponse, 'data'>;
+
+export type DeleteTransactionRequestData = {
+	transactionId: number;
+};
+
+export type DeleteTransactionResponse = Omit<AxiosResponse, 'data'>;

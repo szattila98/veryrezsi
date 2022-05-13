@@ -7,28 +7,86 @@
 				redirect: '/login',
 			};
 		}
-		const res = await getExpenses({ userId: session.user.id });
+		const currencyTypes = (await getCurrencyTypes()).data;
 		return {
-			status: res.status,
 			props: {
-				expenses: res.data,
+				userId: session.user.id,
+				currencyTypes,
 			},
 		};
 	};
 </script>
 
 <script lang="ts">
-	import { Expense } from '$mock/api/models/expense_model';
+	import { onMount } from 'svelte';
+	import { CurrencyType, Expense, NewTransaction } from '$mock/api/models/expense_model';
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';
-	import { getExpenses } from '$api/dashboard';
+	import TransactionList from '$lib/components/TransactionList.svelte';
+	import Separator from '@smui/list/src/Separator.svelte';
+	import Button from '@smui/button/src/Button.svelte';
+	import NewTransactionDialog from '$lib/components/NewTransactionDialog.svelte';
+	import { getCurrencyTypes } from './api/currency';
 
-	export let expenses: Expense[] = [];
+	export let userId: number;
+	export let currencyTypes: CurrencyType[] = [];
 
-	let clickedExpense: Expense | null = expenses && expenses[0] ? expenses[0] : null;
+	let expenses: Expense[] = [];
+	let clickedExpense: Expense | null;
+	let newTransactionDialog: NewTransactionDialog;
+
+	onMount(async () => {
+		const res = await fetch(`/api/expense/${userId}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const data = (await res.json()).data;
+		console.log(data);
+		expenses = data.expenses as Expense[];
+		clickedExpense = expenses && expenses[0] ? expenses[0] : null;
+	});
+
+	$: clickedExpense = clickedExpense
+		? expenses.filter((expense) => {
+				return expense.id === clickedExpense?.id;
+		  })[0] || null
+		: null;
+
 	function onDrawerClick(expense: Expense) {
 		clickedExpense = expense;
+	}
+
+	function newTransactionHandle(event: CustomEvent<{ transaction: NewTransaction }>) {
+		fetch('/api/transaction', {
+			method: 'POST',
+			body: JSON.stringify(event.detail.transaction),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}).then(() => location.reload());
+	}
+
+	function deleteTransactionHandle(event: CustomEvent<{ transactionId: number }>) {
+		fetch(`/api/transaction/${event.detail.transactionId}/delete`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}).then(() => {
+			fetch(`/api/expense/${userId}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			}).then((res) => {
+				res.json().then((res) => {
+					expenses = res.data.expenses;
+				});
+			});
+		});
 	}
 </script>
 
@@ -48,20 +106,37 @@
 	<AppContent class="app-content">
 		<main class="main-content">
 			{#if clickedExpense}
-				<h2>{clickedExpense.name}</h2>
+				<div class="expenseHeader">
+					<h2>{clickedExpense.name}</h2>
+					<Button on:click={newTransactionDialog.show}>New Transaction</Button>
+				</div>
 				<pre>{clickedExpense.startDate}</pre>
 				<p>{clickedExpense.description}</p>
 				<p>
-					{clickedExpense.recurrence_type.name} recurrence, {clickedExpense.recurrence_type.perYear}
+					{clickedExpense.recurrenceType.name} recurrence, {clickedExpense.recurrenceType.perYear}
 					per year
 				</p>
-				<p>Cost: {clickedExpense.value} {clickedExpense.currency_type.abbreviation}</p>
+				<p>Cost: {clickedExpense.value} {clickedExpense.currencyType.abbreviation}</p>
+				<Separator />
+				<TransactionList
+					transactions={clickedExpense.transactions}
+					on:deleteTransaction={deleteTransactionHandle}
+				/>
 			{:else}
 				<p>Nothing selected!</p>
 			{/if}
 		</main>
 	</AppContent>
 </div>
+
+{#if clickedExpense}
+	<NewTransactionDialog
+		expenseId={clickedExpense.id}
+		{currencyTypes}
+		on:newTransaction={newTransactionHandle}
+		bind:this={newTransactionDialog}
+	/>
+{/if}
 
 <style lang="scss">
 	.drawer-container {
@@ -85,5 +160,11 @@
 		padding: 16px;
 		height: 100%;
 		box-sizing: border-box;
+	}
+
+	.expenseHeader {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 </style>
