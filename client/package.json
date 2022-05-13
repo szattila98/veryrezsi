@@ -5,6 +5,7 @@
 		"dev": "svelte-kit dev",
 		"clean": "rm -rf ./node_modules",
 		"clean:install": "npm run clean && npm i",
+		"clean:all": "npm run clean && rm -f package-lock.json",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
