@@ -19,7 +19,8 @@ categories = ["web-programming"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+diesel = { version = "1.4.8", features = ["mysql"] }
+dotenv = "0.15.0"
 rocket = { version = "0.5.0-rc.2", features = ["json", "secrets"] }
 serde = {version = "1.0.137", features = ["derive"] }
 serde_json = "1.0.81"
-dotenv = "0.15.0"
