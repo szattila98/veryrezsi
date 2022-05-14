@@ -2,6 +2,7 @@ use rocket::http::{Cookie, CookieJar};
 use rocket::response::status;
 use rocket::serde::{json::Json, Deserialize, Serialize};
 
+use crate::database::{self, Database};
 use crate::models::user::User;
 
 const AUTH_COOKIE_NAME: &str = "JSESSIONID";
@@ -31,8 +32,8 @@ pub async fn me(cookies: &CookieJar<'_>) -> Result<Json<User>, status::Unauthori
         return Ok(Json(User {
             id: 1,
             username: "admin".to_string(),
-            pw_hash: "dont_send_this".to_string(),
             email: "admin@mail.com".to_string(),
+            pw_hash: "dont_send_this".to_string(),
         }));
     }
     Err(status::Unauthorized::<()>(None))
