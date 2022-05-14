@@ -32,7 +32,8 @@
 			"$routes/*": ["src/routes/*"],
 			"$api": ["src/routes/api"],
 			"$api/*": ["src/routes/api/*"]
-		}
+		},
+		"types": ["jest"]
 	},
 	"include": [
 		"src/**/*.d.ts",
