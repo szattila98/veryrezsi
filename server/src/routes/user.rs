@@ -2,7 +2,7 @@ use rocket::http::{Cookie, CookieJar};
 use rocket::response::status;
 use rocket::serde::{json::Json, Deserialize, Serialize};
 
-use crate::database::{self, Database};
+// use crate::database::{self, Database};
 use crate::models::user::User;
 
 const AUTH_COOKIE_NAME: &str = "JSESSIONID";
