@@ -1,19 +1,19 @@
 #[macro_use]
 extern crate rocket;
-#[macro_use]
-extern crate rocket_sync_db_pools;
-#[macro_use]
-extern crate diesel;
+use migration::MigratorTrait;
+use rocket::fairing::{self, AdHoc};
+use rocket::Build;
+use rocket::{
+    serde::json::{json, Value},
+    Rocket,
+};
+use sea_orm_rocket::Database;
 
-use dotenv::dotenv;
-use rocket::serde::json::{json, Value};
-
-mod config;
 mod database;
+use database::Db;
+
 mod errors;
-mod models;
 mod routes;
-mod schema;
 
 #[catch(404)]
 fn not_found() -> Value {
@@ -23,11 +23,17 @@ fn not_found() -> Value {
     })
 }
 
+async fn run_migrations(rocket: Rocket<Build>) -> fairing::Result {
+    let conn = &Db::fetch(&rocket).unwrap().conn;
+    let _ = migration::Migrator::up(conn, None).await;
+    Ok(rocket)
+}
+
 #[launch]
 pub fn rocket() -> _ {
-    dotenv().ok();
-    rocket::custom(config::from_env())
+    rocket::build()
+        .attach(Db::init())
+        .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
         .mount("/api/user", routes![routes::user::auth, routes::user::me])
         .register("/", catchers![not_found])
-        .attach(database::Database::fairing())
 }

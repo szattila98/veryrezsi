@@ -2,8 +2,9 @@ use rocket::http::{Cookie, CookieJar};
 use rocket::response::status;
 use rocket::serde::{json::Json, Deserialize, Serialize};
 
-// use crate::database::{self, Database};
-use crate::models::user::User;
+pub use entity::user;
+pub use entity::user::Entity as User;
+// use sea_orm_rocket::{Connection, Database};
 
 const AUTH_COOKIE_NAME: &str = "JSESSIONID";
 
@@ -26,10 +27,10 @@ pub async fn auth(
 }
 
 #[get("/me")]
-pub async fn me(cookies: &CookieJar<'_>) -> Result<Json<User>, status::Unauthorized<()>> {
+pub async fn me(cookies: &CookieJar<'_>) -> Result<Json<user::Model>, status::Unauthorized<()>> {
     if let Some(auth_cookie) = cookies.get_private(AUTH_COOKIE_NAME) {
         println!("user_id: {}", auth_cookie.value());
-        return Ok(Json(User {
+        return Ok(Json(user::Model {
             id: 1,
             username: "admin".to_string(),
             email: "admin@mail.com".to_string(),
