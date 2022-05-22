@@ -12,9 +12,9 @@ pub enum UserError {
     NotFound(String),
 }
 
-impl Into<UserError> for DbErr {
-    fn into(self) -> UserError {
-        UserError::DatabaseError(self)
+impl From<DbErr> for UserError {
+    fn from(e: DbErr) -> Self {
+        UserError::DatabaseError(e)
     }
 }
 
@@ -27,22 +27,22 @@ pub async fn find_user_by_username(
         .one(conn)
         .await;
 
-    return match result {
+    match result {
         Ok(opt) => match opt {
             Some(user) => Ok(user),
             None => Err(UserError::NotFound(username)),
         },
         Err(e) => Err(e.into()),
-    };
+    }
 }
 
 pub async fn find_user_by_id(conn: &DatabaseConnection, id: i32) -> Result<user::Model, UserError> {
     let result = User::find_by_id(id).one(conn).await;
-    return match result {
+    match result {
         Ok(opt) => match opt {
             Some(user) => Ok(user),
             None => Err(UserError::NotFound(id.to_string())),
         },
         Err(e) => Err(e.into()),
-    };
+    }
 }
