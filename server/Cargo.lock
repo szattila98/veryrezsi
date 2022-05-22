@@ -2907,6 +2907,7 @@ dependencies = [
  "sea-orm-rocket",
  "serde",
  "serde_json",
+ "thiserror",
 ]
 
 [[package]]

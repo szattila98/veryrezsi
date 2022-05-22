@@ -12,7 +12,7 @@ use sea_orm_rocket::Database;
 mod database;
 use database::Db;
 
-mod errors;
+mod logic;
 mod routes;
 
 #[catch(404)]
@@ -34,6 +34,9 @@ pub fn rocket() -> _ {
     rocket::build()
         .attach(Db::init())
         .attach(AdHoc::try_on_ignite("Migrations", run_migrations))
-        .mount("/api/user", routes![routes::user::auth, routes::user::me])
+        .mount(
+            "/api/user",
+            routes![routes::users::login, routes::users::me],
+        )
         .register("/", catchers![not_found])
 }

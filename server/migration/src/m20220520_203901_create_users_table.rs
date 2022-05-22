@@ -1,5 +1,7 @@
 use entity::user;
 use sea_orm_migration::prelude::*;
+use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
+use sea_orm_migration::sea_orm::Set;
 
 pub struct Migration;
 
@@ -34,7 +36,20 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(user::Column::PwHash).string().not_null())
                     .to_owned(),
             )
-            .await
+            .await?;
+
+        // Dummy user
+        let db = manager.get_connection();
+        user::ActiveModel {
+            id: Set(1),
+            email: Set("bob@ross.com".to_string()),
+            username: Set("happylittleclouds".to_string()),
+            pw_hash: Set("TODO_good_hash_here".to_string()),
+        }
+        .insert(db)
+        .await?;
+
+        Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
