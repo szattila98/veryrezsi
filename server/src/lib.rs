@@ -9,11 +9,22 @@ use rocket::{
 };
 use sea_orm_rocket::Database;
 
+extern crate pwhash;
+
 mod database;
 use database::Db;
 
+mod auth;
 mod logic;
 mod routes;
+
+#[catch(401)]
+fn unauthorized() -> Value {
+    json!({
+        "status": "401",
+        "reason": "You are unauthorized to use this resource."
+    })
+}
 
 #[catch(404)]
 fn not_found() -> Value {
@@ -38,5 +49,5 @@ pub fn rocket() -> _ {
             "/api/user",
             routes![routes::users::login, routes::users::me],
         )
-        .register("/", catchers![not_found])
+        .register("/", catchers![unauthorized, not_found])
 }

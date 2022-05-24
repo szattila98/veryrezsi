@@ -44,7 +44,9 @@ impl MigrationTrait for Migration {
             id: Set(1),
             email: Set("bob@ross.com".to_string()),
             username: Set("happylittleclouds".to_string()),
-            pw_hash: Set("TODO_good_hash_here".to_string()),
+            pw_hash: Set(
+                "$2b$10$YvSfR107VspgYn9AoveuTOQ.GRjj0UvRI1w9YlgA7oMz9uPLBNGVS".to_string(),
+            ),
         }
         .insert(db)
         .await?;
