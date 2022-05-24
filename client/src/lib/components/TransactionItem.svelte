@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Transaction } from '$mock/api/models/expense_model';
+	import type { Transaction } from '$mock/api/models/expense_model';
 	import IconButton from '@smui/icon-button';
 
 	import { Item, Text, PrimaryText, SecondaryText } from '@smui/list';

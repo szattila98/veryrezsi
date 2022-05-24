@@ -13,6 +13,14 @@
 		location.reload();
 	}
 
+	function toHome() {
+		goto('/');
+	}
+
+	function toProfile() {
+		goto('/profile');
+	}
+
 	function toDashboard() {
 		goto('/dashboard');
 	}
@@ -30,7 +38,17 @@
 	<Button on:click={signout} variant="raised">
 		<ButtonLabel>Sign out</ButtonLabel>
 	</Button>
-	{#if $page.url.pathname == '/'}
+	{#if $page.url.pathname != '/'}
+	<Button on:click={toHome} variant="raised">
+		<ButtonLabel>To Home</ButtonLabel>
+	</Button>
+	{/if}
+	{#if $page.url.pathname != '/profile'}
+		<Button on:click={toProfile} variant="raised">
+			<ButtonLabel>To Profile</ButtonLabel>
+		</Button>
+	{/if}
+	{#if $page.url.pathname != '/dashboard'}
 		<Button on:click={toDashboard} variant="raised">
 			<ButtonLabel>To Dashboard</ButtonLabel>
 		</Button>

@@ -1,19 +1,8 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
+	import { authLoad } from "$lib/auth";
 
-	export const load: Load = async ({ session }) => {
-		if (!session?.user) {
-			return {
-				status: 302,
-				redirect: '/login',
-			};
-		}
-		return {
-			props: {
-				user: session.user,
-			},
-		};
-	};
+	export const load: Load = authLoad;
 </script>
 
 <script lang="ts">

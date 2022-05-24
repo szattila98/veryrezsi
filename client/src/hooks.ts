@@ -1,5 +1,4 @@
-import { MaybePromise } from '@sveltejs/kit/types/helper';
-import { RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 
 import { parse } from 'cookie';
 
@@ -11,7 +10,7 @@ export async function handle({
 	resolve,
 }: {
 	event: RequestEvent;
-	resolve(event: RequestEvent): MaybePromise<Response>;
+	resolve(event: RequestEvent): Awaited<Promise<Response>>;
 }) {
 	const cookies = parse(event.request.headers.get('cookie') || '');
 
