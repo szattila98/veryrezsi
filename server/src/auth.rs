@@ -1,15 +1,11 @@
-use rocket::http::Status;
-use rocket::outcome::IntoOutcome;
-use rocket::request::{self, FromRequest, Request};
-use thiserror::Error;
+use axum::{
+    async_trait,
+    extract::{FromRequest, RequestParts},
+    http,
+};
+use axum_extra::extract::cookie::{Key, PrivateCookieJar};
 
-pub const AUTH_COOKIE_NAME: &str = "SESSIONID";
-
-#[derive(Error, Debug)]
-pub enum AuthError {
-    #[error("no user id was found in the cookie")]
-    NoValidCookie,
-}
+pub const AUTH_COOKIE_NAME: &str = "SESSION";
 
 pub struct AuthenticatedUser {
     pub id: i32,
@@ -21,15 +17,22 @@ impl AuthenticatedUser {
     }
 }
 
-#[rocket::async_trait]
-impl<'r> FromRequest<'r> for AuthenticatedUser {
-    type Error = AuthError;
+#[async_trait]
+impl<B> FromRequest<B> for AuthenticatedUser
+where
+    B: Send, // required by `async_trait`
+{
+    type Rejection = http::StatusCode;
 
-    async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
-        req.cookies()
-            .get_private(AUTH_COOKIE_NAME)
-            .and_then(|c| c.value().parse().ok())
-            .map(AuthenticatedUser::new)
-            .into_outcome((Status::Unauthorized, AuthError::NoValidCookie))
+    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
+        let result = PrivateCookieJar::<Key>::from_request(req).await;
+        if let Ok(jar) = result {
+            if let Some(cookie) = jar.get(AUTH_COOKIE_NAME) {
+                if let Ok(id) = cookie.value().parse() {
+                    return Ok(AuthenticatedUser::new(id));
+                }
+            }
+        }
+        Err(http::StatusCode::UNAUTHORIZED)
     }
 }

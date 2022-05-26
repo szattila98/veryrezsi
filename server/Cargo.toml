@@ -23,13 +23,18 @@ keywords = ["api", "calculator", "web-app", "expenses-manager", "rocket"]
 categories = ["web-programming"]
 
 [dependencies]
+tokio = { version = "1.18.2", features = ["full"] }
+axum = "0.5.6"
+axum-extra = { version = "0.3.3", features = ["cookie-private"] }
+tower = "0.4.12" # kelle?
+tower-http = { version = "0.3.3", features = ["fs"] } ## kelle?
+dotenv = "0.15.0"
+serde = "1.0.137"
+serde_json = "1.0.81"
 sea-orm = { version = "0.8.0", features = [ "sqlx-mysql", "runtime-tokio-native-tls", "macros" ] }
 entity = { path = "entity" }
 migration = { path = "migration" }
-sea-orm-rocket = "0.5.0"
-rocket = { version = "0.5.0-rc.2", features = ["json", "secrets"] }
-serde = {version = "1.0.137", features = ["derive"] }
-serde_json = "1.0.81"
-async-trait = "0.1.53"
+tracing-subscriber = { version = "0.3.11", features = ["env-filter"] }
+anyhow = "1.0.57"
 thiserror = "1.0.31"
 pwhash = "1.0.0"

@@ -1,9 +1,0 @@
-[default]
-port = 8000
-workers = 4
-keep_alive = 5
-log_level = "normal"
-secret_key = "8Xui8SN4mI+7egV/9dlfYYLGQJeEx4+DwmSQLwDVXJg="
-
-[default.databases.veryrezsi]
-url = "mysql://veryrezsi:password@127.0.0.1:3306/veryrezsi"

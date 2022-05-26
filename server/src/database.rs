@@ -1,39 +1,23 @@
-use async_trait::async_trait;
-use sea_orm::ConnectOptions;
-use sea_orm_rocket::{rocket::figment::Figment, Config, Database};
-use std::time::Duration;
+use migration::{Migrator, MigratorTrait};
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
+use std::{env, time::Duration};
 
-#[derive(Database, Debug)]
-#[database("veryrezsi")]
-pub struct Db(SeaOrmPool);
+pub async fn init() -> DatabaseConnection {
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set in .env file");
 
-#[derive(Debug, Clone)]
-pub struct SeaOrmPool {
-    pub conn: sea_orm::DatabaseConnection,
-}
+    let mut opt = ConnectOptions::new(db_url);
+    opt.max_connections(100)
+        .min_connections(5)
+        .connect_timeout(Duration::from_secs(8))
+        .idle_timeout(Duration::from_secs(8))
+        .max_lifetime(Duration::from_secs(8))
+        .sqlx_logging(false);
 
-#[async_trait]
-impl sea_orm_rocket::Pool for SeaOrmPool {
-    type Error = sea_orm::DbErr;
+    let conn = Database::connect(opt)
+        .await
+        .expect("Database connection failed");
 
-    type Connection = sea_orm::DatabaseConnection;
+    let _ = Migrator::up(&conn, None).await;
 
-    async fn init(figment: &Figment) -> Result<Self, Self::Error> {
-        let config = figment.extract::<Config>().unwrap();
-        let mut options: ConnectOptions = config.url.into();
-        options
-            .max_connections(config.max_connections as u32)
-            .min_connections(config.min_connections.unwrap_or_default())
-            .connect_timeout(Duration::from_secs(config.connect_timeout));
-        if let Some(idle_timeout) = config.idle_timeout {
-            options.idle_timeout(Duration::from_secs(idle_timeout));
-        }
-        let conn = sea_orm::Database::connect(options).await?;
-
-        Ok(SeaOrmPool { conn })
-    }
-
-    fn borrow(&self) -> &Self::Connection {
-        &self.conn
-    }
+    conn
 }
