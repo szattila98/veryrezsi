@@ -1,5 +1,7 @@
+import type { Cookie } from './util/CookieTestUtil';
+
 import { generateSessionCookieForUser, USERID_IS_NOT_A_NUMBER_MESSGE } from '$mock/api/user/login';
-import { Cookie, cookieToObject } from './util/CookieTestUtil';
+import { cookieToObject } from './util/CookieTestUtil';
 
 describe('Session cookie generation', () => {
 	test('should result in the same session id, for the same user ids', () => {

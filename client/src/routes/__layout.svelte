@@ -1,27 +1,45 @@
-<script>
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+<script lang="ts">
+	import type { TopAppBarComponentDev } from '@smui/top-app-bar';
+
+	import {onMount} from 'svelte';
+
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
 	import Button, { Label as ButtonLabel } from '@smui/button';
+	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
+	import IconButton from '@smui/icon-button';
+
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { session } from '$app/stores';
 
 	import '../style/app.scss';
 
-	async function signout() {
-		await fetch('/api/logout', { method: 'POST' });
+	let darkTheme: boolean;
+	export let topAppBar: TopAppBarComponentDev;
 
+	$: modeLabel = `switch to ${darkTheme ? 'light' : 'dark'} mode`;
+	$: modeIcon = darkTheme ? 'light_mode' : 'dark_mode';
+
+	onMount(() => {
+    	darkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  	})
+
+	const toggleMode = () => (darkTheme = !darkTheme);
+
+	const signout = async () =>  {
+		await fetch('/api/logout', { method: 'POST' });
 		location.reload();
 	}
 
-	function toHome() {
+	const toHome = () => {
 		goto('/');
 	}
 
-	function toProfile() {
+	const toProfile = () => {
 		goto('/profile');
 	}
 
-	function toDashboard() {
+	const toDashboard = () => {
 		goto('/dashboard');
 	}
 
@@ -32,27 +50,55 @@
 
 <svelte:head>
 	<title>VeryRezsi</title>
+
+	{#if darkTheme === undefined}
+		<link
+			rel="stylesheet"
+			href="/smui-light.css"
+			media="(prefers-color-scheme: light)"
+		/>
+		<link
+			rel="stylesheet"
+			href="/smui-dark.css"
+			media="screen and (prefers-color-scheme: dark)"
+		/>
+	{:else if darkTheme}
+		<link rel="stylesheet" href="/smui.css" media="print" />
+		<link rel="stylesheet" href="/smui-dark.css" media="screen" />
+	{:else}
+		<link rel="stylesheet" href="/smui.css" />
+	{/if}
 </svelte:head>
 
 {#if isLoggedIn()}
-	<Button on:click={signout} variant="raised">
-		<ButtonLabel>Sign out</ButtonLabel>
-	</Button>
-	{#if $page.url.pathname != '/'}
-	<Button on:click={toHome} variant="raised">
-		<ButtonLabel>To Home</ButtonLabel>
-	</Button>
-	{/if}
-	{#if $page.url.pathname != '/profile'}
-		<Button on:click={toProfile} variant="raised">
-			<ButtonLabel>To Profile</ButtonLabel>
-		</Button>
-	{/if}
-	{#if $page.url.pathname != '/dashboard'}
-		<Button on:click={toDashboard} variant="raised">
-			<ButtonLabel>To Dashboard</ButtonLabel>
-		</Button>
-	{/if}
+	<TopAppBar id="appbar" bind:this={topAppBar} variant="standard">
+		<Row>
+			<Section align="start" toolbar>
+				<Button on:click={signout}>
+					<ButtonLabel>Sign out</ButtonLabel>
+				</Button>
+				<Button on:click={toHome} disabled={$page.url.pathname == '/'} >
+					<ButtonLabel>Home</ButtonLabel>
+				</Button>
+				<Button on:click={toProfile} disabled={$page.url.pathname == '/profile'}>
+					<ButtonLabel>Profile</ButtonLabel>
+				</Button>
+				<Button on:click={toDashboard} disabled={$page.url.pathname == '/dashboard'}>
+					<ButtonLabel>Dashboard</ButtonLabel>
+				</Button>
+			</Section>
+			<Section align="end" toolbar>
+				<IconButton
+				  aria-label="{modeLabel}"
+				  class="material-icons"
+				  on:click="{toggleMode}"
+				  title="{modeLabel}"
+				>
+				  {modeIcon}
+				</IconButton>
+			</Section>
+		</Row>
+  	</TopAppBar>
 {/if}
 
 <LayoutGrid>
@@ -62,3 +108,15 @@
 	</Cell>
 	<Cell span={2} />
 </LayoutGrid>
+
+<style>
+	:global(app),
+	:global(body),
+	:global(html) {
+	  margin: 0
+	}	
+
+	#appbar {
+		position: fixed !important;
+	}
+  </style>
