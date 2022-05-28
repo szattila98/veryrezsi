@@ -2,10 +2,13 @@
 
 @use '@material/theme/color-palette';
 
+// VeryRezsi specific styles
+@use '../style/app';
+
 // Svelte Colors!
 @use '@material/theme/index' as theme with
 	(
-		$primary: #ff3e00,
+		$primary: app.$main,
 		$secondary: #676778,
 		$surface: #fff,
 		$background: #fff,

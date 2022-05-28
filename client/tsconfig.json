@@ -21,6 +21,8 @@
 			"$mock/*": ["src/mock/*"],
 			"$routes": ["src/routes"],
 			"$routes/*": ["src/routes/*"],
+			"$shared": ["src/shared"],
+			"$shared/*": ["src/shared/*"],
 			"$api": ["src/routes/api"],
 			"$api/*": ["src/routes/api/*"]
 		},
