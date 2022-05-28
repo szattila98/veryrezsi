@@ -5,19 +5,18 @@
 
 	import LayoutGrid, { Cell } from '@smui/layout-grid';
 	import Button, { Label as ButtonLabel } from '@smui/button';
-	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
+	import TopAppBar, { Row, Section } from '@smui/top-app-bar';
 	import IconButton from '@smui/icon-button';
 
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { session } from '$app/stores';
+	import { session, page } from '$app/stores';
 
 	import '../style/app.scss';
 
 	let darkTheme: boolean;
-	export let topAppBar: TopAppBarComponentDev;
+	let topAppBar: TopAppBarComponentDev;
 
-	$: modeLabel = `switch to ${darkTheme ? 'light' : 'dark'} mode`;
+	$: modeLabel = `Switch to ${darkTheme ? 'light' : 'dark'} mode`;
 	$: modeIcon = darkTheme ? 'light_mode' : 'dark_mode';
 
 	onMount(() => {
@@ -46,6 +45,10 @@
 	const isLoggedIn = () => {
 		return !!$session.user;
 	};
+
+	$: isCurrentPage = (pageName: string) => {
+		return $page.url.pathname === pageName;
+	}
 </script>
 
 <svelte:head>
@@ -54,7 +57,7 @@
 	{#if darkTheme === undefined}
 		<link
 			rel="stylesheet"
-			href="/smui-light.css"
+			href="/smui.css"
 			media="(prefers-color-scheme: light)"
 		/>
 		<link
@@ -74,16 +77,13 @@
 	<TopAppBar id="appbar" bind:this={topAppBar} variant="standard">
 		<Row>
 			<Section align="start" toolbar>
-				<Button on:click={signout}>
-					<ButtonLabel>Sign out</ButtonLabel>
-				</Button>
-				<Button on:click={toHome} disabled={$page.url.pathname == '/'} >
+				<Button on:click={toHome} disabled={isCurrentPage('/')} variant={isCurrentPage('/') ? 'outlined' : 'text'} >
 					<ButtonLabel>Home</ButtonLabel>
 				</Button>
-				<Button on:click={toProfile} disabled={$page.url.pathname == '/profile'}>
+				<Button on:click={toProfile} disabled={isCurrentPage('/profile') } variant={isCurrentPage('/profile') ? 'outlined' : 'text'}>
 					<ButtonLabel>Profile</ButtonLabel>
 				</Button>
-				<Button on:click={toDashboard} disabled={$page.url.pathname == '/dashboard'}>
+				<Button on:click={toDashboard} disabled={isCurrentPage('/dashboard')} variant={isCurrentPage('/dashboard') ? 'outlined' : 'text'}>
 					<ButtonLabel>Dashboard</ButtonLabel>
 				</Button>
 			</Section>
@@ -96,6 +96,9 @@
 				>
 				  {modeIcon}
 				</IconButton>
+				<Button on:click={signout}>
+					<ButtonLabel>Sign out</ButtonLabel>
+				</Button>
 			</Section>
 		</Row>
   	</TopAppBar>
@@ -114,9 +117,5 @@
 	:global(body),
 	:global(html) {
 	  margin: 0
-	}	
-
-	#appbar {
-		position: fixed !important;
 	}
   </style>

@@ -2,7 +2,7 @@
 	"name": "veryrezsi",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev --open",
 		"clean": "rm -rf ./node_modules",
 		"clean:install": "npm run clean && npm i",
 		"clean:all": "npm run clean && rm -f package-lock.json",
