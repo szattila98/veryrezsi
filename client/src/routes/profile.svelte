@@ -6,10 +6,10 @@
 </script>
 
 <script lang="ts">
-	import type { user } from '$shared/domain';
+	import type { User } from '$shared/domain';
 	import UserDetails from '$lib/components/UserDetails.svelte';
 
-	export let user: user;
+	export let user: User;
 </script>
 
 <div class="content">

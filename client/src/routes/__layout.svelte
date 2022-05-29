@@ -116,14 +116,14 @@
 	<Cell span={2} />
 </LayoutGrid>
 
-<style lang="scss" global>
-	app,
-	body,
-	html {
+<style lang="scss">
+	:global(app),
+	:global(body),
+	:global(html) {
 		margin: 0;
 	}
 
-	#appbar {
+	:global(#appbar) {
 		position: static;
 	}
 </style>

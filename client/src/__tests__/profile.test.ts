@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import type { user } from '$shared/domain';
+import type { User } from '$shared/domain';
 
 import '@testing-library/jest-dom';
 import Profile from '../routes/profile.svelte';
@@ -10,7 +10,7 @@ import { render } from '@testing-library/svelte';
 
 describe('Profile page', () => {
 	test('should display Username and Email', () => {
-		const testUser: user = {
+		const testUser: User = {
 			id: 11,
 			email: 'mwhichera@hao123.com',
 			username: 'tkrzyzanowskia',

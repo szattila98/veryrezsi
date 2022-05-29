@@ -1,9 +1,8 @@
 <script lang="ts">
-	import Paper, { Title, Content } from '@smui/paper';
+	import type { User } from '$shared/domain';
+	import Paper, { Content } from '@smui/paper';
 
-	import type { user } from '$shared/domain';
-
-	export let user: user;
+	export let user: User;
 </script>
 
 <div id="userDetails">
