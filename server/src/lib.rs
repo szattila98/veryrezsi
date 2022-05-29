@@ -1,41 +1,19 @@
-use std::{env, net::SocketAddr};
-
-use axum::{
-    routing::{get, post},
-    Extension, Router,
-};
+use axum::Router;
 use axum_extra::extract::cookie::Key;
-use tower::ServiceBuilder;
+use config::Config;
 
 mod database;
 
 mod auth;
+mod config;
 mod logic;
 mod routes;
 
-pub async fn init() -> (SocketAddr, Router) {
-    dotenv::dotenv().ok();
-
+pub async fn init() -> (String, String, Router) {
+    let config = Config::init();
     tracing_subscriber::fmt::init();
-
-    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
-    let port = env::var("PORT").unwrap_or_else(|_| "8000".to_string());
-    let cookie_key = env::var("COOKIE_KEY").expect("COOKIE_KEY is not set in .env file");
-    let server_url = format!("{}:{}", host, port);
-
-    let conn = database::init().await;
-
-    let key = Key::from(cookie_key.as_bytes());
-
-    let app = Router::new()
-        .route("/api/user/auth", post(routes::users::login))
-        .route("/api/user/me", get(routes::users::me))
-        .layer(
-            ServiceBuilder::new()
-                .layer(Extension(conn))
-                .layer(Extension(key)),
-        );
-
-    let addr = server_url.parse().expect("Could not parse host and port");
-    (addr, app)
+    let conn = database::init(config.database_url).await;
+    let cookie_key = Key::from(config.cookie_key.as_bytes());
+    let router = routes::init(conn, cookie_key);
+    (config.server_host, config.server_port, router)
 }

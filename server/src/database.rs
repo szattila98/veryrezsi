@@ -1,11 +1,9 @@
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use std::{env, time::Duration};
+use std::time::Duration;
 
-pub async fn init() -> DatabaseConnection {
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set in .env file");
-
-    let mut opt = ConnectOptions::new(db_url);
+pub async fn init(database_url: String) -> DatabaseConnection {
+    let mut opt = ConnectOptions::new(database_url);
     opt.max_connections(100)
         .min_connections(5)
         .connect_timeout(Duration::from_secs(8))

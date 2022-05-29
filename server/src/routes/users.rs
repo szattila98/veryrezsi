@@ -1,10 +1,10 @@
-use axum::{http, Extension, Json};
+use axum::{http, response::IntoResponse, Extension, Json};
 use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
 use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 
-use crate::auth;
+use crate::auth::{self, AUTH_COOKIE_NAME};
 use entity::user;
 
 use crate::logic::user_operations;
@@ -40,4 +40,8 @@ pub async fn me(
         return Ok(Json(user));
     };
     Err(http::StatusCode::UNAUTHORIZED)
+}
+
+pub async fn logout(cookies: PrivateCookieJar) -> impl IntoResponse {
+    cookies.remove(Cookie::named(AUTH_COOKIE_NAME))
 }
