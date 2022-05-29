@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CurrencyType, NewTransaction } from '$mock/api/models/expense_model';
-	
+
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
 	import { form, field } from 'svelte-forms';

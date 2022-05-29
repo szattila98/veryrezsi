@@ -1,7 +1,7 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
+	import { authLoad } from '$lib/auth';
 
-	import { authLoad } from "$lib/auth";
 	export const load: Load = authLoad;
 </script>
 

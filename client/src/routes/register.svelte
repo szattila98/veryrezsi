@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RegisterRequestData } from '$mock/api/models/register_model';
-	
+
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel } from '@smui/snackbar';

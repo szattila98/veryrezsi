@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SnackbarComponentDev } from '@smui/snackbar';
 	import type { LoginRequestData } from '$mock/api/models/login_model';
-	
+
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Snackbar, { Label as SnackbarLabel } from '@smui/snackbar';
