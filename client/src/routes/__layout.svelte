@@ -113,15 +113,11 @@
 </LayoutGrid>
 
 <style lang="scss" global>
-	@import '../style/app';
-
-	:global(app),
-	:global(body),
-	:global(html) {
+	app, body, html {
 	  margin: 0
 	}
 
-	:global(#appbar) {
+	#appbar {
 		position: static;
 	}
   </style>

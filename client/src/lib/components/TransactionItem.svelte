@@ -21,5 +21,3 @@
 		>close</IconButton
 	>
 </Item>
-
-<style lang="scss"></style>

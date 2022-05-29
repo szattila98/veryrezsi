@@ -11,7 +11,6 @@
 	import UserDetails from '$lib/components/UserDetails.svelte';
 
 	export let user: user;
-
 </script>
 
 <div class="content">
@@ -22,7 +21,6 @@
 </div>
 
 <style lang="scss">
-	#title {}
 
 	.content {
 		display: flex;
