@@ -1,5 +1,5 @@
-import { NewTransaction, NewTransactionResponse } from '$mock/api/models/expense_model';
-import { RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
+import type { NewTransaction, NewTransactionResponse } from '$mock/api/models/expense_model';
 import { mockNewTransaction } from '$mock/api/expense/expenses';
 
 /** @type {import('./[id]').RequestHandler} */
