@@ -4,7 +4,10 @@ use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 
-use crate::auth::{self, AUTH_COOKIE_NAME};
+use crate::{
+    auth::{self, AUTH_COOKIE_NAME},
+    logic::user_operations::NewUser,
+};
 use entity::user;
 
 use crate::logic::user_operations;
@@ -44,4 +47,15 @@ pub async fn me(
 
 pub async fn logout(cookies: PrivateCookieJar) -> impl IntoResponse {
     cookies.remove(Cookie::named(AUTH_COOKIE_NAME))
+}
+
+pub async fn register(
+    Extension(ref conn): Extension<DatabaseConnection>,
+    Json(new_user): Json<NewUser>,
+) -> Result<Json<user::Model>, http::StatusCode> {
+    let result = user_operations::save_user(conn, new_user).await;
+    if let Ok(user) = result {
+        return Ok(Json(user));
+    };
+    Err(http::StatusCode::BAD_REQUEST)
 }

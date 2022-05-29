@@ -2,7 +2,7 @@ use axum::Server;
 use tokio::signal;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() {
     let (host, port, router) = veryrezsi::init().await;
     let address = format!("{}:{}", host, port)
         .parse()
@@ -12,7 +12,6 @@ async fn main() -> anyhow::Result<()> {
         .serve(router.into_make_service())
         .with_graceful_shutdown(shutdown_signal())
         .await;
-    Ok(())
 }
 
 async fn shutdown_signal() {

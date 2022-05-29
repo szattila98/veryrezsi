@@ -12,7 +12,8 @@ pub fn init(conn: DatabaseConnection, secret_key: Key) -> Router {
     let user_api = Router::new()
         .route("/auth", post(users::login))
         .route("/me", get(users::me))
-        .route("/logout", post(users::logout));
+        .route("/logout", post(users::logout))
+        .route("/register", post(users::register));
 
     let api = Router::new().nest("/user", user_api);
 
