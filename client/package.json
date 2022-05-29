@@ -36,7 +36,6 @@
 		"@smui/top-app-bar": "^6.0.0-beta.16",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
-		"@sveltejs/vite-plugin-svelte": "^1.0.0-next.44",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/svelte": "^3.1.1",
 		"@types/cookie": "^0.4.1",
@@ -54,7 +53,7 @@
 		"svelte": "3.44.0",
 		"svelte-check": "2.2.6",
 		"svelte-jester": "^2.3.2",
-		"svelte-preprocess": "4.9.4",
+		"svelte-preprocess": "4.10.6",
 		"ts-jest": "^27.1.4",
 		"tslib": "2.3.1",
 		"typescript": "4.5.5"
