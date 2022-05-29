@@ -1,4 +1,4 @@
-export type cookie = {
+export type Cookie = {
 	'Set-Cookie': string;
 };
 

@@ -1,4 +1,4 @@
-import type { cookie } from './util/CookieTestUtil';
+import type { Cookie } from './util/CookieTestUtil';
 
 import { generateSessionCookieForUser, USERID_IS_NOT_A_NUMBER_MESSGE } from '$mock/api/user/login';
 import { cookieToObject } from './util/CookieTestUtil';
@@ -25,7 +25,7 @@ describe('Session cookie generation', () => {
 
 const getGeneratedSessionCookieObject = (username: string): SessionCookieContent => {
 	return cookieToObject(
-		(generateSessionCookieForUser(username) as cookie)['Set-Cookie']
+		(generateSessionCookieForUser(username) as Cookie)['Set-Cookie']
 	) as SessionCookieContent;
 };
 
