@@ -27,7 +27,7 @@ pub async fn init() -> (SocketAddr, Router) {
     info!("Successfully established database connection");
 
     info!("Creating api routes and loading extensions...");
-    let router = routes::init(conn, Key::from(&config.cookie_key.as_bytes()));
+    let router = routes::init(conn, Key::from(config.cookie_key.as_bytes()));
     info!("Successfully created api routes with extensions");
 
     info!("Starting server on {}...", config.server_address);

@@ -39,7 +39,7 @@ pub async fn me(
 ) -> Result<Json<user::Model>, http::StatusCode> {
     // TODO maybe query user from db in the guard and then there is even less repetition with always finding the user by id
     match user_operations::find_user_by_id(conn, user.id).await {
-        Ok(user) => return Ok(Json(user)),
+        Ok(user) => Ok(Json(user)),
         Err(_) => Err(http::StatusCode::UNAUTHORIZED),
     }
 }
@@ -53,7 +53,7 @@ pub async fn register(
     Json(new_user): Json<NewUser>,
 ) -> Result<Json<user::Model>, http::StatusCode> {
     match user_operations::save_user(conn, new_user).await {
-        Ok(user) => return Ok(Json(user)),
+        Ok(user) => Ok(Json(user)),
         Err(_) => Err(http::StatusCode::BAD_REQUEST),
     }
 }
