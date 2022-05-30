@@ -38,11 +38,10 @@ pub async fn me(
     user: auth::AuthenticatedUser,
 ) -> Result<Json<user::Model>, http::StatusCode> {
     // TODO maybe query user from db in the guard and then there is even less repetition with always finding the user by id
-    let result = user_operations::find_user_by_id(conn, user.id).await;
-    if let Ok(user) = result {
-        return Ok(Json(user));
-    };
-    Err(http::StatusCode::UNAUTHORIZED)
+    match user_operations::find_user_by_id(conn, user.id).await {
+        Ok(user) => return Ok(Json(user)),
+        Err(_) => Err(http::StatusCode::UNAUTHORIZED),
+    }
 }
 
 pub async fn logout(cookies: PrivateCookieJar) -> impl IntoResponse {
@@ -53,9 +52,8 @@ pub async fn register(
     Extension(ref conn): Extension<DatabaseConnection>,
     Json(new_user): Json<NewUser>,
 ) -> Result<Json<user::Model>, http::StatusCode> {
-    let result = user_operations::save_user(conn, new_user).await;
-    if let Ok(user) = result {
-        return Ok(Json(user));
-    };
-    Err(http::StatusCode::BAD_REQUEST)
+    match user_operations::save_user(conn, new_user).await {
+        Ok(user) => return Ok(Json(user)),
+        Err(_) => Err(http::StatusCode::BAD_REQUEST),
+    }
 }

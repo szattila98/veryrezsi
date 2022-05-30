@@ -39,8 +39,7 @@ pub async fn find_user_by_username(
 }
 
 pub async fn find_user_by_id(conn: &DatabaseConnection, id: i32) -> Result<user::Model, UserError> {
-    let opt = User::find_by_id(id).one(conn).await?;
-    match opt {
+    match User::find_by_id(id).one(conn).await? {
         Some(user) => Ok(user),
         None => Err(UserError::NotFound(id.to_string())),
     }

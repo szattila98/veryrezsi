@@ -1,17 +1,15 @@
 use axum::Server;
 use tokio::signal;
+use tracing::info;
 
 #[tokio::main]
 async fn main() {
-    let (host, port, router) = veryrezsi::init().await;
-    let address = format!("{}:{}", host, port)
-        .parse()
-        .expect("Could not parse host and port");
-    tracing::info!("Starting server on {address}...");
+    let (address, router) = veryrezsi::init().await;
     let _ = Server::bind(&address)
         .serve(router.into_make_service())
         .with_graceful_shutdown(shutdown_signal())
         .await;
+    info!("Shutting down...");
 }
 
 async fn shutdown_signal() {
