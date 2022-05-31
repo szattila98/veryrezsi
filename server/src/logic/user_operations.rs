@@ -38,7 +38,6 @@ pub async fn save_user(
         .one(conn)
         .await?
     {
-        Some(_) => return Err(UserError::EmailAlreadyExists(req.email)),
         None => {
             let pw_hash = bcrypt::hash(req.password)?;
             let user = user::ActiveModel {
@@ -51,5 +50,6 @@ pub async fn save_user(
             // TODO activation logic and email sending
             Ok(user)
         }
+        Some(_) => Err(UserError::EmailAlreadyExists(req.email)),
     }
 }

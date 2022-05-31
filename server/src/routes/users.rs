@@ -18,12 +18,12 @@ pub async fn login(
             if bcrypt::verify(login_data.password, &user.pw_hash) {
                 return Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())));
             }
-            return Err((
+            Err((
                 StatusCode::UNAUTHORIZED,
                 Json(ErrorMsg::new("incorrect credentials")),
-            ));
+            ))
         }
-        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(ErrorMsg::new(e.to_string())))),
+        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(e.into()))),
     }
 }
 
@@ -34,7 +34,7 @@ pub async fn me(
     // TODO maybe query user from db in the guard and then there is even less repetition with always finding the user by id
     match user_operations::find_user_by_id(conn, user.id).await {
         Ok(user) => Ok(Json(user)),
-        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(ErrorMsg::new(e.to_string())))),
+        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(e.into()))),
     }
 }
 
@@ -56,6 +56,6 @@ pub async fn register(
 ) -> Result<Json<user::Model>, (StatusCode, Json<ErrorMsg>)> {
     match user_operations::save_user(conn, new_user).await {
         Ok(user) => Ok(Json(user)),
-        Err(e) => Err((StatusCode::BAD_REQUEST, Json(ErrorMsg::new(e.to_string())))),
+        Err(e) => Err((StatusCode::BAD_REQUEST, Json(e.into()))),
     }
 }
