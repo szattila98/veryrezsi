@@ -43,3 +43,5 @@ Used variables are:
   - it uses the outer `.env` file for the connection string but it can be supplied with it's own file in the `migration` directory if needed
 
 ## Docker setup
+
+setup and migration when needed
