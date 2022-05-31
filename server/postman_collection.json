@@ -1,1 +1,124 @@
-{"info":{"_postman_id":"2719b6f4-93c7-428d-b93f-50f3d2bd640c","name":"requests","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},"item":[{"name":"login","request":{"description":"","method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n\t\"username\": \"happylittleclouds\",\n\t\"password\": \"admin\"\n}"},"url":{"raw":"127.0.0.1:8000/api/user/auth","host":["127","0","0","1:8000"],"path":["api","user","auth"]},"auth":{}},"response":[]},{"name":"me","request":{"description":"","method":"GET","header":[],"url":{"raw":"127.0.0.1:8000/api/user/me","host":["127","0","0","1:8000"],"path":["api","user","me"]},"auth":{}},"response":[]},{"name":"logout","request":{"description":"","method":"POST","header":[],"url":{"raw":"127.0.0.1:8000/api/user/logout","host":["127","0","0","1:8000"],"path":["api","user","logout"]},"auth":{}},"response":[]},{"name":"register","request":{"description":"","method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"password\"\n}"},"url":{"raw":"127.0.0.1:8000/api/user/register","host":["127","0","0","1:8000"],"path":["api","user","register"]},"auth":{}},"response":[]}]}
+{
+	"info": {
+		"_postman_id": "d887b705-19a7-42ed-a0e8-46516bf2990a",
+		"name": "veryrezsi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"happylittleclouds\",\n\t\"password\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/user/auth",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "me",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8000/api/user/me",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8000/api/user/logout",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"password\",\n    \"confirmPassword\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/api/user/register",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

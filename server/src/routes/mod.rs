@@ -6,6 +6,8 @@ use axum_extra::extract::cookie::Key;
 use sea_orm::DatabaseConnection;
 use tower::ServiceBuilder;
 
+pub mod dto;
+pub mod error;
 pub mod users;
 
 pub fn init(conn: DatabaseConnection, secret_key: Key) -> Router {

@@ -1,59 +1,61 @@
-use axum::{http, response::IntoResponse, Extension, Json};
+use super::dto::NewUserRequest;
+use super::{dto::LoginRequest, error::ErrorMsg};
+use crate::auth::{self, AUTH_COOKIE_NAME};
+use crate::logic::user_operations;
+use axum::{http::StatusCode, Extension, Json};
 use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
+use entity::user;
 use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
-use serde::{Deserialize, Serialize};
-
-use crate::{
-    auth::{self, AUTH_COOKIE_NAME},
-    logic::user_operations::NewUser,
-};
-use entity::user;
-
-use crate::logic::user_operations;
-
-#[derive(Deserialize, Serialize, Debug)]
-pub struct LoginData {
-    pub username: String,
-    pub password: String,
-}
 
 pub async fn login(
-    Json(login_data): Json<LoginData>,
+    Json(login_data): Json<LoginRequest>,
     Extension(ref conn): Extension<DatabaseConnection>,
     cookies: PrivateCookieJar,
-) -> Result<PrivateCookieJar, http::StatusCode> {
-    if let Ok(user) =
-        user_operations::find_user_by_username(conn, login_data.username.to_string()).await
-    {
-        if bcrypt::verify(login_data.password, &user.pw_hash) {
-            return Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())));
+) -> Result<PrivateCookieJar, (StatusCode, Json<ErrorMsg>)> {
+    match user_operations::find_user_by_username(conn, login_data.username.to_string()).await {
+        Ok(user) => {
+            if bcrypt::verify(login_data.password, &user.pw_hash) {
+                return Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())));
+            }
+            return Err((
+                StatusCode::UNAUTHORIZED,
+                Json(ErrorMsg::new("incorrect credentials")),
+            ));
         }
+        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(ErrorMsg::new(e.to_string())))),
     }
-    Err(http::StatusCode::UNAUTHORIZED)
 }
 
 pub async fn me(
     Extension(ref conn): Extension<DatabaseConnection>,
     user: auth::AuthenticatedUser,
-) -> Result<Json<user::Model>, http::StatusCode> {
+) -> Result<Json<user::Model>, (StatusCode, Json<ErrorMsg>)> {
     // TODO maybe query user from db in the guard and then there is even less repetition with always finding the user by id
     match user_operations::find_user_by_id(conn, user.id).await {
         Ok(user) => Ok(Json(user)),
-        Err(_) => Err(http::StatusCode::UNAUTHORIZED),
+        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(ErrorMsg::new(e.to_string())))),
     }
 }
 
-pub async fn logout(cookies: PrivateCookieJar) -> impl IntoResponse {
-    cookies.remove(Cookie::named(AUTH_COOKIE_NAME))
+pub async fn logout(
+    cookies: PrivateCookieJar,
+) -> Result<PrivateCookieJar, (StatusCode, Json<ErrorMsg>)> {
+    match cookies.get(AUTH_COOKIE_NAME) {
+        Some(cookie) => Ok(cookies.remove(cookie)),
+        None => Err((
+            StatusCode::BAD_REQUEST,
+            Json(ErrorMsg::new("not logged in")),
+        )),
+    }
 }
 
 pub async fn register(
     Extension(ref conn): Extension<DatabaseConnection>,
-    Json(new_user): Json<NewUser>,
-) -> Result<Json<user::Model>, http::StatusCode> {
+    Json(new_user): Json<NewUserRequest>,
+) -> Result<Json<user::Model>, (StatusCode, Json<ErrorMsg>)> {
     match user_operations::save_user(conn, new_user).await {
         Ok(user) => Ok(Json(user)),
-        Err(_) => Err(http::StatusCode::BAD_REQUEST),
+        Err(e) => Err((StatusCode::BAD_REQUEST, Json(ErrorMsg::new(e.to_string())))),
     }
 }
