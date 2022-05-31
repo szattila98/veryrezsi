@@ -2,26 +2,28 @@ version: '3.1'
 
 services:
 
-  db:
+  database:
     image: mysql:8.0.29
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d
-    port: 
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports: 
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
 
-  veryrezsi-server:
+  veryrezsi:
+    image: ekidd/rust-musl-builder:stable
     volumes:
-      - ./src:/usr/local/src
-      - ./entity:/usr/local/entity
-      - ./migration:/usr/local/migration
-      - ./Cargo.toml:/usr/local/Cargo.toml
-      - ./docker/conf/.env:/usr/local/.env
-      - ./docker/scripts
-    restart: always
+      - ./entity:/app/entity
+      - ./migration:/app/migration
+      - ./src:/app/src
+      - ./Cargo.toml:/app/Cargo.toml
+      - ./Cargo.lock:/app/Cargo.lock
+      - ./docker/conf/.env:/app/.env
+      - ./docker/scripts:/docker/scripts
     ports:
       - "8000:8000"
     depends_on:
       - db
-    entrypoint: entrypoint
+    working_dir: /docker/scripts
+    entrypoint: ./run.sh
