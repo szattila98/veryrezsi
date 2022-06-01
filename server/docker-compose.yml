@@ -1,8 +1,9 @@
-version: '3.1'
+version: '3.9'
 
 services:
 
   database:
+    container_name: database
     image: mysql:8.0.29
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -10,3 +11,19 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"] # it is needed becasue the server starts up quicker than then database
+      interval: 2s
+      timeout: 20s
+      retries: 10
+
+  veryrezsi:
+    container_name: veryrezsi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy # this will make the server wait for the database to be healthy and ready
