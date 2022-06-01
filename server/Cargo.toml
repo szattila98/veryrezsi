@@ -30,7 +30,7 @@ tower = "0.4.12"
 dotenv = "0.15.0"
 serde = "1.0.137"
 serde_json = "1.0.81"
-sea-orm = { version = "0.8.0", features = [ "sqlx-mysql", "runtime-tokio-native-tls", "macros" ] }
+sea-orm = { version = "0.8.0", features = [ "sqlx-mysql", "runtime-tokio-rustls", "macros" ] }
 entity = { path = "entity" }
 migration = { path = "migration" }
 tracing = "0.1.34"

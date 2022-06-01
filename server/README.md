@@ -1,10 +1,8 @@
 # veryrezsi server
 
-A backend for the expense calculator. It a Rust project, which uses the Axum web-framework to create a REST API.
+A backend for the expense calculator. It is a Rust project, which uses the Axum web-framework to create a REST API.
 
 ## Dependencies
-
-**To develop and build locally**
 
 - rustup 1.24.3 or later
 - mysql 8 or later
@@ -13,10 +11,7 @@ A backend for the expense calculator. It a Rust project, which uses the Axum web
   - cargo-edit - command line dependency tool
   - cargo-llvm-cov - test coverage tool
   - cargo-audit - vulnerability scanner
-
-**To run in Docker**
-
-- only docker and docker-compose is needed
+  - docker and docker-compose - for easier database setup
 
 ## Environment
 
@@ -34,14 +29,15 @@ Used variables are:
   - should be equal or greater than **64**
 - **RUST_LOG** - log level, possible value are _info_, _debug_, _error_, _warn_, _trace_
 
-## Local setup
+## Setup
 
-- Install rustup and setup a mysql database
-- Run the `init.sql` file, which creates the necessary database structure
+- Install rustup
+- Setup database, there are two options
+  - local mysql database
+    - Run the `init.sql` file, which creates the necessary database structure
+  - mysql database in a docker container with docker-compose
+    - Run `docker-compose up -d` and a database will be available at the 3306 port, already initialized
 - Build and run with `cargo run`, it will automatically run database migrations
+  - When developing use `cargo watch -x run` for hot-reloading, provided `cargo-watch` is installed
 - To manipulate migrations, refer to the README.md in the `migration` directory and use the CLI tool
-  - it uses the outer `.env` file for the connection string but it can be supplied with it's own file in the `migration` directory if needed
-
-## Docker setup
-
-setup and migration when needed
+  - It uses the outer `.env` file for the connection string but it can be supplied with it's own file in the `migration` directory if needed

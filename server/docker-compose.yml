@@ -10,20 +10,3 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
-
-  veryrezsi:
-    image: ekidd/rust-musl-builder:stable
-    volumes:
-      - ./entity:/app/entity
-      - ./migration:/app/migration
-      - ./src:/app/src
-      - ./Cargo.toml:/app/Cargo.toml
-      - ./Cargo.lock:/app/Cargo.lock
-      - ./docker/conf/.env:/app/.env
-      - ./docker/scripts:/docker/scripts
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    working_dir: /docker/scripts
-    entrypoint: ./run.sh

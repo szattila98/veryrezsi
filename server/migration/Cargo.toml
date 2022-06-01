@@ -9,5 +9,5 @@ name = "migration"
 path = "src/lib.rs"
 
 [dependencies]
-sea-orm-migration = { version = "0.8.2", features = [ "sqlx-mysql", "runtime-tokio-native-tls" ] }
+sea-orm-migration = { version = "0.8.2", features = [ "sqlx-mysql", "runtime-tokio-rustls" ] }
 entity = { path = "../entity" }
