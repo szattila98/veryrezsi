@@ -1,14 +1,12 @@
-use std::net::SocketAddr;
-
 use axum::Router;
 use axum_extra::extract::cookie::Key;
 use config::Config;
+use std::net::SocketAddr;
 use tracing::{debug, info};
-
-mod database;
 
 mod auth;
 mod config;
+mod database;
 mod logic;
 mod routes;
 

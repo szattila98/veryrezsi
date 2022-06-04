@@ -37,3 +37,4 @@ tracing = "0.1.34"
 tracing-subscriber = { version = "0.3.11", features = ["env-filter"] }
 thiserror = "1.0.31"
 pwhash = "1.0.0"
+validator = { version = "0.15.0", features = ["derive"] }

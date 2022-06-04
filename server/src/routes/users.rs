@@ -1,4 +1,5 @@
 use super::dto::NewUserRequest;
+use super::error::ValidatedJson;
 use super::{dto::LoginRequest, error::ErrorMsg};
 use crate::auth::{self, AUTH_COOKIE_NAME};
 use crate::logic::user_operations;
@@ -9,53 +10,48 @@ use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
 
 pub async fn login(
-    Json(login_data): Json<LoginRequest>,
+    ValidatedJson(login_data): ValidatedJson<LoginRequest>,
     Extension(ref conn): Extension<DatabaseConnection>,
     cookies: PrivateCookieJar,
-) -> Result<PrivateCookieJar, (StatusCode, Json<ErrorMsg>)> {
+) -> Result<PrivateCookieJar, ErrorMsg> {
     match user_operations::find_user_by_username(conn, login_data.username.to_string()).await {
         Ok(user) => {
             if bcrypt::verify(login_data.password, &user.pw_hash) {
                 return Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())));
             }
-            Err((
+            Err(ErrorMsg::new(
                 StatusCode::UNAUTHORIZED,
-                Json(ErrorMsg::new("incorrect credentials")),
+                "incorrect credentials",
             ))
         }
-        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(e.into()))),
+        Err(e) => Err(e.into()),
     }
 }
 
 pub async fn me(
     Extension(ref conn): Extension<DatabaseConnection>,
     user: auth::AuthenticatedUser,
-) -> Result<Json<user::Model>, (StatusCode, Json<ErrorMsg>)> {
+) -> Result<Json<user::Model>, ErrorMsg> {
     // TODO maybe query user from db in the guard and then there is even less repetition with always finding the user by id
     match user_operations::find_user_by_id(conn, user.id).await {
         Ok(user) => Ok(Json(user)),
-        Err(e) => Err((StatusCode::UNAUTHORIZED, Json(e.into()))),
+        Err(e) => Err(e.into()),
     }
 }
 
-pub async fn logout(
-    cookies: PrivateCookieJar,
-) -> Result<PrivateCookieJar, (StatusCode, Json<ErrorMsg>)> {
+pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, ErrorMsg> {
     match cookies.get(AUTH_COOKIE_NAME) {
         Some(cookie) => Ok(cookies.remove(cookie)),
-        None => Err((
-            StatusCode::BAD_REQUEST,
-            Json(ErrorMsg::new("not logged in")),
-        )),
+        None => Err(ErrorMsg::new(StatusCode::BAD_REQUEST, "not logged in")),
     }
 }
 
 pub async fn register(
     Extension(ref conn): Extension<DatabaseConnection>,
-    Json(new_user): Json<NewUserRequest>,
-) -> Result<Json<user::Model>, (StatusCode, Json<ErrorMsg>)> {
+    ValidatedJson(new_user): ValidatedJson<NewUserRequest>,
+) -> Result<Json<user::Model>, ErrorMsg> {
     match user_operations::save_user(conn, new_user).await {
         Ok(user) => Ok(Json(user)),
-        Err(e) => Err((StatusCode::BAD_REQUEST, Json(e.into()))),
+        Err(e) => Err(e.into()),
     }
 }

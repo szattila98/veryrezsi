@@ -8,8 +8,6 @@ pub enum UserError {
     UserNotFound(String),
     #[error("user with this email '{0}' already exists")]
     EmailAlreadyExists(String),
-    #[error("confirm password does not match password")]
-    ConfirmPasswordIsDifferent,
     #[error("password could not be hashed")]
     PasswordHashError(#[from] PwHashError),
     #[error("database error")]

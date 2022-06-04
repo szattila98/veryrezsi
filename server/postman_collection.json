@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d887b705-19a7-42ed-a0e8-46516bf2990a",
+		"_postman_id": "a2d53929-5323-461b-bda8-0b8e0a757c8d",
 		"name": "veryrezsi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -23,12 +23,9 @@
 							"raw": "{\n\t\"username\": \"happylittleclouds\",\n\t\"password\": \"admin\"\n}"
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/user/auth",
+							"raw": "localhost:8000/api/user/auth",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"localhost"
 							],
 							"port": "8000",
 							"path": [
@@ -46,12 +43,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "127.0.0.1:8000/api/user/me",
+							"raw": "localhost:8000/api/user/me",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"localhost"
 							],
 							"port": "8000",
 							"path": [
@@ -69,12 +63,9 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "127.0.0.1:8000/api/user/logout",
+							"raw": "localhost:8000/api/user/logout",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"localhost"
 							],
 							"port": "8000",
 							"path": [
@@ -101,12 +92,9 @@
 							"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"password\",\n    \"confirmPassword\": \"password\"\n}"
 						},
 						"url": {
-							"raw": "127.0.0.1:8000/api/user/register",
+							"raw": "localhost:8000/api/user/register",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"localhost"
 							],
 							"port": "8000",
 							"path": [

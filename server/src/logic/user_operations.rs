@@ -30,9 +30,6 @@ pub async fn save_user(
     conn: &DatabaseConnection,
     req: NewUserRequest,
 ) -> Result<user::Model, UserError> {
-    if req.password != req.confirm_password {
-        return Err(UserError::ConfirmPasswordIsDifferent);
-    }
     match User::find()
         .filter(user::Column::Email.eq(req.email.clone()))
         .one(conn)
