@@ -1,12 +1,13 @@
+use crate::routes::error::ErrorMsg;
 use axum::{
     async_trait,
     extract::{FromRequest, RequestParts},
-    http,
+    http::StatusCode,
 };
 use axum_extra::extract::cookie::{Key, PrivateCookieJar};
 use tracing::debug;
 
-pub const AUTH_COOKIE_NAME: &str = "SESSION";
+pub const AUTH_COOKIE_NAME: &str = "JSESSIONID";
 
 pub struct AuthenticatedUser {
     pub id: i32,
@@ -23,7 +24,7 @@ impl<B> FromRequest<B> for AuthenticatedUser
 where
     B: Send, // required by `async_trait`
 {
-    type Rejection = http::StatusCode;
+    type Rejection = ErrorMsg<()>;
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         // TODO refactor to be more elegant
@@ -42,6 +43,6 @@ where
         } else {
             debug!("Could not create PrivateCookieJar from request");
         }
-        Err(http::StatusCode::UNAUTHORIZED)
+        Err(ErrorMsg::new(StatusCode::UNAUTHORIZED, "Not logged in"))
     }
 }

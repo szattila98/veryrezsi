@@ -1,3 +1,4 @@
+use crate::logic::error::UserError;
 use axum::{
     async_trait,
     body::HttpBody,
@@ -9,18 +10,37 @@ use axum::{
 use serde::{de::DeserializeOwned, Serialize};
 use validator::{Validate, ValidationErrors};
 
-use crate::logic::error::UserError;
-
+/// A struct that can be returned from route handlers on error.
+/// It has an optional generic details parameter, which is used to return more detailed information about the error (e.g. validation errors).
+/// If none, it won't be serialized.
+/// ```
+/// use veryrezsi::routes::error::ErrorMsg;
+/// use axum::http::StatusCode;
+/// use validator::ValidationErrors;
+///
+/// let msg: ErrorMsg<ValidationErrors> = ErrorMsg::new(StatusCode::BAD_REQUEST, "invalid username")
+///     .details(ValidationErrors::new());
+/// ```
+/// On empty details use `()` as the generic parameter.
+/// ```
+/// use veryrezsi::routes::error::ErrorMsg;
+/// use axum::http::StatusCode;
+/// use validator::ValidationErrors;
+///
+/// let msg: ErrorMsg<()> = ErrorMsg::new(StatusCode::BAD_REQUEST, "invalid username");
+/// ```
 #[derive(Debug, Serialize)]
-pub struct ErrorMsg {
+pub struct ErrorMsg<D: Serialize> {
     #[serde(skip_serializing)]
     status: StatusCode,
     reason: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    details: Option<ValidationErrors>, // TODO making this generic somehow would be ideal for later use
+    details: Option<D>, // option is needed until specialization feature is stable, then we can use a trait to test whether D is a type or ()
 }
 
-impl ErrorMsg {
+impl<D: Serialize> ErrorMsg<D> {
+    /// Creates a new ErrorMsg with the given status code and reason, without details.
+    /// Reason is generic over any string-like type.
     pub fn new<S: AsRef<str>>(status: StatusCode, reason: S) -> Self {
         Self {
             status,
@@ -29,32 +49,32 @@ impl ErrorMsg {
         }
     }
 
-    // builder function, so None in constructor is not needed everywhere
-    pub fn details(mut self, details: ValidationErrors) -> Self {
+    /// Builder function, so details field in constructor is optional.
+    pub fn details(mut self, details: D) -> Self {
         self.details = Some(details);
         self
     }
 }
 
-impl IntoResponse for ErrorMsg {
+impl<D: Serialize> IntoResponse for ErrorMsg<D> {
     fn into_response(self) -> Response {
         (self.status, Json(self)).into_response()
     }
 }
 
-impl From<JsonRejection> for ErrorMsg {
+impl<D: Serialize> From<JsonRejection> for ErrorMsg<D> {
     fn from(e: JsonRejection) -> Self {
         Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
     }
 }
 
-impl From<ValidationErrors> for ErrorMsg {
+impl From<ValidationErrors> for ErrorMsg<ValidationErrors> {
     fn from(e: ValidationErrors) -> Self {
         Self::new(StatusCode::BAD_REQUEST, "validation of inputs failed").details(e)
     }
 }
 
-impl From<UserError> for ErrorMsg {
+impl<D: Serialize> From<UserError> for ErrorMsg<D> {
     fn from(e: UserError) -> Self {
         match e {
             UserError::UserNotFound(_) => Self::new(StatusCode::NOT_FOUND, e.to_string()),
@@ -80,7 +100,7 @@ where
     B::Data: Send,
     B::Error: Into<BoxError>,
 {
-    type Rejection = ErrorMsg;
+    type Rejection = ErrorMsg<ValidationErrors>;
 
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         let Json(value) = Json::<T>::from_request(req).await?;

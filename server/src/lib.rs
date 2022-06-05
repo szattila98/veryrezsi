@@ -8,7 +8,7 @@ mod auth;
 mod config;
 mod database;
 mod logic;
-mod routes;
+pub mod routes;
 
 pub async fn init() -> (SocketAddr, Router) {
     print_logo();

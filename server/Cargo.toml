@@ -23,7 +23,7 @@ keywords = ["api", "calculator", "web-app", "expenses-manager", "rocket"]
 categories = ["web-programming"]
 
 [dependencies]
-tokio = { version = "1.18.2", features = ["full"] }
+tokio = { version = "1.19.1", features = ["full"] }
 axum = "0.5.6"
 axum-extra = { version = "0.3.3", features = ["cookie-private"] }
 tower = "0.4.12"
