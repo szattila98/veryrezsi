@@ -16,6 +16,8 @@ pub struct ErrorMsg {
     #[serde(skip_serializing)]
     status: StatusCode,
     reason: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    details: Option<ValidationErrors>, // TODO making this generic somehow would be ideal for later use
 }
 
 impl ErrorMsg {
@@ -23,7 +25,14 @@ impl ErrorMsg {
         Self {
             status,
             reason: reason.as_ref().into(),
+            details: None,
         }
+    }
+
+    // builder function, so None in constructor is not needed everywhere
+    pub fn details(mut self, details: ValidationErrors) -> Self {
+        self.details = Some(details);
+        self
     }
 }
 
@@ -41,8 +50,7 @@ impl From<JsonRejection> for ErrorMsg {
 
 impl From<ValidationErrors> for ErrorMsg {
     fn from(e: ValidationErrors) -> Self {
-        let message = format!("{}", e).replace('\n', ", ");
-        Self::new(StatusCode::BAD_REQUEST, message)
+        Self::new(StatusCode::BAD_REQUEST, "validation of inputs failed").details(e)
     }
 }
 
