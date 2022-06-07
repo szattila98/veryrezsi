@@ -1,5 +1,5 @@
 use super::dto::NewUserRequest;
-use super::error::ValidatedJson;
+use super::common::ValidatedJson;
 use super::{dto::LoginRequest, error::ErrorMsg};
 use crate::auth::{self, AUTH_COOKIE_NAME};
 use crate::logic::user_operations;

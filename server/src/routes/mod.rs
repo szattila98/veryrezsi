@@ -9,6 +9,7 @@ use tower::ServiceBuilder;
 pub mod dto;
 pub mod error;
 pub mod users;
+pub mod common;
 
 pub fn init(conn: DatabaseConnection, secret_key: Key) -> Router {
     let user_api = Router::new()

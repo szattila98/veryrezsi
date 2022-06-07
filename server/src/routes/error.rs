@@ -1,14 +1,12 @@
 use crate::logic::error::UserError;
 use axum::{
-    async_trait,
-    body::HttpBody,
-    extract::{rejection::JsonRejection, FromRequest, RequestParts},
+    extract::rejection::JsonRejection,
     http::StatusCode,
     response::{IntoResponse, Response},
-    BoxError, Json,
+    Json,
 };
-use serde::{de::DeserializeOwned, Serialize};
-use validator::{Validate, ValidationErrors};
+use serde::Serialize;
+use validator::ValidationErrors;
 
 /// A struct that can be returned from route handlers on error.
 /// It has an optional generic details parameter, which is used to return more detailed information about the error (e.g. validation errors).
@@ -86,25 +84,5 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
         }
-    }
-}
-
-#[derive(Debug, Clone, Copy, Default)]
-pub struct ValidatedJson<T>(pub T);
-
-#[async_trait]
-impl<T, B> FromRequest<B> for ValidatedJson<T>
-where
-    T: DeserializeOwned + Validate,
-    B: Send + HttpBody,
-    B::Data: Send,
-    B::Error: Into<BoxError>,
-{
-    type Rejection = ErrorMsg<ValidationErrors>;
-
-    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let Json(value) = Json::<T>::from_request(req).await?;
-        value.validate()?;
-        Ok(ValidatedJson(value))
     }
 }
