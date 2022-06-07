@@ -6,10 +6,10 @@ use axum_extra::extract::cookie::Key;
 use sea_orm::DatabaseConnection;
 use tower::ServiceBuilder;
 
+pub mod common;
 pub mod dto;
 pub mod error;
 pub mod users;
-pub mod common;
 
 pub fn init(conn: DatabaseConnection, secret_key: Key) -> Router {
     let user_api = Router::new()
