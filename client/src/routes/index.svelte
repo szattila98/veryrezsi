@@ -1,8 +1,9 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
-	import { authLoad } from '$lib/auth';
+	import { loadUser } from '$lib/auth';
 
-	export const load: Load = authLoad;
+	// Loads user prop in render time
+	export const load: Load = loadUser;
 </script>
 
 <div class="content">
