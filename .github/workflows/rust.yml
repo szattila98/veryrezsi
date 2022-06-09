@@ -1,9 +1,8 @@
 on:
   push:
-    branches: ["**"]
+    branches: ["main"]
   pull_request:
     branches: ["**"]
-
   workflow_dispatch:
 
 name: Rust CI

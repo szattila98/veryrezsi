@@ -15,7 +15,7 @@ impl Config {
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set in .env file");
         let cookie_key = env::var("COOKIE_KEY").expect("COOKIE_KEY is not set in .env file");
         let log_level = env::var("LOG_LEVEL").unwrap_or_else(|_| "info".to_string());
-        let server_address: SocketAddr = format!("{}:{}", server_host, server_port)
+        let server_address = format!("{}:{}", server_host, server_port)
             .parse()
             .expect("Could not parse valid address from server host and port");
         Config {
