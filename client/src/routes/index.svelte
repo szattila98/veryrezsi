@@ -1,32 +1,13 @@
 <script context="module" lang="ts">
 	import type { Load } from '@sveltejs/kit';
+	import { loadUser } from '$lib/auth';
 
-	export const load: Load = async ({ session }) => {
-		if (!session?.user) {
-			return {
-				status: 302,
-				redirect: '/login',
-			};
-		}
-		return {
-			props: {
-				user: session.user,
-			},
-		};
-	};
-</script>
-
-<script lang="ts">
-	export let user;
-
-	// If you want to get user without the ugly context="module" block
-	// import { session } from '$app/stores';
-	// export let user = $session.user;
+	// Loads user prop in render time
+	export const load: Load = loadUser;
 </script>
 
 <div class="content">
 	<h1>Very Rezsi, So Profit!</h1>
-	<p>Your email: {user.email}</p>
 </div>
 
 <style lang="scss">

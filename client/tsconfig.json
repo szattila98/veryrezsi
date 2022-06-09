@@ -1,21 +1,12 @@
 {
+	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
-		"moduleResolution": "node",
-		"module": "es2020",
-		"lib": ["es2020", "DOM"],
-		"target": "es2020",
-		/**
-			svelte-preprocess cannot figure out whether you have a value or a type, so tell TypeScript
-			to enforce using \`import type\` instead of \`import\` for Types.
-			*/
-		// "importsNotUsedAsValues": "error",
 		"strict": true,
-		"isolatedModules": true,
 		"resolveJsonModule": true,
 		/**
-			To have warnings/errors of the Svelte compiler at the correct position,
-			enable source maps by default.
-			*/
+		To have warnings/errors of the Svelte compiler at the correct position,
+		enable source maps by default.
+		*/
 		"sourceMap": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
@@ -30,6 +21,8 @@
 			"$mock/*": ["src/mock/*"],
 			"$routes": ["src/routes"],
 			"$routes/*": ["src/routes/*"],
+			"$shared": ["src/shared"],
+			"$shared/*": ["src/shared/*"],
 			"$api": ["src/routes/api"],
 			"$api/*": ["src/routes/api/*"]
 		},

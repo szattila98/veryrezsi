@@ -1,5 +1,5 @@
-import { DeleteTransactionResponse } from '$mock/api/models/expense_model';
-import { RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
+import type { DeleteTransactionResponse } from '$mock/api/models/expense_model';
 import { mockDeleteTransaction } from '$mock/api/expense/expenses';
 
 /** @type {import('./[id]').RequestHandler} */

@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { CurrencyType, NewTransaction } from '$mock/api/models/expense_model';
+
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
 	import { form, field } from 'svelte-forms';
 	import { required } from 'svelte-forms/validators';
 	import Dialog, { Content, Title } from '@smui/dialog';
-	import { CurrencyType, NewTransaction } from '$mock/api/models/expense_model';
 	import { createEventDispatcher } from 'svelte';
 	import Select, { Option } from '@smui/select';
 

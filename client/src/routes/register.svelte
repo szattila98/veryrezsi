@@ -1,12 +1,14 @@
 <script lang="ts">
+	import type { RegisterRequestData } from '$mock/api/models/register_model';
+
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
-	import Snackbar, { Label as SnackbarLabel, SnackbarComponentDev } from '@smui/snackbar';
+	import Snackbar, { Label as SnackbarLabel } from '@smui/snackbar';
+	import type { SnackbarComponentDev } from '@smui/snackbar';
 	import { form, field } from 'svelte-forms';
 	import { email, between, matchField, pattern } from 'svelte-forms/validators';
 
 	import { PASSWORD_REGEXP } from '$lib/const';
-	import { RegisterRequestData } from '$mock/api/models/register_model';
 
 	let failureSnackbar: SnackbarComponentDev;
 
@@ -26,7 +28,7 @@
 
 					// Just a hack to use instead goto(), goto refused to load session in some cases
 					// TODO
-					window.location = '/';
+					window.location.href = '/';
 				}
 			);
 		} else {

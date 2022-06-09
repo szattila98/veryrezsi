@@ -18,8 +18,8 @@
 </script>
 
 <script lang="ts">
+	import type { CurrencyType, Expense, NewTransaction } from '$mock/api/models/expense_model';
 	import { onMount } from 'svelte';
-	import { CurrencyType, Expense, NewTransaction } from '$mock/api/models/expense_model';
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
 	import List, { Item, Text } from '@smui/list';

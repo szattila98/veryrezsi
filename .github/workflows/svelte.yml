@@ -2,7 +2,7 @@ name: Svelte
 
 on:
   push:
-    branches: ["**"]
+    branches: ["main"]
   pull_request:
     branches: ["**"]
   workflow_dispatch:
@@ -35,6 +35,5 @@ jobs:
 
       - name: Build
         run: npm run build
-
 #      - name: Run tests
 #        run: npm test

@@ -1,7 +1,7 @@
+import type { RequestEvent } from '@sveltejs/kit';
 import type { GetExpensesRequestData, GetExpensesResponse } from '$mock/api/models/expense_model';
 
 import { mockGetExpenses } from '$mock/api/expense/expenses';
-import { RequestEvent } from '@sveltejs/kit';
 
 export async function get({
 	params,
