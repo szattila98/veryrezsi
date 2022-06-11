@@ -7,7 +7,7 @@ A backend for the expense calculator. It is a Rust project, which uses the Axum 
 - rustup 1.24.3 or later
 - mysql 8 or later
 - docker and docker-compose - for easier database setup or as the backend for frontend development
-- optional cargo plugins for easier development (install with `cargo install ${plugins}`)
+- optional cargo plugins for easier development (install with  `cargo install cargo-watch cargo-edit cargo-llvm-cov cargo-audit cargo-cache cargo-update`)
   - cargo-watch - hot-reload for development
   - cargo-edit - command line dependency utility
   - cargo-llvm-cov - test coverage tool

@@ -28,7 +28,7 @@ pub async fn init() -> (SocketAddr, Router) {
     let router = routes::init(conn, Key::from(config.cookie_key.as_bytes()));
     info!("Successfully created api routes with extensions");
 
-    info!("Starting server on {}...", config.server_address);
+    info!("Server is listening on {}...", config.server_address);
     (config.server_address, router)
 }
 
