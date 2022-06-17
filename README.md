@@ -7,7 +7,7 @@ Subscription and expense calculator web-application.
 
 - npm v7 or higher
   - 8.4.1 ✅
-- node v14 or higher
+- node 16.7 or higher
   - v16.14.0 ✅
 
 ## Development

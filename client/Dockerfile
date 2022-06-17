@@ -1,26 +1,25 @@
 # Stage BUILD
-FROM mhart/alpine-node:16
+FROM node:18-alpine
 
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-
 COPY . .
+
+RUN npm ci
+RUN npm audit fix
 
 RUN npm run build
 
 # Stage RUN
-### slim: Smaller and Safer
-FROM mhart/alpine-node:slim-16
+FROM node:18-alpine
 
 WORKDIR /app
 
-COPY --from=0 /app/package*.json ./
+COPY --from=0 /app/package*.json .
+COPY --from=0 /app/build .
 
 # clean install dependencies, no devDependencies, no prepare script
 RUN npm ci --production --ignore-scripts
-
-COPY --from=0 /app/build ./
+RUN npm audit fix
 
 EXPOSE 3000
 CMD ["node", "./index.js"]

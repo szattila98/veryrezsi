@@ -1,6 +1,8 @@
 {
 	"name": "veryrezsi",
 	"version": "0.0.1",
+	"main": "index.js",
+	"type": "module",
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"clean": "rm -rf ./node_modules",
@@ -34,7 +36,7 @@
 		"@smui/snackbar": "^6.0.0-beta.14",
 		"@smui/textfield": "^6.0.0-beta.14",
 		"@smui/top-app-bar": "^6.0.0-beta.16",
-		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/adapter-node": "^1.0.0-next.78",
 		"@sveltejs/kit": "next",
 		"@testing-library/jest-dom": "^5.16.4",
 		"@testing-library/svelte": "^3.1.1",
@@ -55,11 +57,10 @@
 		"svelte-jester": "^2.3.2",
 		"svelte-preprocess": "4.10.6",
 		"ts-jest": "^27.1.4",
-		"tslib": "2.3.1",
 		"typescript": "4.5.5"
 	},
-	"type": "module",
 	"dependencies": {
+		"tslib": "2.3.1",
 		"cookie": "^0.4.2",
 		"svelte-forms": "^2.2.1"
 	}

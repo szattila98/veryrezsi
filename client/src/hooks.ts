@@ -43,3 +43,10 @@ export function getSession(event: RequestEvent) {
 		  }
 		: {};
 }
+
+process.on('SIGINT', function () {
+	process.exit();
+}); // Docker - Ctrl+C
+process.on('SIGTERM', function () {
+	process.exit();
+}); // Docker - Terminated
