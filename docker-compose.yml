@@ -6,7 +6,7 @@ services:
     container_name: database
     image: mysql:8.0.29
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports: 
       - "3306:3306"
     environment:
@@ -17,13 +17,21 @@ services:
       timeout: 20s
       retries: 10
 
-  veryrezsi:
-    container_name: veryrezsi
+  server:
+    container_name: veryrezsi_server
     build:
-      context: .
+      context: ./server
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     depends_on:
       database:
         condition: service_healthy # this will make the server wait for the database to be healthy and ready
+
+  client:
+    container_name: veryrezsi_client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
