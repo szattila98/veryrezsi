@@ -62,5 +62,9 @@
 	"dependencies": {
 		"cookie": "^0.4.2",
 		"svelte-forms": "^2.2.1"
+	},
+	"volta": {
+		"node": "16.14.0",
+		"npm": "8.4.1"
 	}
 }
