@@ -27,7 +27,7 @@ export interface Expense {
 	description: string;
 	recurrenceType: RecurrenceType;
 	currencyType: CurrencyType;
-	predefinedExpenseId: number | null;
+	predefinedExpenseId: number | null; // TODO what to do with this?
 	startDate: string;
 	value: string;
 	userId: number;
@@ -48,6 +48,19 @@ type GetExpensesResponseData = {
 
 export type GetExpensesResponse = Omit<AxiosResponse, 'data'> & {
 	data: GetExpensesResponseData;
+};
+
+export type NewExpenseRequestData = Omit<Expense, 'id'|'transactions'|'recurrenceType'|'currencyType'> & {
+	recurrenceTypeId: number;
+	currencyTypeId: number;
+};
+
+type NewExpenseResponseData = {
+	expenseId: number;
+};
+
+export type NewExpenseResponse = Omit<AxiosResponse, 'data'> & {
+	data: NewExpenseResponseData;
 };
 
 type GetCurrencyTypesResponseData = CurrencyType[];

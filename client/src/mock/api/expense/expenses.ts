@@ -12,6 +12,8 @@ import type {
 	GetCurrencyTypesResponse,
 	GetExpensesRequestData,
 	GetExpensesResponse,
+	NewExpenseRequestData,
+	NewExpenseResponse,
 	NewTransactionRequestData,
 	NewTransactionResponse,
 	Transaction,
@@ -40,6 +42,27 @@ export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesRespon
 export const mockGetCurrencyTypes = (): GetCurrencyTypesResponse => {
 	return response(200, currencyTypes) as GetCurrencyTypesResponse;
 };
+
+export const mockNewExpense = (data: NewExpenseRequestData): NewTransactionResponse => { 
+	loadExpenses();
+	const expenseId = Math.floor(Math.random() * 100000);
+	const recurrenceType = recurrenceTypes.find( (recurrenceType) => recurrenceType.id === data.recurrenceTypeId )
+	const currencyType = currencyTypes.find( (currencyType) => currencyType.id === data.currencyTypeId )
+	const newExpense: Expense = {
+		id: expenseId,
+		name: data.name,
+		description: data.description,
+		recurrenceType: recurrenceType ? recurrenceType : { id: 0, name: '', perYear: 0 },
+		currencyType: currencyType ? currencyType : { id: 0, abbreviation: '', name: '' },
+		predefinedExpenseId: data.predefinedExpenseId,
+		startDate: data.startDate,
+		value: data.value,
+		userId: data.userId,
+		transactions: [],
+	}
+	expenses?.push(newExpense);
+	return response(200, expenseId) as NewExpenseResponse;
+}
 
 export const mockNewTransaction = (data: NewTransactionRequestData): NewTransactionResponse => {
 	loadExpenses();
