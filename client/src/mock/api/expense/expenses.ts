@@ -4,6 +4,7 @@ import expensesJson from '$mock/entities/user_expense.json';
 import recurrenceTypes from '$mock/entities/recurrence_type.json';
 import currencyTypes from '$mock/entities/currency_type.json';
 import transactionsJson from '$mock/entities/transaction.json';
+import predefinedExpenses from '$mock/entities/predefined_expense.json';
 
 import type {
 	DeleteTransactionRequestData,
@@ -12,6 +13,7 @@ import type {
 	GetCurrencyTypesResponse,
 	GetExpensesRequestData,
 	GetExpensesResponse,
+	GetPredefinedExpensesResponse,
 	NewExpenseRequestData,
 	NewExpenseResponse,
 	NewTransactionRequestData,
@@ -19,8 +21,29 @@ import type {
 	Transaction,
 } from '../models/expense_model';
 
-let expenses: Expense[] | null = null
+let expenses: Expense[] | null = null;
 let transactions: Transaction[] | null = null;
+
+export const mockGetPredefinedExpenses = (): GetPredefinedExpensesResponse => {
+	const data = predefinedExpenses.map((expense) => {
+		const recurrenceType = recurrenceTypes.find(
+			(recurrenceType) => recurrenceType.id === expense.recurrence_type_id
+		);
+		const currencyType = currencyTypes.find(
+			(currencyType) => currencyType.id === expense.currency_type_id
+		);
+		return {
+			id: expense.id,
+			name: expense.name,
+			description: expense.description,
+			recurrenceType: recurrenceType ? recurrenceType : { id: 0, name: '', perYear: 0 },
+			currencyType: currencyType ? currencyType : { id: 0, abbreviation: '', name: '' },
+			value: expense.value,
+		};
+	});
+
+	return response(200, { predefinedExpenses: data }) as GetPredefinedExpensesResponse;
+};
 
 export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
 	loadExpenses();
@@ -29,13 +52,15 @@ export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesRespon
 		return response(400, { expenses: [] }) as GetExpensesResponse;
 	}
 
-	const userExpenses = expenses?.filter((expense) => expense.userId === data.userId)
+	const userExpenses = expenses?.filter((expense) => expense.userId === data.userId);
 	userExpenses?.forEach((expense) => {
-		const expenseTransactions = transactions?.filter((transaction) => transaction.expenseId === expense.id);
+		const expenseTransactions = transactions?.filter(
+			(transaction) => transaction.expenseId === expense.id
+		);
 		if (expenseTransactions) {
 			expense.transactions = expenseTransactions;
 		}
-	})
+	});
 	return response(200, { expenses: userExpenses }) as GetExpensesResponse;
 };
 
@@ -43,11 +68,15 @@ export const mockGetCurrencyTypes = (): GetCurrencyTypesResponse => {
 	return response(200, currencyTypes) as GetCurrencyTypesResponse;
 };
 
-export const mockNewExpense = (data: NewExpenseRequestData): NewTransactionResponse => { 
+export const mockNewExpense = (data: NewExpenseRequestData): NewTransactionResponse => {
 	loadExpenses();
 	const expenseId = Math.floor(Math.random() * 100000);
-	const recurrenceType = recurrenceTypes.find( (recurrenceType) => recurrenceType.id === data.recurrenceTypeId )
-	const currencyType = currencyTypes.find( (currencyType) => currencyType.id === data.currencyTypeId )
+	const recurrenceType = recurrenceTypes.find(
+		(recurrenceType) => recurrenceType.id === data.recurrenceTypeId
+	);
+	const currencyType = currencyTypes.find(
+		(currencyType) => currencyType.id === data.currencyTypeId
+	);
 	const newExpense: Expense = {
 		id: expenseId,
 		name: data.name,
@@ -59,17 +88,17 @@ export const mockNewExpense = (data: NewExpenseRequestData): NewTransactionRespo
 		value: data.value,
 		userId: data.userId,
 		transactions: [],
-	}
+	};
 	expenses?.push(newExpense);
 	return response(200, expenseId) as NewExpenseResponse;
-}
+};
 
 export const mockNewTransaction = (data: NewTransactionRequestData): NewTransactionResponse => {
 	loadExpenses();
 	if (transactions) {
 		const currencyType = currencyTypes.find(
 			(currencyType) => currencyType.id === data.newTransaction.currencyTypeId
-		)
+		);
 		const newTransaction = {
 			id: Math.floor(Math.random() * 100000),
 			donorName: data.newTransaction.donorName,
@@ -104,8 +133,7 @@ export const mockDeleteTransaction = (
 function loadExpenses() {
 	loadTransactions();
 	if (!expenses) {
-		expenses = expensesJson
-		.map((expense) => {
+		expenses = expensesJson.map((expense) => {
 			return {
 				id: expense.id,
 				name: expense.name,

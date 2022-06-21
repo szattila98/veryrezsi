@@ -34,6 +34,23 @@ export interface Expense {
 	transactions: Transaction[];
 }
 
+export interface PredefinedExpense {
+	id: number;
+	name: string;
+	description: string;
+	recurrenceType: RecurrenceType;
+	currencyType: CurrencyType;
+	value: number;
+}
+
+type GetPredefinedExpensesResponseData = {
+	predefinedExpenses: PredefinedExpense[];
+};
+
+export type GetPredefinedExpensesResponse = Omit<AxiosResponse, 'data'> & {
+	data: GetPredefinedExpensesResponseData;
+};
+
 export type NewTransaction = Omit<Transaction, 'id' | 'currencyType'> & {
 	currencyTypeId: number;
 };
@@ -50,7 +67,10 @@ export type GetExpensesResponse = Omit<AxiosResponse, 'data'> & {
 	data: GetExpensesResponseData;
 };
 
-export type NewExpenseRequestData = Omit<Expense, 'id'|'transactions'|'recurrenceType'|'currencyType'> & {
+export type NewExpenseRequestData = Omit<
+	Expense,
+	'id' | 'transactions' | 'recurrenceType' | 'currencyType'
+> & {
 	recurrenceTypeId: number;
 	currencyTypeId: number;
 };
