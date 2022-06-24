@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    name: Build and Check Client
     runs-on: ubuntu-latest
     defaults:
       run:

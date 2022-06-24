@@ -12,7 +12,7 @@ env:
 
 jobs:
   check:
-    name: Check
+    name: Server Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -32,7 +32,7 @@ jobs:
           args: --manifest-path server/Cargo.toml
 
   test:
-    name: Test Suite
+    name: Server Test Suite
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -52,7 +52,7 @@ jobs:
           args: --manifest-path server/Cargo.toml
 
   lints:
-    name: Lints
+    name: Server Lints
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
