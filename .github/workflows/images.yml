@@ -15,7 +15,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.0.0
         with:
           ref: ${{ github.ref }}
-          check-name: "Build and Check Client"
+          check-name: "Build and Check Client (16.x)"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check out code
@@ -50,7 +50,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.0.0
         with:
           ref: ${{ github.ref }}
-          check-name: "Server Lints"
+          check-name: "Server Test Suite"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check out code
