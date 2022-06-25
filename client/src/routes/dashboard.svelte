@@ -92,6 +92,7 @@
 
 <div class="drawer-container">
 	<Drawer>
+		<Button on:click={() => alert('aaa')}>New Expense</Button>
 		<Content>
 			<List>
 				{#each expenses as expense, i (i)}

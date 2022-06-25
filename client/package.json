@@ -1,8 +1,8 @@
 {
 	"name": "veryrezsi",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev --port 4000",
 		"clean": "rm -rf ./node_modules",
 		"clean:install": "npm run clean && npm i",
 		"clean:all": "npm run clean && rm -f package-lock.json",

@@ -67,12 +67,16 @@ export type GetExpensesResponse = Omit<AxiosResponse, 'data'> & {
 	data: GetExpensesResponseData;
 };
 
-export type NewExpenseRequestData = Omit<
+export type NewExpense = Omit<
 	Expense,
 	'id' | 'transactions' | 'recurrenceType' | 'currencyType'
 > & {
 	recurrenceTypeId: number;
 	currencyTypeId: number;
+};
+
+export type NewExpenseRequestData = {
+	newExpense: NewExpense;
 };
 
 type NewExpenseResponseData = {
@@ -87,6 +91,12 @@ type GetCurrencyTypesResponseData = CurrencyType[];
 
 export type GetCurrencyTypesResponse = Omit<AxiosResponse, 'data'> & {
 	data: GetCurrencyTypesResponseData;
+};
+
+type GetRecurrenceTypesResponseData = RecurrenceType[];
+
+export type GetRecurrenceTypesResponse = Omit<AxiosResponse, 'data'> & {
+	data: GetRecurrenceTypesResponseData;
 };
 
 export type NewTransactionRequestData = {

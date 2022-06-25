@@ -14,6 +14,7 @@ import type {
 	GetExpensesRequestData,
 	GetExpensesResponse,
 	GetPredefinedExpensesResponse,
+	GetRecurrenceTypesResponse,
 	NewExpenseRequestData,
 	NewExpenseResponse,
 	NewTransactionRequestData,
@@ -68,28 +69,33 @@ export const mockGetCurrencyTypes = (): GetCurrencyTypesResponse => {
 	return response(200, currencyTypes) as GetCurrencyTypesResponse;
 };
 
-export const mockNewExpense = (data: NewExpenseRequestData): NewTransactionResponse => {
+export const mockGetRecurrenceTypes = (): GetRecurrenceTypesResponse => {
+	return response(200, recurrenceTypes) as GetRecurrenceTypesResponse;
+};
+
+export const mockNewExpense = (data: NewExpenseRequestData): NewExpenseResponse => {
 	loadExpenses();
+	const newExpense = data.newExpense;
 	const expenseId = Math.floor(Math.random() * 100000);
 	const recurrenceType = recurrenceTypes.find(
-		(recurrenceType) => recurrenceType.id === data.recurrenceTypeId
+		(recurrenceType) => recurrenceType.id === newExpense.recurrenceTypeId
 	);
 	const currencyType = currencyTypes.find(
-		(currencyType) => currencyType.id === data.currencyTypeId
+		(currencyType) => currencyType.id === newExpense.currencyTypeId
 	);
-	const newExpense: Expense = {
+	const expense: Expense = {
 		id: expenseId,
-		name: data.name,
-		description: data.description,
+		name: newExpense.name,
+		description: newExpense.description,
 		recurrenceType: recurrenceType ? recurrenceType : { id: 0, name: '', perYear: 0 },
 		currencyType: currencyType ? currencyType : { id: 0, abbreviation: '', name: '' },
-		predefinedExpenseId: data.predefinedExpenseId,
-		startDate: data.startDate,
-		value: data.value,
-		userId: data.userId,
+		predefinedExpenseId: newExpense.predefinedExpenseId,
+		startDate: newExpense.startDate,
+		value: newExpense.value,
+		userId: newExpense.userId,
 		transactions: [],
 	};
-	expenses?.push(newExpense);
+	expenses?.push(expense);
 	return response(200, expenseId) as NewExpenseResponse;
 };
 
