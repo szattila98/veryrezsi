@@ -25,7 +25,6 @@
 	async function onSubmit() {
 		await newTransactionForm.validate();
 		if ($newTransactionForm.valid) {
-			console.log('nein');
 			dispatch('newTransaction', {
 				transaction: {
 					donorName: $donorName.value,

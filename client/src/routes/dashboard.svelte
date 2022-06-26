@@ -7,18 +7,28 @@
 				redirect: '/login',
 			};
 		}
-		const currencyTypes = (await getCurrencyTypes()).data;
+		const [predefinedExpensesResponse, currencyTypesResponse, recurrenceTypesResponse] =
+			await Promise.all([getPredefinedExpenses(), getCurrencyTypes(), getRecurrenceTypes()]);
 		return {
 			props: {
 				userId: session.user.id,
-				currencyTypes,
+				predefinedExpenses: predefinedExpensesResponse.data,
+				currencyTypes: currencyTypesResponse.data,
+				recurrenceTypes: recurrenceTypesResponse.data,
 			},
 		};
 	};
 </script>
 
 <script lang="ts">
-	import type { CurrencyType, Expense, NewTransaction } from '$mock/api/models/expense_model';
+	import type {
+		CurrencyType,
+		Expense,
+		NewExpense,
+		NewTransaction,
+		PredefinedExpense,
+		RecurrenceType,
+	} from '$mock/api/models/expense_model';
 	import { onMount } from 'svelte';
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
@@ -26,14 +36,20 @@
 	import TransactionList from '$lib/components/TransactionList.svelte';
 	import Separator from '@smui/list/src/Separator.svelte';
 	import Button from '@smui/button/src/Button.svelte';
+	import NewExpenseDialog from '$lib/components/NewExpenseDialog.svelte';
 	import NewTransactionDialog from '$lib/components/NewTransactionDialog.svelte';
 	import { getCurrencyTypes } from './api/currency';
+	import { getRecurrenceTypes } from './api/recurrence';
+	import { getPredefinedExpenses } from './api/expense';
 
 	export let userId: number;
+	export let predefinedExpenses: PredefinedExpense[] = [];
+	export let recurrenceTypes: RecurrenceType[] = [];
 	export let currencyTypes: CurrencyType[] = [];
 
 	let expenses: Expense[] = [];
 	let clickedExpense: Expense | null;
+	let newExpenseDialog: NewExpenseDialog;
 	let newTransactionDialog: NewTransactionDialog;
 
 	onMount(async () => {
@@ -44,7 +60,6 @@
 			},
 		});
 		const data = (await res.json()).data;
-		console.log(data);
 		expenses = data.expenses as Expense[];
 		clickedExpense = expenses && expenses[0] ? expenses[0] : null;
 	});
@@ -57,6 +72,16 @@
 
 	function onDrawerClick(expense: Expense) {
 		clickedExpense = expense;
+	}
+
+	function newExpenseHandle(event: CustomEvent<{ expense: NewExpense }>) {
+		fetch('/api/expense', {
+			method: 'POST',
+			body: JSON.stringify(event.detail.expense),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}).then(() => location.reload());
 	}
 
 	function newTransactionHandle(event: CustomEvent<{ transaction: NewTransaction }>) {
@@ -92,7 +117,7 @@
 
 <div class="drawer-container">
 	<Drawer>
-		<Button on:click={() => alert('aaa')}>New Expense</Button>
+		<Button on:click={newExpenseDialog.show}>New Expense</Button>
 		<Content>
 			<List>
 				{#each expenses as expense, i (i)}
@@ -129,6 +154,14 @@
 		</main>
 	</AppContent>
 </div>
+
+<NewExpenseDialog
+	{predefinedExpenses}
+	{currencyTypes}
+	{recurrenceTypes}
+	on:newExpense={newExpenseHandle}
+	bind:this={newExpenseDialog}
+/>
 
 {#if clickedExpense}
 	<NewTransactionDialog
