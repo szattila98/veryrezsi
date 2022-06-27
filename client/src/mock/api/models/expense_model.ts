@@ -43,9 +43,7 @@ export interface PredefinedExpense {
 	value: number;
 }
 
-type GetPredefinedExpensesResponseData = {
-	predefinedExpenses: PredefinedExpense[];
-};
+type GetPredefinedExpensesResponseData = PredefinedExpense[];
 
 export type GetPredefinedExpensesResponse = Omit<AxiosResponse, 'data'> & {
 	data: GetPredefinedExpensesResponseData;

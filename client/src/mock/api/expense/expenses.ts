@@ -43,7 +43,7 @@ export const mockGetPredefinedExpenses = (): GetPredefinedExpensesResponse => {
 		};
 	});
 
-	return response(200, { predefinedExpenses: data }) as GetPredefinedExpensesResponse;
+	return response(200, data) as GetPredefinedExpensesResponse;
 };
 
 export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {

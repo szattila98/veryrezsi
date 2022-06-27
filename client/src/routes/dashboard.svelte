@@ -156,6 +156,7 @@
 </div>
 
 <NewExpenseDialog
+	{userId}
 	{predefinedExpenses}
 	{currencyTypes}
 	{recurrenceTypes}

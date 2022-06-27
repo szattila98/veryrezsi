@@ -54,7 +54,7 @@
 				bind:invalid={$donorName.invalid}
 				><svelte:fragment slot="helper">
 					{#if !$donorName.valid}
-						<HelperLine>Not a valid donor</HelperLine>
+						<HelperLine>Please enter a donor</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -65,7 +65,7 @@
 				{/each}
 				<svelte:fragment slot="helperText">
 					{#if !$selectedCurrencyTypeId.valid}
-						<HelperLine>Not a valid currency</HelperLine>
+						<HelperLine>Please select a currency</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Select>
@@ -79,7 +79,7 @@
 				type="number"
 				><svelte:fragment slot="helper">
 					{#if !$value.valid}
-						<HelperLine>Not a valid value</HelperLine>
+						<HelperLine>Please enter the value</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -92,7 +92,7 @@
 				bind:invalid={$date.invalid}
 				><svelte:fragment slot="helper">
 					{#if !$date.valid}
-						<HelperLine>Not a valid date</HelperLine>
+						<HelperLine>Please enter the transaction date</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
