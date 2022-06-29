@@ -1,5 +1,5 @@
-import type { AxiosResponse } from '../_common/axios_response';
-import type { MessageResponseBody } from '../_common/response_body';
+import type { AxiosResponse } from '../../mock/api/_common/axios_response';
+import type { MessageResponseBody } from '../../mock/api/_common/response_body';
 
 export type LoginRequestData = {
 	user: string;

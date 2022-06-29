@@ -1,11 +1,4 @@
 <script lang="ts">
-	import type {
-		PredefinedExpense,
-		CurrencyType,
-		RecurrenceType,
-		NewExpense,
-	} from '$mock/api/models/expense_model';
-
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
 	import { form, field } from 'svelte-forms';
@@ -13,6 +6,8 @@
 	import Dialog, { Content, Title } from '@smui/dialog';
 	import { createEventDispatcher } from 'svelte';
 	import Select, { Option } from '@smui/select';
+	import type { CurrencyType, PredefinedExpense, RecurrenceType } from '$shared/domain';
+	import type { NewExpense } from '$shared/api/newExpense';
 
 	export let userId: number; // TODO field not needed with actual server
 	export let predefinedExpenses: PredefinedExpense[];

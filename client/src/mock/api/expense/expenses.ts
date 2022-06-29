@@ -5,22 +5,17 @@ import recurrenceTypes from '$mock/entities/recurrence_type.json';
 import currencyTypes from '$mock/entities/currency_type.json';
 import transactionsJson from '$mock/entities/transaction.json';
 import predefinedExpenses from '$mock/entities/predefined_expense.json';
-
+import type { Expense, Transaction } from '$shared/domain';
 import type {
 	DeleteTransactionRequestData,
 	DeleteTransactionResponse,
-	Expense,
-	GetCurrencyTypesResponse,
-	GetExpensesRequestData,
-	GetExpensesResponse,
-	GetPredefinedExpensesResponse,
-	GetRecurrenceTypesResponse,
-	NewExpenseRequestData,
-	NewExpenseResponse,
-	NewTransactionRequestData,
-	NewTransactionResponse,
-	Transaction,
-} from '../models/expense_model';
+} from '$shared/api/deleteTransaction';
+import type { GetCurrencyTypesResponse } from '$shared/api/getCurrencyTypes';
+import type { GetPredefinedExpensesResponse } from '$shared/api/getPredifinedExpenses';
+import type { GetRecurrenceTypesResponse } from '$shared/api/getRecurrenceTypes';
+import type { NewExpenseRequestData, NewExpenseResponse } from '$shared/api/newExpense';
+import type { NewTransactionRequestData, NewTransactionResponse } from '$shared/api/newTransaction';
+import type { GetExpensesRequestData, GetExpensesResponse } from '../../../shared/api/getExpenses';
 
 let expenses: Expense[] | null = null;
 let transactions: Transaction[] | null = null;

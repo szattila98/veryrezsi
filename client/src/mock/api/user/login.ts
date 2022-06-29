@@ -1,9 +1,8 @@
+import type { LoginRequestData, LoginResponse } from '$shared/api/login';
 import { serialize } from 'cookie';
 
 import { response } from '../_common/axios_response';
 import { response_message } from '../_common/response_body';
-
-import type { LoginRequestData, LoginResponse } from '../models/login_model';
 
 const USERID_IS_NOT_A_NUMBER_MESSGE =
 	'UserId is not a number. Use "randomName_1" username format to provide userId';

@@ -1,10 +1,7 @@
+import { mockNewExpense, mockGetPredefinedExpenses } from '$mock/api/expense/expenses';
+import type { GetPredefinedExpensesResponse } from '$shared/api/getPredifinedExpenses';
+import type { NewExpenseResponse, NewExpense } from '$shared/api/newExpense';
 import type { RequestEvent } from '@sveltejs/kit';
-import type {
-	GetPredefinedExpensesResponse,
-	NewExpense,
-	NewExpenseResponse,
-} from '$mock/api/models/expense_model';
-import { mockGetPredefinedExpenses, mockNewExpense } from '$mock/api/expense/expenses';
 
 /** @type {import('./[id]').RequestHandler} */
 export async function post({ request }: RequestEvent): Promise<NewExpenseResponse> {

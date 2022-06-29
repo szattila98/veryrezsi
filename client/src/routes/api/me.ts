@@ -1,6 +1,5 @@
-import type { MeRequestData, MeResponse } from '$mock/api/models/me_model';
-
 import { mockWhoAmI } from '$mock/api/user/me';
+import type { MeResponse, MeRequestData } from '$shared/api/me';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function get({ request }: { request: Request }): Promise<MeResponse> {

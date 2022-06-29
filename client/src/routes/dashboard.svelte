@@ -21,14 +21,6 @@
 </script>
 
 <script lang="ts">
-	import type {
-		CurrencyType,
-		Expense,
-		NewExpense,
-		NewTransaction,
-		PredefinedExpense,
-		RecurrenceType,
-	} from '$mock/api/models/expense_model';
 	import { onMount } from 'svelte';
 
 	import Drawer, { AppContent, Content } from '@smui/drawer';
@@ -41,6 +33,9 @@
 	import { getCurrencyTypes } from './api/currency';
 	import { getRecurrenceTypes } from './api/recurrence';
 	import { getPredefinedExpenses } from './api/expense';
+	import type { CurrencyType, Expense, PredefinedExpense, RecurrenceType } from '$shared/domain';
+	import type { NewExpense } from '$shared/api/newExpense';
+	import type { NewTransaction } from '$shared/api/newTransaction';
 
 	export let userId: number;
 	export let predefinedExpenses: PredefinedExpense[] = [];

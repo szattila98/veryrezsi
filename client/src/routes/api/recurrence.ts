@@ -1,5 +1,5 @@
 import { mockGetRecurrenceTypes } from '$mock/api/expense/expenses';
-import type { GetRecurrenceTypesResponse } from '$mock/api/models/expense_model';
+import type { GetRecurrenceTypesResponse } from '$shared/api/getRecurrenceTypes';
 
 export async function getRecurrenceTypes(): Promise<GetRecurrenceTypesResponse> {
 	return mockGetRecurrenceTypes();
