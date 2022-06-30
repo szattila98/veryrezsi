@@ -1,13 +1,13 @@
-name: Build & Deploy Docker Images
+name: Build & Publish Docker Images
 
 on:
   push:
-    branches: ["main", "docker_svelte"]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
   publish-client:
-    name: Build & Publish Client Docker Image
+    name: Publish Client image
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +42,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   publish-server:
-    name: Build & Publish Server Docker Image
+    name: Publish Server image
     runs-on: ubuntu-latest
 
     steps:
