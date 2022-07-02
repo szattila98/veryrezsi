@@ -157,7 +157,7 @@
 				</svelte:fragment>
 			</Select>
 
-			<Select bind:value={$recurrenceTypeId.value} label="Currency">
+			<Select bind:value={$recurrenceTypeId.value} label="Recurrence">
 				{#each recurrenceTypes as recurrence}
 					<Option value={recurrence.id}>{recurrence.name}</Option>
 				{/each}
