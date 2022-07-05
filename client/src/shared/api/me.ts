@@ -1,13 +1,8 @@
-import type { AxiosResponse } from '../_common/axios_response';
+import type { User } from '$shared/domain';
+import type { AxiosResponse } from '../../mock/api/_common/axios_response';
 
 export type MeRequestData = {
 	sessionId: string;
-};
-
-type User = {
-	id: number;
-	email: string;
-	username: string;
 };
 
 type MeResponseData = {

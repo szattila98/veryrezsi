@@ -1,5 +1,5 @@
+import type { LogoutRequest, LogoutResponse } from '$shared/api/logout';
 import { parse, serialize } from 'cookie';
-import { LogoutRequest, LogoutResponse } from '../models/logout_model';
 
 import { response } from '../_common/axios_response';
 import { response_message } from '../_common/response_body';

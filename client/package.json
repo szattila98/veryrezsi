@@ -1,8 +1,8 @@
 {
 	"name": "veryrezsi",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev --port 4000",
 		"clean": "rm -rf ./node_modules",
 		"clean:install": "npm run clean && npm i",
 		"clean:all": "npm run clean && rm -f package-lock.json",
@@ -62,5 +62,9 @@
 	"dependencies": {
 		"cookie": "^0.4.2",
 		"svelte-forms": "^2.2.1"
+	},
+	"volta": {
+		"node": "16.14.0",
+		"npm": "8.4.1"
 	}
 }

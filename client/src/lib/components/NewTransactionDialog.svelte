@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { CurrencyType, NewTransaction } from '$mock/api/models/expense_model';
-
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label } from '@smui/button';
 	import { form, field } from 'svelte-forms';
@@ -8,6 +6,8 @@
 	import Dialog, { Content, Title } from '@smui/dialog';
 	import { createEventDispatcher } from 'svelte';
 	import Select, { Option } from '@smui/select';
+	import type { CurrencyType } from '$shared/domain';
+	import type { NewTransaction } from '$shared/api/newTransaction';
 
 	export let expenseId: number;
 	export let currencyTypes: CurrencyType[];
@@ -25,7 +25,6 @@
 	async function onSubmit() {
 		await newTransactionForm.validate();
 		if ($newTransactionForm.valid) {
-			console.log('nein');
 			dispatch('newTransaction', {
 				transaction: {
 					donorName: $donorName.value,
@@ -55,7 +54,7 @@
 				bind:invalid={$donorName.invalid}
 				><svelte:fragment slot="helper">
 					{#if !$donorName.valid}
-						<HelperLine>Not a valid donor</HelperLine>
+						<HelperLine>Please enter a donor</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -66,7 +65,7 @@
 				{/each}
 				<svelte:fragment slot="helperText">
 					{#if !$selectedCurrencyTypeId.valid}
-						<HelperLine>Not a valid currency</HelperLine>
+						<HelperLine>Please select a currency</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Select>
@@ -80,7 +79,7 @@
 				type="number"
 				><svelte:fragment slot="helper">
 					{#if !$value.valid}
-						<HelperLine>Not a valid value</HelperLine>
+						<HelperLine>Please enter the value</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
@@ -93,7 +92,7 @@
 				bind:invalid={$date.invalid}
 				><svelte:fragment slot="helper">
 					{#if !$date.valid}
-						<HelperLine>Not a valid date</HelperLine>
+						<HelperLine>Please enter the transaction date</HelperLine>
 					{/if}
 				</svelte:fragment>
 			</Textfield>
