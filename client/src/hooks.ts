@@ -21,12 +21,12 @@ export async function handle({
 
 		if (session) {
 			event.locals.user = session.data.user;
-			const response = await resolve(event);
+			const response = resolve(event);
 			return response;
 		}
 	}
 
-	const response = await resolve(event);
+	const response = resolve(event);
 	return response;
 }
 

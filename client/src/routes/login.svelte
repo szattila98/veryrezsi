@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { SnackbarComponentDev } from '@smui/snackbar';
-	import type { LoginRequestData } from '$mock/api/models/login_model';
 
 	import Textfield, { HelperLine } from '@smui/textfield';
 	import Button, { Label as ButtonLabel } from '@smui/button';
@@ -8,6 +7,7 @@
 	import { form, field } from 'svelte-forms';
 
 	import { required } from 'svelte-forms/validators';
+	import type { LoginRequestData } from '$shared/api/login';
 
 	let failureSnackbar: SnackbarComponentDev;
 
