@@ -6,4 +6,4 @@ Subscription and expense calculator web-application.
 Powered by SvelteKit on client side, and Rust on server side.
 
 ## Development
-Refer to [DEV.md](./blob/docker_svelte/DEV.md) file.
+Refer to [DEV.md](../blob/main/DEV.md) file.
