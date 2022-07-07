@@ -18,22 +18,29 @@ impl MigrationTrait for Migration {
             .create_table(
                 Table::create()
                     .table(user::Entity)
-                    .if_not_exists()
                     .col(
                         ColumnDef::new(user::Column::Id)
                             .integer()
                             .not_null()
-                            .auto_increment()
-                            .primary_key(),
+                            .primary_key()
+                            .auto_increment(),
                     )
                     .col(
                         ColumnDef::new(user::Column::Email)
                             .string_len(320)
-                            .unique_key()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .col(
+                        ColumnDef::new(user::Column::Username)
+                            .string_len(255)
                             .not_null(),
                     )
-                    .col(ColumnDef::new(user::Column::Username).string().not_null())
-                    .col(ColumnDef::new(user::Column::PwHash).string().not_null())
+                    .col(
+                        ColumnDef::new(user::Column::PwHash)
+                            .string_len(255)
+                            .not_null(),
+                    )
                     .to_owned(),
             )
             .await?;
