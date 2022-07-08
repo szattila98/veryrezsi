@@ -25,7 +25,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(account_activation::Column::Token)
-                            .uuid()
+                            .string_len(36)
                             .not_null()
                             .unique_key(),
                     )

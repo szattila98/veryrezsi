@@ -1,7 +1,9 @@
 use super::error::UserError;
 use crate::routes::dto::NewUserRequest;
+use entity::account_activation;
 use entity::user::{self, Entity as User};
 use pwhash::bcrypt;
+use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
@@ -42,9 +44,18 @@ pub async fn save_user(
                 email: Set(req.email),
                 username: Set(req.username),
                 pw_hash: Set(pw_hash),
+                activated: NotSet,
             };
             let user = user.insert(conn).await?;
-            // TODO activation logic and email sending
+
+            let activation = account_activation::ActiveModel {
+                id: NotSet,
+                token: Set(Uuid::new_v4().to_string()),
+                user_id: Set(user.id),
+                expiration: Set(chrono::Local::now()),
+            };
+            activation.insert(conn).await?;
+
             Ok(user)
         }
         Some(_) => Err(UserError::EmailAlreadyExists(req.email)),

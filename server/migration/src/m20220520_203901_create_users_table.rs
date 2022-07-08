@@ -41,6 +41,12 @@ impl MigrationTrait for Migration {
                             .string_len(255)
                             .not_null(),
                     )
+                    .col(
+                        ColumnDef::new(user::Column::Activated)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -54,6 +60,7 @@ impl MigrationTrait for Migration {
             pw_hash: Set(
                 "$2b$10$YvSfR107VspgYn9AoveuTOQ.GRjj0UvRI1w9YlgA7oMz9uPLBNGVS".to_string(),
             ),
+            activated: Set(true),
         }
         .insert(db)
         .await?;

@@ -10,6 +10,6 @@ pub enum UserError {
     EmailAlreadyExists(String),
     #[error("password could not be hashed")]
     PasswordHashError(#[from] PwHashError),
-    #[error("database error")]
+    #[error("database error: '{0}'")]
     DatabaseError(#[from] DbErr),
 }

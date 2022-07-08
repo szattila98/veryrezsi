@@ -6,10 +6,14 @@ use serde::{self, Deserialize, Serialize};
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
+    #[sea_orm(unique)]
     pub email: String,
     pub username: String,
     #[serde(skip_serializing)]
     pub pw_hash: String,
+    #[sea_orm(default_value = "false")]
+    #[serde(skip_serializing)]
+    pub activated: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
