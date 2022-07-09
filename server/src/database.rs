@@ -2,9 +2,9 @@ use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
 
-use crate::config::Config;
+use crate::config::AppConfig;
 
-pub async fn init(config: &Config) -> DatabaseConnection {
+pub async fn init(config: &AppConfig) -> DatabaseConnection {
     let mut opt = ConnectOptions::new(config.database_url.clone());
     opt.max_connections(100)
         .min_connections(5)

@@ -1,4 +1,6 @@
 use super::error::UserError;
+use crate::config;
+use crate::email::Mailer;
 use crate::routes::dto::NewUserRequest;
 use entity::account_activation;
 use entity::user::{self, Entity as User};
@@ -6,6 +8,7 @@ use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use tracing::error;
 
 pub async fn find_user_by_username(
     conn: &DatabaseConnection,
@@ -29,7 +32,9 @@ pub async fn find_user_by_id(conn: &DatabaseConnection, id: i32) -> Result<user:
 }
 
 pub async fn save_user(
+    config: &config::AppConfig,
     conn: &DatabaseConnection,
+    mailer: &Mailer,
     req: NewUserRequest,
 ) -> Result<user::Model, UserError> {
     match User::find()
@@ -37,6 +42,7 @@ pub async fn save_user(
         .one(conn)
         .await?
     {
+        Some(_) => Err(UserError::EmailAlreadyExists(req.email)),
         None => {
             let pw_hash = bcrypt::hash(req.password)?;
             let user = user::ActiveModel {
@@ -54,10 +60,18 @@ pub async fn save_user(
                 user_id: Set(user.id),
                 expiration: Set(chrono::Local::now()),
             };
-            activation.insert(conn).await?;
+            let activation = activation.insert(conn).await?;
+
+            let body = format!(
+                "http://{}/api/user/activate/{}",
+                config.server_address, activation.token
+            );
+            mailer
+                .send(user.email.clone(), "Account activation", body)
+                .await
+                .unwrap_or_else(|e| error!("{e}"));
 
             Ok(user)
         }
-        Some(_) => Err(UserError::EmailAlreadyExists(req.email)),
     }
 }

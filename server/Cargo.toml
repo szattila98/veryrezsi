@@ -39,3 +39,4 @@ thiserror = "1.0.31"
 pwhash = "1.0.0"
 validator = { version = "0.15.0", features = ["derive"] }
 chrono = "0.4.19"
+lettre = { version = "0.10.0", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
