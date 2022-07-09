@@ -1,6 +1,5 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
-import { resolve } from 'path';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,16 +13,7 @@ const config = {
 	}),
 
 	kit: {
-		adapter: adapter(),
-		vite: {
-			resolve: {
-				alias: {
-					$mock: resolve('./src/mock'),
-					$routes: resolve('./src/routes'),
-					$api: resolve('./src/routes/api'),
-				},
-			},
-		},
+		adapter: adapter({ out: 'build' }),
 	},
 };
 

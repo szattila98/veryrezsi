@@ -1,16 +1,9 @@
-# veryrezsi
+# 💲 VeryRezsi 💲
+###### Status
+![Docker Build](https://github.com/szattila98/veryrezsi/actions/workflows/images.yml/badge.svg)
+## Brief 
 Subscription and expense calculator web-application.
-
-# Usage 
-
-## Prerequisites 
-
-- npm v7 or higher
-  - 8.4.1 ✅
-- node v14 or higher
-  - v16.14.0 ✅
+Powered by SvelteKit on client side, and Rust on server side.
 
 ## Development
-- `cd ./veryrezsi/client`
-- `npm i`
-- `npm run dev`
+Refer to [DEV.md](../main/DEV.md) file.
