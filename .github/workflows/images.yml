@@ -2,7 +2,7 @@ name: Build & Publish Docker Images
 
 on:
   push:
-    branches: ["main", "docker_svelte"]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
