@@ -26,7 +26,7 @@ impl Mailer {
             Credentials::new(config.smtp_username.clone(), config.smtp_password.clone());
         let conn: AsyncSmtpTransport<Tokio1Executor> =
             AsyncSmtpTransport::<Tokio1Executor>::builder_dangerous("0.0.0.0")
-                .port(1025)
+                .port(config.smtp_port)
                 .credentials(credentials)
                 .pool_config(PoolConfig::default())
                 .build();

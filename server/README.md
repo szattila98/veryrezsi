@@ -31,3 +31,7 @@ Used variables are:
   - cookies will be encrypted using this key
   - should be equal or greater than **64**
 - **RUST_LOG** - log level, possible value are _info_, _debug_, _error_, _warn_, _trace_
+- **SMTP_ADDRESS** - the address of the smtp server
+- **SMTP_PORT** - the port of the smtp server
+- **SMTP_USERNAME** - the username for the smtp server
+- **SMTP_PASSWORD** - the password for the smtp server

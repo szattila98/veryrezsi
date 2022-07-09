@@ -12,6 +12,7 @@ pub struct AppConfig {
 #[derive(Debug, Clone)]
 pub struct MailConfig {
     pub smtp_address: String,
+    pub smtp_port: u16,
     pub smtp_username: String,
     pub smtp_password: String,
 }
@@ -27,6 +28,10 @@ impl AppConfig {
             .parse()
             .expect("Could not parse valid address from server host and port");
         let smtp_address = env::var("SMTP_ADDRESS").expect("SMTP_ADDRESS is not set in .env file");
+        let smtp_port = env::var("SMTP_PORT")
+            .expect("SMTP_ADDRESS is not set in .env file")
+            .parse()
+            .expect("Could not parse valid port from SMTP_PORT");
         let smtp_username =
             env::var("SMTP_USERNAME").expect("SMTP_USERNAME is not set in .env file");
         let smtp_password =
@@ -38,6 +43,7 @@ impl AppConfig {
             log_level,
             mail_config: MailConfig {
                 smtp_address,
+                smtp_port,
                 smtp_username,
                 smtp_password,
             },
