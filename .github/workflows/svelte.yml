@@ -5,6 +5,8 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["**"]
+    paths:
+      - "client/**"
   workflow_dispatch:
 
 jobs:
@@ -17,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [16.x, 18.x]
 
     steps:
       - name: Checkout repository
