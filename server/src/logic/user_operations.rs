@@ -7,7 +7,10 @@ use entity::user::{self, Entity as User};
 use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set,
+    TransactionTrait,
+};
 use std::sync::Arc;
 use tracing::{debug, error};
 
@@ -45,6 +48,8 @@ pub async fn save_user(
     {
         Some(_) => Err(UserError::EmailAlreadyExists(req.email)),
         None => {
+            let txn = conn.begin().await?;
+
             let pw_hash = bcrypt::hash(req.password)?;
             let user = user::ActiveModel {
                 id: NotSet,
@@ -53,7 +58,7 @@ pub async fn save_user(
                 pw_hash: Set(pw_hash),
                 activated: NotSet,
             };
-            let user = user.insert(conn).await?;
+            let user = user.insert(&txn).await?;
 
             let activation = account_activation::ActiveModel {
                 id: NotSet,
@@ -61,7 +66,9 @@ pub async fn save_user(
                 user_id: Set(user.id),
                 expiration: Set(chrono::Local::now()),
             };
-            let activation = activation.insert(conn).await?;
+            let activation = activation.insert(&txn).await?;
+
+            txn.commit().await?;
 
             let body = format!(
                 "http://{}/api/user/activate/{}",
