@@ -10,6 +10,7 @@ use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
 use entity::user;
 use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
+use std::sync::Arc;
 
 pub async fn login(
     ValidatedJson(login_data): ValidatedJson<LoginRequest>,
@@ -51,7 +52,7 @@ pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, Error
 pub async fn register(
     Extension(ref config): Extension<AppConfig>,
     Extension(ref conn): Extension<DatabaseConnection>,
-    Extension(ref mailer): Extension<Mailer>,
+    Extension(mailer): Extension<Arc<Mailer>>,
     ValidatedJson(new_user): ValidatedJson<NewUserRequest>,
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
     match user_operations::save_user(config, conn, mailer, new_user).await {

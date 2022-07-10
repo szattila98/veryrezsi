@@ -1,12 +1,12 @@
+use crate::{config::AppConfig, email::Mailer};
 use axum::{
     routing::{get, post},
     Extension, Router,
 };
 use axum_extra::extract::cookie::Key;
 use sea_orm::DatabaseConnection;
+use std::sync::Arc;
 use tower::ServiceBuilder;
-
-use crate::{config::AppConfig, email::Mailer};
 
 pub mod common;
 pub mod dto;
@@ -32,6 +32,6 @@ pub fn init(
             .layer(Extension(config))
             .layer(Extension(conn))
             .layer(Extension(secret_key))
-            .layer(Extension(mailer)),
+            .layer(Extension(Arc::new(mailer))),
     )
 }

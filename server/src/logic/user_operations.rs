@@ -8,7 +8,8 @@ use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
-use tracing::error;
+use std::sync::Arc;
+use tracing::{debug, error};
 
 pub async fn find_user_by_username(
     conn: &DatabaseConnection,
@@ -34,7 +35,7 @@ pub async fn find_user_by_id(conn: &DatabaseConnection, id: i32) -> Result<user:
 pub async fn save_user(
     config: &config::AppConfig,
     conn: &DatabaseConnection,
-    mailer: &Mailer,
+    mailer: Arc<Mailer>,
     req: NewUserRequest,
 ) -> Result<user::Model, UserError> {
     match User::find()
@@ -66,10 +67,14 @@ pub async fn save_user(
                 "http://{}/api/user/activate/{}",
                 config.server_address, activation.token
             );
-            mailer
-                .send(user.email.clone(), "Account activation", body)
-                .await
-                .unwrap_or_else(|e| error!("{e}"));
+            let email = user.email.clone();
+            tokio::spawn(async move {
+                mailer
+                    .send(email, "Account activation", body)
+                    .await
+                    .unwrap_or_else(|e| error!("{e}"));
+                debug!("Sent activation email");
+            });
 
             Ok(user)
         }
