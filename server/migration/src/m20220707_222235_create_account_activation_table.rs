@@ -1,13 +1,8 @@
 use entity::{account_activation, user};
 use sea_orm_migration::prelude::*;
 
+#[derive(DeriveMigrationName)]
 pub struct Migration;
-
-impl MigrationName for Migration {
-    fn name(&self) -> &str {
-        "m20220707_222235_create_account_activation_table"
-    }
-}
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {

@@ -3,13 +3,8 @@ use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
 use sea_orm_migration::sea_orm::Set;
 
+#[derive(DeriveMigrationName)]
 pub struct Migration;
-
-impl MigrationName for Migration {
-    fn name(&self) -> &str {
-        "m20220520_203901_create_users_table"
-    }
-}
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {

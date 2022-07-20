@@ -48,27 +48,32 @@ pub async fn save_user(
     {
         Some(_) => Err(UserError::EmailAlreadyExists(req.email)),
         None => {
-            let txn = conn.begin().await?;
-
             let pw_hash = bcrypt::hash(req.password)?;
-            let user = user::ActiveModel {
-                id: NotSet,
-                email: Set(req.email),
-                username: Set(req.username),
-                pw_hash: Set(pw_hash),
-                activated: NotSet,
-            };
-            let user = user.insert(&txn).await?;
 
-            let activation = account_activation::ActiveModel {
-                id: NotSet,
-                token: Set(Uuid::new_v4().to_string()),
-                user_id: Set(user.id),
-                expiration: Set(chrono::Local::now()),
-            };
-            let activation = activation.insert(&txn).await?;
+            let (user, activation) = conn
+                .transaction::<_, (user::Model, account_activation::Model), UserError>(|txn| {
+                    Box::pin(async move {
+                        let user = user::ActiveModel {
+                            id: NotSet,
+                            email: Set(req.email),
+                            username: Set(req.username),
+                            pw_hash: Set(pw_hash),
+                            activated: NotSet,
+                        };
+                        let user = user.insert(txn).await?;
 
-            txn.commit().await?;
+                        let activation = account_activation::ActiveModel {
+                            id: NotSet,
+                            token: Set(Uuid::new_v4().to_string()),
+                            user_id: Set(user.id),
+                            expiration: Set(chrono::Local::now()),
+                        };
+                        let activation = activation.insert(txn).await?;
+
+                        Ok((user, activation))
+                    })
+                })
+                .await?;
 
             let body = format!(
                 "http://{}/api/user/activate/{}",
@@ -76,11 +81,11 @@ pub async fn save_user(
             );
             let email = user.email.clone();
             tokio::spawn(async move {
-                mailer
-                    .send(email, "Account activation", body)
-                    .await
-                    .unwrap_or_else(|e| error!("{e}"));
-                debug!("Sent activation email");
+                if let Err(e) = mailer.send(email, "Account activation", body).await {
+                    error!("{e}")
+                } else {
+                    debug!("Sent activation email");
+                }
             });
 
             Ok(user)
