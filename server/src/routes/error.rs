@@ -83,6 +83,7 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
             UserError::ActivationTokenNotFound(_) => {
                 Self::new(StatusCode::BAD_REQUEST, e.to_string())
             }
+            UserError::ActivationTokenExpired => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
             UserError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }

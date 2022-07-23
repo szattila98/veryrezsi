@@ -23,7 +23,8 @@ pub fn init(
         .route("/auth", post(users::login))
         .route("/me", get(users::me))
         .route("/logout", post(users::logout))
-        .route("/register", post(users::register));
+        .route("/register", post(users::register))
+        .route("/activate/:token", get(users::activate_account));
 
     let api = Router::new().nest("/user", user_api);
 

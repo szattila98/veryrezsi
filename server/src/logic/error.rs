@@ -12,6 +12,8 @@ pub enum UserError {
     PasswordCannotBeHashed(#[from] PwHashError),
     #[error("activation token '{0}' not found")]
     ActivationTokenNotFound(String),
+    #[error("activation token expired")]
+    ActivationTokenExpired,
     #[error("database error: '{0}'")]
     DatabaseError(#[from] DbErr),
 }

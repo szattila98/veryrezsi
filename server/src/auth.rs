@@ -43,6 +43,6 @@ where
         } else {
             debug!("Could not create PrivateCookieJar from request");
         }
-        Err(ErrorMsg::new(StatusCode::UNAUTHORIZED, "Not logged in"))
+        Err(ErrorMsg::new(StatusCode::UNAUTHORIZED, "not logged in"))
     }
 }

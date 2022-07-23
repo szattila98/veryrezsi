@@ -2,14 +2,15 @@ use super::error::UserError;
 use crate::config;
 use crate::email::Mailer;
 use crate::routes::dto::NewUserRequest;
-use entity::account_activation;
+use chrono::Duration;
+use entity::account_activation::{self, Entity as AccountActivation};
 use entity::user::{self, Entity as User};
 use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set,
-    TransactionTrait,
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter,
+    Set, TransactionTrait,
 };
 use std::sync::Arc;
 use tracing::{debug, error};
@@ -66,7 +67,9 @@ pub async fn save_user(
                             id: NotSet,
                             token: Set(Uuid::new_v4().to_string()),
                             user_id: Set(user.id),
-                            expiration: Set(chrono::Local::now()),
+                            expiration: Set(chrono::Local::now()
+                                .checked_add_signed(Duration::days(1))
+                                .unwrap()),
                         };
                         let activation = activation.insert(txn).await?;
 
@@ -90,5 +93,39 @@ pub async fn save_user(
 
             Ok(user)
         }
+    }
+}
+
+pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Result<(), UserError> {
+    let account_activation = AccountActivation::find()
+        .filter(account_activation::Column::Token.eq(token.clone()))
+        .one(conn)
+        .await?;
+    match account_activation {
+        Some(activation) => {
+            if activation.expiration >= chrono::Local::now() {
+                let user = User::find_by_id(activation.user_id).one(conn).await?;
+                match user {
+                    Some(user) => {
+                        conn.transaction::<_, (), UserError>(|txn| {
+                            Box::pin(async move {
+                                let mut user = user.into_active_model();
+                                user.activated = Set(true);
+                                user.update(txn).await?;
+                                let activation = activation.into_active_model();
+                                activation.delete(txn).await?;
+                                Ok(())
+                            })
+                        })
+                        .await?;
+                        Ok(())
+                    }
+                    None => Err(UserError::UserNotFound(activation.user_id.to_string())),
+                }
+            } else {
+                Err(UserError::ActivationTokenExpired)
+            }
+        }
+        None => Err(UserError::ActivationTokenNotFound(token)),
     }
 }

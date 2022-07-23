@@ -5,6 +5,7 @@ use crate::auth::{self, AUTH_COOKIE_NAME};
 use crate::config::AppConfig;
 use crate::email::Mailer;
 use crate::logic::user_operations;
+use axum::extract::Path;
 use axum::{http::StatusCode, Extension, Json};
 use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
 use entity::user;
@@ -19,6 +20,12 @@ pub async fn login(
 ) -> Result<PrivateCookieJar, ErrorMsg<()>> {
     match user_operations::find_user_by_username(conn, login_data.username.to_string()).await {
         Ok(user) => {
+            if !user.activated {
+                return Err(ErrorMsg::new(
+                    StatusCode::BAD_REQUEST,
+                    "account not activated",
+                ));
+            }
             if bcrypt::verify(login_data.password, &user.pw_hash) {
                 return Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())));
             }
@@ -35,7 +42,6 @@ pub async fn me(
     Extension(ref conn): Extension<DatabaseConnection>,
     user: auth::AuthenticatedUser,
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
-    // TODO maybe query user from db in the guard and then there is even less repetition with always finding the user by id
     match user_operations::find_user_by_id(conn, user.id).await {
         Ok(user) => Ok(Json(user)),
         Err(e) => Err(e.into()),
@@ -57,6 +63,16 @@ pub async fn register(
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
     match user_operations::save_user(config, conn, mailer, new_user).await {
         Ok(user) => Ok(Json(user)),
+        Err(e) => Err(e.into()),
+    }
+}
+
+pub async fn activate_account(
+    Extension(ref conn): Extension<DatabaseConnection>,
+    Path(token): Path<String>,
+) -> Result<&'static str, ErrorMsg<()>> {
+    match user_operations::activate_account(conn, token).await {
+        Ok(_) => Ok("Account activated!"),
         Err(e) => Err(e.into()),
     }
 }
