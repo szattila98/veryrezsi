@@ -80,18 +80,16 @@ pub async fn save_user(
                 })
                 .await?;
 
-            let email = user.email.clone();
-            let username = user.username.clone();
             let activation_link = format!(
                 "http://{}/api/user/activate/{}",
                 config.server_address, activation.token
             );
             let template = include_str!("./../../resources/email/activation_email.html");
             let mut data = HashMap::new();
-            data.insert("username", &username);
+            data.insert("username", &user.username);
             data.insert("activation_link", &activation_link);
             let body = render_template(template, data);
-
+            let email = user.email.clone();
             tokio::spawn(async move {
                 if let Err(e) = mailer
                     .send(email, "Veryrezsi account activation", body)

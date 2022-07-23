@@ -4,17 +4,20 @@ A backend for the expense calculator. It is a Rust project, which uses the Axum 
 
 ## Dependencies
 
-- rustup 1.24.3 or later
-- mysql 8 or later
-- docker and docker-compose - for easier database setup or as the backend for frontend development
-- optional cargo plugins for easier development (install with  `cargo install cargo-watch cargo-edit cargo-llvm-cov cargo-audit cargo-cache cargo-update`)
-  - cargo-watch - hot-reload for development
-  - cargo-edit - command line dependency utility
-  - cargo-llvm-cov - test coverage tool
-  - cargo-audit - vulnerability scanner
-  - cargo-cache - dependency and build cache manager
-  - cargo-update - updates the installed plugins (this is different from the `cargo update` command, which updates project dependencies)
-- rust analyzer vscode plugin for development
+- _rustup_ (1.62.1 or later)
+- _rustc_ (1.25.1 or later)
+- _mysql_ (8 or later)
+- _docker_ (20.10.17 or later) and _docker-compose_ (1.29.2 or later) - for easier database setup or as the backend for frontend development
+- optional _cargo plugins_ for easier development (install with `cargo install cargo-watch cargo-llvm-cov cargo-audit cargo-cache cargo-update`)
+  - _cargo-watch_ - hot-reload for development, use with `cargo watch -x run`
+  - _cargo-audit_ - vulnerability scanner, use with `cargo audit`
+  - _cargo-llvm-cov_ - test coverage tool
+  - _cargo-cache_ - dependency and build cache manager
+  - _cargo-update_ - updates installed binaries with `cargo install-update -a` (this is different from the `cargo update` command, which updates project dependencies)
+- _sea-orm-cli_
+  - install with `cargo install sea-orm-cli`
+  - has many uses, but heavily optional because it is only used here for the generation of base migration files with `sea-orm-cli migrate generate migration_name`, which saves us some hassle
+- _rust-analyzer_ vscode plugin for development
 
 ## Environment
 
