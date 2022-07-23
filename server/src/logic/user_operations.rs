@@ -1,6 +1,6 @@
 use super::error::UserError;
 use crate::config;
-use crate::email::Mailer;
+use crate::email::{render_template, Mailer};
 use crate::routes::dto::NewUserRequest;
 use chrono::Duration;
 use entity::account_activation::{self, Entity as AccountActivation};
@@ -13,6 +13,7 @@ use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter,
     Set, TransactionTrait,
 };
+use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::{debug, error};
 
@@ -79,13 +80,23 @@ pub async fn save_user(
                 })
                 .await?;
 
-            let body = format!(
+            let email = user.email.clone();
+            let username = user.username.clone();
+            let activation_link = format!(
                 "http://{}/api/user/activate/{}",
                 config.server_address, activation.token
             );
-            let email = user.email.clone();
+            let template = include_str!("./../../resources/email/activation_email.html");
+            let mut data = HashMap::new();
+            data.insert("username", &username);
+            data.insert("activation_link", &activation_link);
+            let body = render_template(template, data);
+
             tokio::spawn(async move {
-                if let Err(e) = mailer.send(email, "Account activation", body).await {
+                if let Err(e) = mailer
+                    .send(email, "Veryrezsi account activation", body)
+                    .await
+                {
                     error!("{e}")
                 } else {
                     debug!("Sent activation email");

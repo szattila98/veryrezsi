@@ -1,5 +1,9 @@
+use std::collections::HashMap;
+
 use crate::config::MailConfig;
+use handlebars::Handlebars;
 use lettre::{
+    message::{header::ContentType, SinglePart},
     transport::smtp::{authentication::Credentials, PoolConfig},
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
@@ -41,8 +45,18 @@ impl Mailer {
             .to(to.parse().unwrap())
             .from(self.from.parse().unwrap())
             .subject(subject)
-            .body(body)?;
+            .singlepart(
+                SinglePart::builder()
+                    .header(ContentType::TEXT_HTML)
+                    .body(body),
+            )?;
         self.conn.send(email).await?;
         Ok(())
     }
+}
+
+pub fn render_template(template: &str, data: HashMap<&str, &String>) -> String {
+    Handlebars::new()
+        .render_template(template, &data)
+        .expect("Failed to render template")
 }

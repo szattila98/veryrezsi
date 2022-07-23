@@ -42,3 +42,4 @@ chrono = "0.4.19"
 lettre = { version = "0.10.1", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
 fancy-regex = "0.10.0"
 lazy_static = "1.4.0"
+handlebars = "4.3.3"
