@@ -5,6 +5,7 @@ use crate::routes::dto::NewUserRequest;
 use chrono::Duration;
 use entity::account_activation::{self, Entity as AccountActivation};
 use entity::user::{self, Entity as User};
+use entity::Id;
 use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
@@ -29,7 +30,7 @@ pub async fn find_user_by_username(
     }
 }
 
-pub async fn find_user_by_id(conn: &DatabaseConnection, id: i32) -> Result<user::Model, UserError> {
+pub async fn find_user_by_id(conn: &DatabaseConnection, id: Id) -> Result<user::Model, UserError> {
     match User::find_by_id(id).one(conn).await? {
         Some(user) => Ok(user),
         None => Err(UserError::UserNotFound(id.to_string())),

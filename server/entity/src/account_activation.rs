@@ -1,3 +1,4 @@
+use crate::Id;
 use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
@@ -5,10 +6,10 @@ use serde::{self, Deserialize, Serialize};
 #[sea_orm(table_name = "account_activation")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub id: i32,
+    pub id: Id,
     #[sea_orm(unique)]
     pub token: String,
-    pub user_id: i32,
+    pub user_id: Id,
     pub expiration: DateTimeLocal,
 }
 

@@ -5,16 +5,17 @@ use axum::{
     http::StatusCode,
 };
 use axum_extra::extract::cookie::{Key, PrivateCookieJar};
+use entity::Id;
 use tracing::debug;
 
 pub const AUTH_COOKIE_NAME: &str = "JSESSIONID";
 
 pub struct AuthenticatedUser {
-    pub id: i32,
+    pub id: Id,
 }
 
 impl AuthenticatedUser {
-    fn new(id: i32) -> Self {
+    fn new(id: Id) -> Self {
         AuthenticatedUser { id }
     }
 }

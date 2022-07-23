@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                     .table(account_activation::Entity)
                     .col(
                         ColumnDef::new(account_activation::Column::Id)
-                            .integer()
+                            .big_integer()
                             .not_null()
                             .primary_key()
                             .auto_increment(),
@@ -26,7 +26,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(account_activation::Column::UserId)
-                            .integer()
+                            .big_integer()
                             .not_null(),
                     )
                     .col(
