@@ -1,6 +1,5 @@
-import type { LoginRequestData, LoginResponse } from '$mock/api/models/login_model';
-
 import { mockLogin } from '$mock/api/user/login';
+import type { LoginResponse, LoginRequestData } from '$shared/api/login';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function post({ request }: { request: Request }): Promise<LoginResponse> {

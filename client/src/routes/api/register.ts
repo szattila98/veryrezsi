@@ -1,6 +1,5 @@
-import type { RegisterRequestData, RegisterResponse } from '$mock/api/models/register_model';
-
 import { mockRegister } from '$mock/api/user/register';
+import type { RegisterResponse, RegisterRequestData } from '$shared/api/register';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function post({ request }: { request: Request }): Promise<RegisterResponse> {

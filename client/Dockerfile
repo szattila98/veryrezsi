@@ -16,7 +16,7 @@ COPY --from=0 /app/package*.json ./
 COPY --from=0 /app/build ./
 
 # clean install dependencies, no devDependencies, no prepare script
-RUN npm ci --production --ignore-scripts --no-audit
+RUN npm ci --omit=dev --ignore-scripts --no-audit
 
 EXPOSE 3000
 CMD ["node", "./index.js"]

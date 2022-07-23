@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Transaction } from '$mock/api/models/expense_model';
+	import type { Transaction } from '$shared/domain';
 
 	import List, { Group, Subheader } from '@smui/list';
 	import TransactionItem from './TransactionItem.svelte';

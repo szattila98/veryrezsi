@@ -1,51 +1,62 @@
 import { response } from '../_common/axios_response';
 
-import expenses from '$mock/entities/user_expense.json';
+import expensesJson from '$mock/entities/user_expense.json';
 import recurrenceTypes from '$mock/entities/recurrence_type.json';
 import currencyTypes from '$mock/entities/currency_type.json';
 import transactionsJson from '$mock/entities/transaction.json';
-
+import predefinedExpenses from '$mock/entities/predefined_expense.json';
+import type { Expense, Transaction } from '$shared/domain';
 import type {
 	DeleteTransactionRequestData,
 	DeleteTransactionResponse,
-	Expense,
-	GetCurrencyTypesResponse,
-	GetExpensesRequestData,
-	GetExpensesResponse,
-	NewTransactionRequestData,
-	NewTransactionResponse,
-	Transaction,
-} from '../models/expense_model';
+} from '$shared/api/deleteTransaction';
+import type { GetCurrencyTypesResponse } from '$shared/api/getCurrencyTypes';
+import type { GetPredefinedExpensesResponse } from '$shared/api/getPredifinedExpenses';
+import type { GetRecurrenceTypesResponse } from '$shared/api/getRecurrenceTypes';
+import type { NewExpenseRequestData, NewExpenseResponse } from '$shared/api/newExpense';
+import type { NewTransactionRequestData, NewTransactionResponse } from '$shared/api/newTransaction';
+import type { GetExpensesRequestData, GetExpensesResponse } from '../../../shared/api/getExpenses';
 
+let expenses: Expense[] | null = null;
 let transactions: Transaction[] | null = null;
 
+export const mockGetPredefinedExpenses = (): GetPredefinedExpensesResponse => {
+	const data = predefinedExpenses.map((expense) => {
+		const recurrenceType = recurrenceTypes.find(
+			(recurrenceType) => recurrenceType.id === expense.recurrence_type_id
+		);
+		const currencyType = currencyTypes.find(
+			(currencyType) => currencyType.id === expense.currency_type_id
+		);
+		return {
+			id: expense.id,
+			name: expense.name,
+			description: expense.description,
+			recurrenceType: recurrenceType ? recurrenceType : { id: 0, name: '', perYear: 0 },
+			currencyType: currencyType ? currencyType : { id: 0, abbreviation: '', name: '' },
+			value: expense.value,
+		};
+	});
+
+	return response(200, data) as GetPredefinedExpensesResponse;
+};
+
 export const mockGetExpenses = (data: GetExpensesRequestData): GetExpensesResponse => {
-	loadTransactions();
+	loadExpenses();
 
 	if (!data.userId) {
 		return response(400, { expenses: [] }) as GetExpensesResponse;
 	}
 
-	const userExpenses = expenses
-		.filter((expense) => expense.user_id === data.userId)
-		.map((expense) => {
-			return {
-				id: expense.id,
-				name: expense.name,
-				description: expense.description,
-				recurrenceType: recurrenceTypes.find(
-					(recurrenceType) => recurrenceType.id === expense.recurrence_type_id
-				),
-				currencyType: currencyTypes.find(
-					(currencyType) => currencyType.id === expense.currency_type_id
-				),
-				predefinedExpenseId: expense.predefined_expense_id,
-				startDate: expense.startDate,
-				value: expense.value,
-				userId: expense.user_id,
-				transactions: transactions?.filter((transaction) => expense.id === transaction.expenseId),
-			} as Expense;
-		});
+	const userExpenses = expenses?.filter((expense) => expense.userId === data.userId);
+	userExpenses?.forEach((expense) => {
+		const expenseTransactions = transactions?.filter(
+			(transaction) => transaction.expenseId === expense.id
+		);
+		if (expenseTransactions) {
+			expense.transactions = expenseTransactions;
+		}
+	});
 	return response(200, { expenses: userExpenses }) as GetExpensesResponse;
 };
 
@@ -53,15 +64,46 @@ export const mockGetCurrencyTypes = (): GetCurrencyTypesResponse => {
 	return response(200, currencyTypes) as GetCurrencyTypesResponse;
 };
 
+export const mockGetRecurrenceTypes = (): GetRecurrenceTypesResponse => {
+	return response(200, recurrenceTypes) as GetRecurrenceTypesResponse;
+};
+
+export const mockNewExpense = (data: NewExpenseRequestData): NewExpenseResponse => {
+	loadExpenses();
+	const newExpense = data.newExpense;
+	const expenseId = Math.floor(Math.random() * 100000);
+	const recurrenceType = recurrenceTypes.find(
+		(recurrenceType) => recurrenceType.id === newExpense.recurrenceTypeId
+	);
+	const currencyType = currencyTypes.find(
+		(currencyType) => currencyType.id === newExpense.currencyTypeId
+	);
+	const expense: Expense = {
+		id: expenseId,
+		name: newExpense.name,
+		description: newExpense.description,
+		recurrenceType: recurrenceType ? recurrenceType : { id: 0, name: '', perYear: 0 },
+		currencyType: currencyType ? currencyType : { id: 0, abbreviation: '', name: '' },
+		predefinedExpenseId: newExpense.predefinedExpenseId,
+		startDate: newExpense.startDate,
+		value: newExpense.value,
+		userId: newExpense.userId,
+		transactions: [],
+	};
+	expenses?.push(expense);
+	return response(200, expenseId) as NewExpenseResponse;
+};
+
 export const mockNewTransaction = (data: NewTransactionRequestData): NewTransactionResponse => {
-	loadTransactions();
+	loadExpenses();
 	if (transactions) {
+		const currencyType = currencyTypes.find(
+			(currencyType) => currencyType.id === data.newTransaction.currencyTypeId
+		);
 		const newTransaction = {
 			id: Math.floor(Math.random() * 100000),
 			donorName: data.newTransaction.donorName,
-			currencyType: currencyTypes.find(
-				(currencyType) => currencyType.id === data.newTransaction.currencyTypeId
-			),
+			currencyType: currencyType ? currencyType : { id: 0, abbreviation: '', name: '' },
 			value: data.newTransaction.value,
 			date: data.newTransaction.date,
 			expenseId: data.newTransaction.expenseId,
@@ -76,7 +118,7 @@ export const mockNewTransaction = (data: NewTransactionRequestData): NewTransact
 export const mockDeleteTransaction = (
 	data: DeleteTransactionRequestData
 ): DeleteTransactionResponse => {
-	loadTransactions();
+	loadExpenses();
 	if (transactions) {
 		const toDeleteIndex = transactions.findIndex(
 			(transaction) => transaction.id === data.transactionId
@@ -88,6 +130,30 @@ export const mockDeleteTransaction = (
 	console.log('Transactions not initialized!');
 	return response(500) as DeleteTransactionResponse;
 };
+
+function loadExpenses() {
+	loadTransactions();
+	if (!expenses) {
+		expenses = expensesJson.map((expense) => {
+			return {
+				id: expense.id,
+				name: expense.name,
+				description: expense.description,
+				recurrenceType: recurrenceTypes.find(
+					(recurrenceType) => recurrenceType.id === expense.recurrence_type_id
+				),
+				currencyType: currencyTypes.find(
+					(currencyType) => currencyType.id === expense.currency_type_id
+				),
+				predefinedExpenseId: expense.predefined_expense_id,
+				startDate: expense.startDate,
+				value: expense.value,
+				userId: expense.user_id,
+				transactions: [],
+			} as Expense;
+		});
+	}
+}
 
 function loadTransactions() {
 	if (!transactions) {

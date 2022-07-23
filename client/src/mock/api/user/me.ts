@@ -1,9 +1,8 @@
 import { response } from '../_common/axios_response';
-import { response_user } from '../models/me_model';
 
 import users from '../../entities/user.json';
-
-import type { MeRequestData, MeResponse } from '../models/me_model';
+import type { MeRequestData, MeResponse } from '../../../shared/api/me';
+import { response_user } from '../../../shared/api/me';
 
 /**
  * Returns a mock response to the - me / whoami / currently authenticated user - request.

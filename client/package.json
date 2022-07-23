@@ -1,13 +1,15 @@
 {
 	"name": "veryrezsi",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"type": "module",
 	"scripts": {
-		"dev": "svelte-kit dev",
-		"clean:install": "npm ci",
-		"build": "svelte-kit build",
-		"package": "svelte-kit package",
-		"preview": "svelte-kit preview",
+		"dev": "vite dev --port 4000",
+		"clean": "rm -rf ./node_modules",
+		"clean:install": "npm run clean && npm i",
+		"clean:all": "npm run clean && rm -f package-lock.json",
+		"build": "vite build",
+		"package": "vite package",
+		"preview": "vite preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
@@ -59,6 +61,11 @@
 		"cookie": "^0.4.2",
 		"svelte": "3.44.0",
 		"svelte-forms": "^2.2.1",
-		"tslib": "2.3.1"
+		"tslib": "2.3.1",
+		"vite": "^2.9.13"
+	},
+	"volta": {
+		"node": "16.14.0",
+		"npm": "8.4.1"
 	}
 }
