@@ -90,7 +90,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"password\",\n    \"confirmPassword\": \"password\"\n}"
+							"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"Password123!\",\n    \"confirmPassword\": \"Password123!\"\n}"
 						},
 						"url": {
 							"raw": "localhost:8000/api/user/register",
