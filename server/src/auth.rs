@@ -1,20 +1,25 @@
+use std::num::ParseIntError;
+
 use crate::routes::error::ErrorMsg;
 use axum::{
     async_trait,
-    extract::{FromRequest, RequestParts},
+    extract::{rejection::ExtensionRejection, FromRequest, RequestParts},
     http::StatusCode,
 };
 use axum_extra::extract::cookie::{Key, PrivateCookieJar};
 use entity::Id;
 use tracing::debug;
 
+/// Defines the name of the cookie used to authenticate users.
 pub const AUTH_COOKIE_NAME: &str = "JSESSIONID";
 
+/// Identifies a user. It is used to hold the decrypted content of the authentication cookie.
 pub struct AuthenticatedUser {
     pub id: Id,
 }
 
 impl AuthenticatedUser {
+    /// Creates a new authenticated user.
     fn new(id: Id) -> Self {
         AuthenticatedUser { id }
     }
@@ -27,23 +32,32 @@ where
 {
     type Rejection = ErrorMsg<()>;
 
+    /// Extracts the authenticated user from the request.
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        // TODO refactor to be more elegant
-        if let Ok(jar) = PrivateCookieJar::<Key>::from_request(req).await {
-            if let Some(cookie) = jar.get(AUTH_COOKIE_NAME) {
-                if let Ok(id) = cookie.value().parse() {
-                    return Ok(AuthenticatedUser::new(id));
-                }
-                debug!(
-                    "Could not parse the value of the cookie, value was:\n{:?}",
-                    cookie.value()
-                );
-            } else {
-                debug!("Could not get {AUTH_COOKIE_NAME} cookie from the jar");
-            }
+        let jar = PrivateCookieJar::<Key>::from_request(req).await?;
+        return if let Some(cookie) = jar.get(AUTH_COOKIE_NAME) {
+            let id = cookie.value().parse()?;
+            Ok(AuthenticatedUser::new(id))
         } else {
-            debug!("Could not create PrivateCookieJar from request");
-        }
-        Err(ErrorMsg::new(StatusCode::UNAUTHORIZED, "not logged in"))
+            debug!("No authentication cookie found");
+            Err(ErrorMsg::new(StatusCode::UNAUTHORIZED, "not logged in"))
+        };
+    }
+}
+
+impl From<ExtensionRejection> for ErrorMsg<()> {
+    fn from(e: ExtensionRejection) -> Self {
+        debug!("{e}");
+        ErrorMsg::new(
+            StatusCode::BAD_REQUEST,
+            "malformed request, cannot extract cookies",
+        )
+    }
+}
+
+impl From<ParseIntError> for ErrorMsg<()> {
+    fn from(e: ParseIntError) -> Self {
+        debug!("{e}");
+        ErrorMsg::new(StatusCode::BAD_REQUEST, "malformed cookie, non-parseable")
     }
 }

@@ -1,5 +1,6 @@
 use std::{env, net::SocketAddr};
 
+/// Contains basic configuration entries.
 #[derive(Debug, Clone)]
 pub struct AppConfig {
     pub server_address: SocketAddr,
@@ -9,6 +10,7 @@ pub struct AppConfig {
     pub mail_config: MailConfig,
 }
 
+/// Contains configuration tied to email sending.
 #[derive(Debug, Clone)]
 pub struct MailConfig {
     pub smtp_address: String,
@@ -18,6 +20,7 @@ pub struct MailConfig {
 }
 
 impl AppConfig {
+    /// Initializes the configuration from environment variables.
     pub fn init() -> Self {
         let server_host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
         let server_port = env::var("PORT").unwrap_or_else(|_| "8000".to_string());

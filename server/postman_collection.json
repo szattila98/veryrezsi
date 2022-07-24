@@ -21,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"happylittleclouds\",\n\t\"password\": \"admin\"\n}"
+							"raw": "{\n\t\"email\": \"bob@ross.com\",\n\t\"password\": \"admin\"\n}"
 						},
 						"url": {
 							"raw": "localhost:8000/api/user/auth",

@@ -1,8 +1,13 @@
+#![warn(clippy::missing_docs_in_private_items)]
+
+//! Binary application that uses the veryrezsi library and runs the server.
+
 use axum::Server;
 use tokio::signal;
 use tracing::info;
 
 #[tokio::main]
+/// Entry point of the application.
 async fn main() {
     let (address, router) = veryrezsi::init().await;
     let _ = Server::bind(&address)
@@ -12,6 +17,7 @@ async fn main() {
     info!("Shutting down...");
 }
 
+/// Makes graceful shutdown possible.
 async fn shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c()

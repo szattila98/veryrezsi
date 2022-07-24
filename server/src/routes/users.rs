@@ -13,31 +13,35 @@ use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
 use std::sync::Arc;
 
+/// Handles the login route.
 pub async fn login(
     ValidatedJson(login_data): ValidatedJson<LoginRequest>,
     Extension(ref conn): Extension<DatabaseConnection>,
     cookies: PrivateCookieJar,
 ) -> Result<PrivateCookieJar, ErrorMsg<()>> {
-    match user_operations::find_user_by_username(conn, login_data.username.to_string()).await {
+    match user_operations::find_user_by_email(conn, login_data.email.to_string()).await {
         Ok(user) => {
-            if !user.activated {
-                return Err(ErrorMsg::new(
+            return if user.activated {
+                return if bcrypt::verify(login_data.password, &user.pw_hash) {
+                    Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())))
+                } else {
+                    Err(ErrorMsg::new(
+                        StatusCode::UNAUTHORIZED,
+                        "incorrect credentials",
+                    ))
+                };
+            } else {
+                Err(ErrorMsg::new(
                     StatusCode::BAD_REQUEST,
                     "account not activated",
-                ));
+                ))
             }
-            if bcrypt::verify(login_data.password, &user.pw_hash) {
-                return Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())));
-            }
-            Err(ErrorMsg::new(
-                StatusCode::UNAUTHORIZED,
-                "incorrect credentials",
-            ))
         }
         Err(e) => Err(e.into()),
     }
 }
 
+/// Handles the current user query route.
 pub async fn me(
     Extension(ref conn): Extension<DatabaseConnection>,
     user: auth::AuthenticatedUser,
@@ -48,6 +52,7 @@ pub async fn me(
     }
 }
 
+/// Handles the logout route.
 pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, ErrorMsg<()>> {
     match cookies.get(AUTH_COOKIE_NAME) {
         Some(cookie) => Ok(cookies.remove(cookie)),
@@ -55,6 +60,7 @@ pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, Error
     }
 }
 
+/// Handles the registration route.
 pub async fn register(
     Extension(ref config): Extension<AppConfig>,
     Extension(ref conn): Extension<DatabaseConnection>,
@@ -67,6 +73,7 @@ pub async fn register(
     }
 }
 
+/// Handles the account activation route.
 pub async fn activate_account(
     Extension(ref conn): Extension<DatabaseConnection>,
     Path(token): Path<String>,

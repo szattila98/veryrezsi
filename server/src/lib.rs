@@ -1,3 +1,7 @@
+#![warn(missing_docs)]
+
+//! Veryrezsi library, which makes serving the server-side logic possible.
+
 use axum::Router;
 use axum_extra::extract::cookie::Key;
 use config::AppConfig;
@@ -9,8 +13,11 @@ mod config;
 mod database;
 mod email;
 mod logic;
+/// Exports the router for the binary.
 pub mod routes;
 
+/// Initializes every part of the application.
+/// Returns the address of the server and the configured router.
 pub async fn init() -> (SocketAddr, Router) {
     print_logo();
     dotenv::dotenv().ok();
@@ -42,6 +49,7 @@ pub async fn init() -> (SocketAddr, Router) {
     (config.server_address, router)
 }
 
+/// Prints the logo of the application.
 fn print_logo() {
     println!(
         r#"

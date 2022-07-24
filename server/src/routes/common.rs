@@ -8,6 +8,7 @@ use axum::{
 use serde::de::DeserializeOwned;
 use validator::{Validate, ValidationErrors};
 
+/// A generic structure that reperesents a requests body, that is validated according to its defined validation rules.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct ValidatedJson<T>(pub T);
 
@@ -21,6 +22,8 @@ where
 {
     type Rejection = ErrorMsg<ValidationErrors>;
 
+    /// Extracts and validates the request body and returns a `ValidatedJson` if both succeeds.
+    /// It is bounded by traits so the generic type has to be something that can be deserialized into and validated.
     async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
         let Json(value) = Json::<T>::from_request(req).await?;
         value.validate()?;

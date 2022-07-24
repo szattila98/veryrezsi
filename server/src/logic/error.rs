@@ -2,6 +2,7 @@ use pwhash::error::Error as PwHashError;
 use sea_orm::{error::DbErr, TransactionError};
 use thiserror::Error;
 
+/// Errors that can happen during the execution of user logic.
 #[derive(Error, Debug)]
 pub enum UserError {
     #[error("user with identifier '{0}' not found")]

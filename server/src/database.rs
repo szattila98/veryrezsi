@@ -1,9 +1,9 @@
+use crate::config::AppConfig;
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
 
-use crate::config::AppConfig;
-
+/// Creates a database connection pool and runs migrations.
 pub async fn init(config: &AppConfig) -> DatabaseConnection {
     let mut opt = ConnectOptions::new(config.database_url.clone());
     opt.max_connections(100)

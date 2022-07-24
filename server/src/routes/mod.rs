@@ -8,11 +8,16 @@ use sea_orm::DatabaseConnection;
 use std::sync::Arc;
 use tower::ServiceBuilder;
 
+/// Common code for all routes.
 pub mod common;
+/// DTOs used in routes.
 pub mod dto;
+/// Error handling on the controller level.
 pub mod error;
+/// User route handlers.
 pub mod users;
 
+/// Initializes the router with the extension layers and the route handlers.
 pub fn init(
     config: AppConfig,
     conn: DatabaseConnection,

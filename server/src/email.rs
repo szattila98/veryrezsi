@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::config::MailConfig;
 use handlebars::Handlebars;
 use lettre::{
@@ -7,9 +5,11 @@ use lettre::{
     transport::smtp::{authentication::Credentials, PoolConfig},
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
+use std::collections::HashMap;
 use thiserror::Error;
 use tracing::log::error;
 
+/// Error types that can occur on email sending.
 #[derive(Debug, Error)]
 pub enum EmailError {
     #[error("Could not build email, reason: '{0}'")]
@@ -18,6 +18,7 @@ pub enum EmailError {
     CannotSend(#[from] lettre::transport::smtp::Error),
 }
 
+/// The structure that handles email sending.
 #[derive(Clone)]
 pub struct Mailer {
     conn: AsyncSmtpTransport<Tokio1Executor>,
@@ -25,6 +26,7 @@ pub struct Mailer {
 }
 
 impl Mailer {
+    /// Creates a new mailer.
     pub fn init(config: &MailConfig) -> Self {
         let credentials =
             Credentials::new(config.smtp_username.clone(), config.smtp_password.clone());
@@ -40,6 +42,7 @@ impl Mailer {
         }
     }
 
+    /// Sends an email.
     pub async fn send(&self, to: String, subject: &str, body: String) -> Result<(), EmailError> {
         let email = Message::builder()
             .to(to.parse().unwrap())
@@ -55,6 +58,8 @@ impl Mailer {
     }
 }
 
+/// Renders a template using handlebars.
+/// The `data` will be substituted into the `template` string.
 pub fn render_template(template: &str, data: HashMap<&str, &String>) -> String {
     Handlebars::new()
         .render_template(template, &data)

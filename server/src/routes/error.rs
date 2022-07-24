@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use crate::logic::error::UserError;
 use axum::{
     extract::rejection::JsonRejection,
@@ -33,7 +35,7 @@ pub struct ErrorMsg<D: Serialize> {
     status: StatusCode,
     reason: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    details: Option<D>, // option is needed until specialization feature is stable, then we can use a trait to test whether D is a type or ()
+    details: Option<D>, // Option is needed until specialization feature is stable, then we can use a trait to test whether D is a type or ()
 }
 
 impl<D: Serialize> ErrorMsg<D> {

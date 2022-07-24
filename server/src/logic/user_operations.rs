@@ -17,20 +17,22 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::{debug, error};
 
-pub async fn find_user_by_username(
+/// Finds a user by its email in the database.
+pub async fn find_user_by_email(
     conn: &DatabaseConnection,
-    username: String,
+    email: String,
 ) -> Result<user::Model, UserError> {
     let opt = User::find()
-        .filter(user::Column::Username.eq(username.clone()))
+        .filter(user::Column::Email.eq(email.clone()))
         .one(conn)
         .await?;
     match opt {
         Some(user) => Ok(user),
-        None => Err(UserError::UserNotFound(username)),
+        None => Err(UserError::UserNotFound(email)),
     }
 }
 
+/// Finds a user by its id in the database.
 pub async fn find_user_by_id(conn: &DatabaseConnection, id: Id) -> Result<user::Model, UserError> {
     match User::find_by_id(id).one(conn).await? {
         Some(user) => Ok(user),
@@ -38,6 +40,7 @@ pub async fn find_user_by_id(conn: &DatabaseConnection, id: Id) -> Result<user::
     }
 }
 
+/// Saves a new user to the database, encrypts the password and sends an activation email.
 pub async fn save_user(
     config: &config::AppConfig,
     conn: &DatabaseConnection,
@@ -106,6 +109,7 @@ pub async fn save_user(
     }
 }
 
+/// Activates a newly registered user.
 pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Result<(), UserError> {
     let account_activation = AccountActivation::find()
         .filter(account_activation::Column::Token.eq(token.clone()))
