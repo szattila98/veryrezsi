@@ -12,7 +12,6 @@ lazy_static! {
             .unwrap();
 }
 
-/// DTO for user login.
 #[derive(Deserialize, Validate)]
 pub struct LoginRequest {
     #[validate(length(
@@ -29,7 +28,6 @@ pub struct LoginRequest {
     pub password: String,
 }
 
-/// DTO for user registration.
 #[derive(Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NewUserRequest {
