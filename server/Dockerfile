@@ -1,32 +1,34 @@
-FROM ekidd/rust-musl-builder:stable as builder
+FROM rust:latest as builder
 
 RUN USER=root cargo new --bin veryrezsi
-WORKDIR /home/rust/src/veryrezsi
-COPY ./Cargo.lock ./Cargo.lock
+WORKDIR /veryrezsi
+
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./entity ./entity
 COPY ./migration ./migration
 COPY ./src ./src
+COPY ./resources ./resources
+
 RUN cargo build --release
 
 
-FROM alpine:latest
-
+FROM debian:buster-slim
 ARG APP=/usr/src/app
+
+RUN apt-get update \
+    && apt-get install -y ca-certificates tzdata \
+    && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 
 ENV TZ=Etc/UTC \
     APP_USER=appuser
 
-RUN addgroup -S $APP_USER \
-    && adduser -S -g $APP_USER $APP_USER
+RUN groupadd $APP_USER \
+    && useradd -g $APP_USER $APP_USER \
+    && mkdir -p ${APP}
 
-RUN apk update \
-    && apk add --no-cache ca-certificates tzdata \
-    && rm -rf /var/cache/apk/*
-
-COPY --from=builder /home/rust/src/veryrezsi/target/x86_64-unknown-linux-musl/release/veryrezsi ${APP}/veryrezsi
+COPY --from=builder /veryrezsi/target/release/veryrezsi ${APP}/veryrezsi
 COPY ./docker/config/.env ${APP}/.env
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
