@@ -17,6 +17,15 @@ services:
       timeout: 20s
       retries: 10
 
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'  # disable saving logs
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
+
   server:
     container_name: veryrezsi_server
     build:
@@ -25,6 +34,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      mailhog:
+        condition: service_started
       database:
         condition: service_healthy # this will make the server wait for the database to be healthy and ready
 

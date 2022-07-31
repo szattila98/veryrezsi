@@ -3,13 +3,8 @@ use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
 use sea_orm_migration::sea_orm::Set;
 
+#[derive(DeriveMigrationName)]
 pub struct Migration;
-
-impl MigrationName for Migration {
-    fn name(&self) -> &str {
-        "m20220520_203901_create_users_table"
-    }
-}
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -18,22 +13,35 @@ impl MigrationTrait for Migration {
             .create_table(
                 Table::create()
                     .table(user::Entity)
-                    .if_not_exists()
                     .col(
                         ColumnDef::new(user::Column::Id)
-                            .integer()
+                            .big_integer()
                             .not_null()
-                            .auto_increment()
-                            .primary_key(),
+                            .primary_key()
+                            .auto_increment(),
                     )
                     .col(
                         ColumnDef::new(user::Column::Email)
                             .string_len(320)
-                            .unique_key()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .col(
+                        ColumnDef::new(user::Column::Username)
+                            .string_len(255)
                             .not_null(),
                     )
-                    .col(ColumnDef::new(user::Column::Username).string().not_null())
-                    .col(ColumnDef::new(user::Column::PwHash).string().not_null())
+                    .col(
+                        ColumnDef::new(user::Column::PwHash)
+                            .string_len(255)
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(user::Column::Activated)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -47,6 +55,7 @@ impl MigrationTrait for Migration {
             pw_hash: Set(
                 "$2b$10$YvSfR107VspgYn9AoveuTOQ.GRjj0UvRI1w9YlgA7oMz9uPLBNGVS".to_string(),
             ),
+            activated: Set(true),
         }
         .insert(db)
         .await?;

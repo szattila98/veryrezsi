@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use crate::logic::error::UserError;
 use axum::{
     extract::rejection::JsonRejection,
@@ -33,7 +35,7 @@ pub struct ErrorMsg<D: Serialize> {
     status: StatusCode,
     reason: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    details: Option<D>, // option is needed until specialization feature is stable, then we can use a trait to test whether D is a type or ()
+    details: Option<D>, // Option is needed until specialization feature is stable, then we can use a trait to test whether D is a type or ()
 }
 
 impl<D: Serialize> ErrorMsg<D> {
@@ -77,9 +79,13 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
         match e {
             UserError::UserNotFound(_) => Self::new(StatusCode::NOT_FOUND, e.to_string()),
             UserError::EmailAlreadyExists(_) => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
-            UserError::PasswordHashError(_) => {
+            UserError::PasswordCannotBeHashed(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
+            UserError::ActivationTokenNotFound(_) => {
+                Self::new(StatusCode::BAD_REQUEST, e.to_string())
+            }
+            UserError::ActivationTokenExpired => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
             UserError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }

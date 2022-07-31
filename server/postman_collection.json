@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "a2d53929-5323-461b-bda8-0b8e0a757c8d",
+		"_postman_id": "8b96ae98-04f7-4d73-ab22-8ed507974149",
 		"name": "veryrezsi",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22217881"
 	},
 	"item": [
 		{
@@ -20,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"happylittleclouds\",\n\t\"password\": \"admin\"\n}"
+							"raw": "{\n\t\"email\": \"bob@ross.com\",\n\t\"password\": \"admin\"\n}"
 						},
 						"url": {
 							"raw": "localhost:8000/api/user/auth",
@@ -89,7 +90,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"password\",\n    \"confirmPassword\": \"password\"\n}"
+							"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"Password123!\",\n    \"confirmPassword\": \"Password123!\"\n}"
 						},
 						"url": {
 							"raw": "localhost:8000/api/user/register",
@@ -101,6 +102,38 @@
 								"api",
 								"user",
 								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8000/api/user/activate/:token",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"user",
+								"activate",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "token",
+									"value": "token"
+								}
 							]
 						}
 					},

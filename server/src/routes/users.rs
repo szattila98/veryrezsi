@@ -2,43 +2,57 @@ use super::common::ValidatedJson;
 use super::dto::NewUserRequest;
 use super::{dto::LoginRequest, error::ErrorMsg};
 use crate::auth::{self, AUTH_COOKIE_NAME};
+use crate::config::AppConfig;
+use crate::email::Mailer;
 use crate::logic::user_operations;
+use axum::extract::Path;
 use axum::{http::StatusCode, Extension, Json};
 use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
 use entity::user;
 use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
+use std::sync::Arc;
 
+/// Handles the login route.
 pub async fn login(
     ValidatedJson(login_data): ValidatedJson<LoginRequest>,
     Extension(ref conn): Extension<DatabaseConnection>,
     cookies: PrivateCookieJar,
 ) -> Result<PrivateCookieJar, ErrorMsg<()>> {
-    match user_operations::find_user_by_username(conn, login_data.username.to_string()).await {
+    match user_operations::find_user_by_email(conn, login_data.email.to_string()).await {
         Ok(user) => {
-            if bcrypt::verify(login_data.password, &user.pw_hash) {
-                return Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())));
+            return if user.activated {
+                return if bcrypt::verify(login_data.password, &user.pw_hash) {
+                    Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())))
+                } else {
+                    Err(ErrorMsg::new(
+                        StatusCode::UNAUTHORIZED,
+                        "incorrect credentials",
+                    ))
+                };
+            } else {
+                Err(ErrorMsg::new(
+                    StatusCode::BAD_REQUEST,
+                    "account not activated",
+                ))
             }
-            Err(ErrorMsg::new(
-                StatusCode::UNAUTHORIZED,
-                "incorrect credentials",
-            ))
         }
         Err(e) => Err(e.into()),
     }
 }
 
+/// Handles the current user query route.
 pub async fn me(
     Extension(ref conn): Extension<DatabaseConnection>,
     user: auth::AuthenticatedUser,
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
-    // TODO maybe query user from db in the guard and then there is even less repetition with always finding the user by id
     match user_operations::find_user_by_id(conn, user.id).await {
         Ok(user) => Ok(Json(user)),
         Err(e) => Err(e.into()),
     }
 }
 
+/// Handles the logout route.
 pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, ErrorMsg<()>> {
     match cookies.get(AUTH_COOKIE_NAME) {
         Some(cookie) => Ok(cookies.remove(cookie)),
@@ -46,12 +60,26 @@ pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, Error
     }
 }
 
+/// Handles the registration route.
 pub async fn register(
+    Extension(ref config): Extension<AppConfig>,
     Extension(ref conn): Extension<DatabaseConnection>,
+    Extension(mailer): Extension<Arc<Mailer>>,
     ValidatedJson(new_user): ValidatedJson<NewUserRequest>,
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
-    match user_operations::save_user(conn, new_user).await {
+    match user_operations::save_user(config, conn, mailer, new_user).await {
         Ok(user) => Ok(Json(user)),
+        Err(e) => Err(e.into()),
+    }
+}
+
+/// Handles the account activation route.
+pub async fn activate_account(
+    Extension(ref conn): Extension<DatabaseConnection>,
+    Path(token): Path<String>,
+) -> Result<&'static str, ErrorMsg<()>> {
+    match user_operations::activate_account(conn, token).await {
+        Ok(_) => Ok("Account activated!"),
         Err(e) => Err(e.into()),
     }
 }
