@@ -9,6 +9,9 @@ use std::collections::HashMap;
 use thiserror::Error;
 use tracing::log::error;
 
+pub const ACTIVATION_EMAIL_TEMPLATE: &str =
+    include_str!("./../resources/email/activation_email.html");
+
 /// Error types that can occur on email sending.
 #[derive(Debug, Error)]
 pub enum EmailError {
