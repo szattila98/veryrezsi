@@ -37,6 +37,14 @@ entity "User" as user {
   activated : boolean
 }
 
+entity "Account Activation" as account_activation {
+  * id : number <<generated>>
+  ---
+  * token : string
+  * user_id : string
+  * expiration : date
+}
+
 entity "User Expense" as uexp {
   * id : number <<generated>>
   ---
@@ -63,6 +71,7 @@ entity "Transaction" as utran {
 }
 
 uexp }o--|| user
+account_activation ||--|| user
 uexp }o--|| currtp
 uexp }o--|| recurrtp
 
