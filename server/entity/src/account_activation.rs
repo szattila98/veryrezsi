@@ -3,7 +3,14 @@ use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
 #[derive(
-    Clone, Debug, PartialEq, DeriveActiveModelBehavior, DeriveEntityModel, Deserialize, Serialize,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    DeriveActiveModelBehavior,
+    DeriveEntityModel,
+    Deserialize,
+    Serialize,
 )]
 #[sea_orm(table_name = "account_activations")]
 pub struct Model {

@@ -3,7 +3,14 @@ use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
 #[derive(
-    Clone, Debug, PartialEq, DeriveEntityModel, DeriveActiveModelBehavior, Deserialize, Serialize,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    DeriveEntityModel,
+    DeriveActiveModelBehavior,
+    Deserialize,
+    Serialize,
 )]
 #[sea_orm(table_name = "currency_types")]
 pub struct Model {
