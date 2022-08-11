@@ -2,8 +2,10 @@ use crate::{Id, Value};
 use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "predefined_expense")]
+#[derive(
+    Clone, Debug, PartialEq, DeriveEntityModel, DeriveActiveModelBehavior, Deserialize, Serialize,
+)]
+#[sea_orm(table_name = "expenses")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Id,
@@ -45,5 +47,3 @@ pub enum Relation {
     )]
     PredefinedExpense,
 }
-
-impl ActiveModelBehavior for ActiveModel {}

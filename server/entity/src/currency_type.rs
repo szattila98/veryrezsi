@@ -2,8 +2,10 @@ use crate::Id;
 use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Deserialize, Serialize)]
-#[sea_orm(table_name = "currency_type")]
+#[derive(
+    Clone, Debug, PartialEq, DeriveEntityModel, DeriveActiveModelBehavior, Deserialize, Serialize,
+)]
+#[sea_orm(table_name = "currency_types")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Id,
@@ -15,5 +17,3 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
-
-impl ActiveModelBehavior for ActiveModel {}
