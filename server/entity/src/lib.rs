@@ -7,4 +7,4 @@ pub mod transaction;
 pub mod user;
 
 pub type Id = i64;
-pub type Value = i64;
+pub type MoneyAmount = i64;

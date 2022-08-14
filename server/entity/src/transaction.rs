@@ -1,4 +1,4 @@
-use crate::{Id, Value};
+use crate::{Id, MoneyAmount};
 use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
@@ -17,7 +17,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Id,
     pub donor_name: String,
-    pub value: Value,
+    pub value: MoneyAmount,
     pub date: DateTimeLocal,
     pub currency_type_id: Id,
     pub expense_id: Id,

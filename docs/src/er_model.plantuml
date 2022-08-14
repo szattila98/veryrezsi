@@ -41,7 +41,7 @@ entity "Account Activation" as account_activation {
   * id : number <<generated>>
   ---
   * token : string
-  * user_id : string
+  * user_id : number <<fk>>
   * expiration : date
 }
 

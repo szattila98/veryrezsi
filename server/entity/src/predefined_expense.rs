@@ -1,4 +1,4 @@
-use crate::{Id, Value};
+use crate::{Id, MoneyAmount};
 use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
@@ -18,7 +18,7 @@ pub struct Model {
     pub id: Id,
     pub name: String,
     pub description: String,
-    pub value: Value,
+    pub value: MoneyAmount,
     pub currency_type_id: Id,
     pub recurrence_type_id: Id,
 }
