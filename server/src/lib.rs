@@ -20,7 +20,7 @@ pub mod routes;
 /// Returns the address of the server and the configured router.
 pub async fn init() -> (SocketAddr, Router) {
     print_logo();
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
     tracing_subscriber::fmt::init();
 
     info!("Loading config from env...");

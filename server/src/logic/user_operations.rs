@@ -1,6 +1,6 @@
 use super::error::UserError;
 use crate::config;
-use crate::email::{render_template, Mailer};
+use crate::email::{render_template, Mailer, ACTIVATION_EMAIL_TEMPLATE};
 use crate::routes::dto::NewUserRequest;
 use chrono::Duration;
 use entity::account_activation::{self, Entity as AccountActivation};
@@ -87,11 +87,10 @@ pub async fn save_user(
                 "http://{}/api/user/activate/{}",
                 config.server_address, activation.token
             );
-            let template = include_str!("./../../resources/email/activation_email.html");
             let mut data = HashMap::new();
             data.insert("username", &user.username);
             data.insert("activation_link", &activation_link);
-            let body = render_template(template, data);
+            let body = render_template(ACTIVATION_EMAIL_TEMPLATE, data);
             let email = user.email.clone();
             tokio::spawn(async move {
                 if let Err(e) = mailer

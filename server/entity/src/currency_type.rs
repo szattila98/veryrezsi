@@ -7,23 +7,19 @@ use serde::{self, Deserialize, Serialize};
     Debug,
     PartialEq,
     Eq,
-    DeriveActiveModelBehavior,
     DeriveEntityModel,
+    DeriveActiveModelBehavior,
     Deserialize,
     Serialize,
 )]
-#[sea_orm(table_name = "users")]
+#[sea_orm(table_name = "currency_types")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Id,
     #[sea_orm(unique)]
-    pub email: String,
-    pub username: String,
-    #[serde(skip_serializing)]
-    pub pw_hash: String,
-    #[sea_orm(default_value = "false")]
-    #[serde(skip_serializing)]
-    pub activated: bool,
+    pub abbreviation: String,
+    #[sea_orm(unique)]
+    pub name: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
