@@ -23,6 +23,10 @@
 - To manipulate migrations, refer to the README.md in the `server/migration` directory and use the CLI tool
   - It uses the outer `.env` file for the connection string but it can be supplied with it's own file in the `server/migration` directory if needed
 
+## Use the API
+- There is a Postman collection file, ready to be used for testing during development at `server/postman_collections.json`
+  - Don't just use it, remember to update it when any of the API schema changes. 
+
 # Frontend dev setup
 
 ## Prerequisites

@@ -1,6 +1,6 @@
 use super::common::ValidatedJson;
-use super::dto::NewUserRequest;
-use super::{dto::LoginRequest, error::ErrorMsg};
+use super::dto::users::NewUserRequest;
+use super::{dto::users::LoginRequest, error::ErrorMsg};
 use crate::auth::{self, AUTH_COOKIE_NAME};
 use crate::config::AppConfig;
 use crate::email::Mailer;

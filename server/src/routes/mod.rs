@@ -31,7 +31,12 @@ pub fn init(
         .route("/register", post(users::register))
         .route("/activate/:token", get(users::activate_account));
 
-    let api = Router::new().nest("/user", user_api);
+    let expense_api = Router::new()
+        .route("/", get)
+
+    let api = Router::new()
+        .nest("/user", user_api)
+        .nest("/expense", expense_api);
 
     Router::new().nest("/api", api).layer(
         ServiceBuilder::new()
