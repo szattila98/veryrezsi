@@ -16,6 +16,8 @@ pub mod dto;
 pub mod error;
 /// User route handlers.
 pub mod users;
+/// Expense route handlers.
+pub mod expenses;
 
 /// Initializes the router with the extension layers and the route handlers.
 pub fn init(
@@ -32,7 +34,8 @@ pub fn init(
         .route("/activate/:token", get(users::activate_account));
 
     let expense_api = Router::new()
-        .route("/", get)
+        .route("/", post(expenses::create_expense))
+        .route("/:userid", get(expenses::get_expenses));
 
     let api = Router::new()
         .nest("/user", user_api)

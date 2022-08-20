@@ -1,17 +1,27 @@
 use super::common::ValidatedJson;
-use super::dto::expenses::NewUserRequest;
+use super::dto::expenses::NewExpenseRequest;
 use super::{dto::expenses::LoginRequest, error::ErrorMsg};
-use crate::auth::{self, AUTH_COOKIE_NAME};
-use crate::config::AppConfig;
-use crate::logic::expense_operation;
-use axum::extract::Path;
-use axum::{http::StatusCode, Extension, Json};
-use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
-use entity::user;
-use pwhash::bcrypt;
-use sea_orm::DatabaseConnection;
-use std::sync::Arc;
+use crate::logic::expense_operations;
 
-pub async fn getExpenses(
-	ValidatedJson(request_data): ValidatedJson<>
-)
+use axum::{http::StatusCode, Extension, Json};
+use axum_extra::extract::PrivateCookieJar;
+use entity::{expense, Id};
+use sea_orm::DatabaseConnection;
+
+// Not a good idea to return with domain model
+pub async fn get_expenses(
+	Extension(ref conn): Extension<DatabaseConnection>,
+    cookies: PrivateCookieJar,
+) -> Result<Json<[expense::Model]>, ErrorMsg<()>> {
+	todo!()
+}
+
+
+pub async fn create_expense(
+	ValidatedJson(new_request_data): ValidatedJson<NewExpenseRequest>,
+	Path(userid): Path<String>
+	Extension(ref conn): Extension<DatabaseConnection>,
+    cookies: PrivateCookieJar
+) -> Result<Json<Id>, ErrorMsg<()>> {
+	todo!()
+}
