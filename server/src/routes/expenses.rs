@@ -12,7 +12,7 @@ use sea_orm::DatabaseConnection;
 pub async fn get_expenses(
 	Extension(ref conn): Extension<DatabaseConnection>,
     cookies: PrivateCookieJar,
-) -> Result<Json<[expense::Model]>, ErrorMsg<()>> {
+) -> Result<Json<Vec<expense::Model>>, ErrorMsg<()>> {
 	todo!()
 }
 
