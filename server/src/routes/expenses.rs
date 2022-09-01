@@ -1,8 +1,8 @@
 use super::common::ValidatedJson;
-use super::dto::expenses::NewExpenseRequest;
-use super::{dto::expenses::LoginRequest, error::ErrorMsg};
+use super::{dto::expenses::NewExpenseRequest, error::ErrorMsg};
 use crate::logic::expense_operations;
 
+use axum::extract::Path;
 use axum::{http::StatusCode, Extension, Json};
 use axum_extra::extract::PrivateCookieJar;
 use entity::{expense, Id};
@@ -19,7 +19,7 @@ pub async fn get_expenses(
 
 pub async fn create_expense(
 	ValidatedJson(new_request_data): ValidatedJson<NewExpenseRequest>,
-	Path(userid): Path<String>
+	Path(userid): Path<String>,
 	Extension(ref conn): Extension<DatabaseConnection>,
     cookies: PrivateCookieJar
 ) -> Result<Json<Id>, ErrorMsg<()>> {

@@ -21,8 +21,23 @@ pub enum UserError {
     DatabaseError(#[from] DbErr),
 }
 
+#[derive(Error, Debug)]
+pub enum ExpenseError {
+    #[error("No expense found for user '{0}'")]
+    NoExpenseFoundForUser(String),
+}
+
 impl From<TransactionError<UserError>> for UserError {
     fn from(e: TransactionError<UserError>) -> Self {
+        match e {
+            TransactionError::Connection(e) => e.into(),
+            TransactionError::Transaction(e) => e,
+        }
+    }
+}
+
+impl From<TransactionError<ExpenseError>> for ExpenseError {
+    fn from(e: TransactionError<ExpenseError>) -> Self {
         match e {
             TransactionError::Connection(e) => e.into(),
             TransactionError::Transaction(e) => e,
