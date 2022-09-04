@@ -5,7 +5,8 @@ use lettre::{
     transport::smtp::{authentication::Credentials, PoolConfig},
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
-use std::collections::HashMap;
+use serde::Serialize;
+use std::{collections::HashMap, hash::Hash};
 use thiserror::Error;
 use tracing::log::error;
 
@@ -63,8 +64,63 @@ impl Mailer {
 
 /// Renders a template using handlebars.
 /// The `data` will be substituted into the `template` string.
-pub fn render_template(template: &str, data: HashMap<&str, &String>) -> String {
-    Handlebars::new()
+/// Accepts data in the form of a hashmap of any type of string key/value pairs.
+/// Rendering is strict, so it fails if the template is supplied with the wrong data. Additional data is ignored.
+pub fn render_template<K, V>(template: &str, data: HashMap<K, V>) -> String
+where
+    K: AsRef<str> + Serialize + Hash + Eq,
+    V: AsRef<str> + Serialize + Hash + Eq,
+{
+    let mut handlebars = Handlebars::new();
+    handlebars.set_strict_mode(true);
+    handlebars
         .render_template(template, &data)
         .expect("Failed to render template")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn render_template_substitutes_correctly() {
+        let template = "{{ a }}-{{ b }}-{{ c }}";
+        let data = "abc"
+            .chars()
+            .map(|c| (c.to_string(), c.to_string()))
+            .collect::<HashMap<_, _>>();
+        let rendered = render_template(template, data);
+        assert_eq!(rendered, "a-b-c");
+    }
+
+    #[test]
+    #[should_panic]
+    fn render_template_panics_on_empty_data() {
+        let template = "{{ a }}-{{ b }}-{{ c }}";
+        let data: HashMap<String, String> = HashMap::new();
+        render_template(template, data);
+    }
+
+    #[test]
+    #[should_panic]
+    fn render_template_panics_on_wrong_data() {
+        let template = "{{ a }}-{{ b }}-{{ c }}";
+        let data = "def"
+            .chars()
+            .map(|c| (c.to_string(), c.to_string()))
+            .collect::<HashMap<_, _>>();
+        render_template(template, data);
+    }
+
+    #[test]
+    fn render_template_additional_data_is_ignored() {
+        let template = "{{ a }}-{{ b }}-{{ c }}";
+        let mut data = "abc"
+            .chars()
+            .map(|c| (c.to_string(), c.to_string()))
+            .collect::<HashMap<_, _>>();
+        data.insert("d".to_string(), "d".to_string());
+        let rendered = render_template(template, data);
+        assert_eq!(rendered, "a-b-c");
+    }
 }
