@@ -3,7 +3,7 @@ use super::dto::NewUserRequest;
 use super::{dto::LoginRequest, error::ErrorMsg};
 use crate::auth::{self, AUTH_COOKIE_NAME};
 use crate::config::AppConfig;
-use crate::email::Mailer;
+use crate::email::MailTransport;
 use crate::logic::user_operations;
 use axum::extract::Path;
 use axum::{http::StatusCode, Extension, Json};
@@ -64,10 +64,10 @@ pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, Error
 pub async fn register(
     Extension(ref config): Extension<AppConfig>,
     Extension(ref conn): Extension<DatabaseConnection>,
-    Extension(mailer): Extension<Arc<Mailer>>,
+    Extension(mail_transport): Extension<Arc<MailTransport>>,
     ValidatedJson(new_user): ValidatedJson<NewUserRequest>,
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
-    match user_operations::save_user(config, conn, mailer, new_user).await {
+    match user_operations::save_user(config, conn, mail_transport, new_user).await {
         Ok(user) => Ok(Json(user)),
         Err(e) => Err(e.into()),
     }

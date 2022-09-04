@@ -1,11 +1,12 @@
 use super::error::UserError;
 use crate::config;
-use crate::email::{render_template, Mailer, ACTIVATION_EMAIL_TEMPLATE};
+use crate::email::{render_template, send_mail, ACTIVATION_EMAIL_TEMPLATE};
 use crate::routes::dto::NewUserRequest;
 use chrono::Duration;
 use entity::account_activation::{self, Entity as AccountActivation};
 use entity::user::{self, Entity as User};
 use entity::Id;
+use lettre::AsyncTransport;
 use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
@@ -15,7 +16,7 @@ use sea_orm::{
 };
 use std::collections::HashMap;
 use std::sync::Arc;
-use tracing::{debug, error};
+use tracing::debug;
 
 /// Finds a user by its email in the database.
 pub async fn find_user_by_email(
@@ -41,12 +42,16 @@ pub async fn find_user_by_id(conn: &DatabaseConnection, id: Id) -> Result<user::
 }
 
 /// Saves a new user to the database, encrypts the password and sends an activation email.
-pub async fn save_user(
+pub async fn save_user<M>(
     config: &config::AppConfig,
     conn: &DatabaseConnection,
-    mailer: Arc<Mailer>,
+    mail_transport: Arc<M>,
     req: NewUserRequest,
-) -> Result<user::Model, UserError> {
+) -> Result<user::Model, UserError>
+where
+    M: AsyncTransport + Send + Sync + 'static,
+    <M as AsyncTransport>::Error: std::fmt::Debug,
+{
     match User::find()
         .filter(user::Column::Email.eq(req.email.clone()))
         .one(conn)
@@ -93,14 +98,8 @@ pub async fn save_user(
             let body = render_template(ACTIVATION_EMAIL_TEMPLATE, data);
             let email = user.email.clone();
             tokio::spawn(async move {
-                if let Err(e) = mailer
-                    .send(email, "Veryrezsi account activation", body)
-                    .await
-                {
-                    error!("{e}")
-                } else {
-                    debug!("Sent activation email");
-                }
+                send_mail(mail_transport, email, "Veryrezsi account activation", body).await;
+                debug!("Sent activation email");
             });
 
             Ok(user)

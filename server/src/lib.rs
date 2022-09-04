@@ -8,6 +8,8 @@ use config::AppConfig;
 use std::net::SocketAddr;
 use tracing::{debug, info};
 
+use crate::email::get_mail_transport;
+
 mod auth;
 mod config;
 mod database;
@@ -32,16 +34,16 @@ pub async fn init() -> (SocketAddr, Router) {
     let conn = database::init(&config).await;
     info!("Successfully established database connection");
 
-    info!("Initializing mailer...");
-    let mailer = email::Mailer::init(&config.mail_config);
-    info!("Successfully initialized mailer");
+    info!("Initializing mail transport...");
+    let mail_transport = get_mail_transport(&config.mail_config);
+    info!("Successfully initialized mail transport");
 
     info!("Creating api routes and loading extensions...");
     let router = routes::init(
         config.clone(),
         conn,
         Key::from(config.cookie_key.as_bytes()),
-        mailer,
+        mail_transport,
     );
     info!("Successfully created api routes with extensions");
 

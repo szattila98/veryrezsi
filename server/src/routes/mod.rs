@@ -1,4 +1,4 @@
-use crate::{config::AppConfig, email::Mailer};
+use crate::{config::AppConfig, email::MailTransport};
 use axum::{
     routing::{get, post},
     Extension, Router,
@@ -22,7 +22,7 @@ pub fn init(
     config: AppConfig,
     conn: DatabaseConnection,
     secret_key: Key,
-    mailer: Mailer,
+    mail_transport: MailTransport,
 ) -> Router {
     let user_api = Router::new()
         .route("/auth", post(users::login))
@@ -38,6 +38,6 @@ pub fn init(
             .layer(Extension(config))
             .layer(Extension(conn))
             .layer(Extension(secret_key))
-            .layer(Extension(Arc::new(mailer))),
+            .layer(Extension(Arc::new(mail_transport))),
     )
 }

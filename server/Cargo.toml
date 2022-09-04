@@ -23,22 +23,22 @@ keywords = ["api", "calculator", "web-app", "expenses-manager", "rocket"]
 categories = ["web-programming"]
 
 [dependencies]
-tokio = { version = "1.20.1", features = ["full"] }
+tokio = { version = "1.21.0", features = ["full"] }
 axum = "0.5.15"
 axum-extra = { version = "0.3.7", features = ["cookie-private"] }
 tower = "0.4.13"
-dotenvy = "0.15.1"
-serde = "1.0.143"
-serde_json = "1.0.83"
-sea-orm = { version = "0.9.1", features = [ "sqlx-mysql", "runtime-tokio-rustls", "macros" ] }
+dotenvy = "0.15.3"
+serde = "1.0.144"
+serde_json = "1.0.85"
+sea-orm = { version = "0.9.2", features = [ "sqlx-mysql", "runtime-tokio-rustls", "macros" ] }
 entity = { path = "entity" }
 migration = { path = "migration" }
 tracing = "0.1.36"
 tracing-subscriber = { version = "0.3.15", features = ["env-filter"] }
-thiserror = "1.0.32"
+thiserror = "1.0.33"
 pwhash = "1.0.0"
 validator = { version = "0.16.0", features = ["derive"] }
-chrono = "0.4.21"
+chrono = "0.4.22"
 lettre = { version = "0.10.1", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
 fancy-regex = "0.10.0"
 lazy_static = "1.4.0"

@@ -16,6 +16,11 @@
   - mysql database in a docker container with docker-compose
     - Run `docker-compose up -d database` and a database will be available at the 3306 port, already initialized
 
+## Starting mailhog
+
+- Mailhog may be needed for some functionalities, altough if not present it only causes error messages in the log.
+- Run it locally or with `docker-compose up -d mailhog`.
+
 ## Running server
 
 - Build and run with `cargo run`, it will automatically run database migrations
