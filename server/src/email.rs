@@ -41,8 +41,8 @@ where
 }
 
 /// Sends an email.
-/// Panics if an error is encountered, but as it is async and should be in a separate async task,
-/// which if panics won't kill the whole server.
+/// Panics if an error is encountered, but it should be running as a separate async task,
+/// which if panics won't kill the function it is used in or the whole server.
 pub async fn send_mail<T>(transport: Arc<T>, to: String, subject: &str, body: String)
 where
     T: AsyncTransport + Send + Sync,
@@ -66,9 +66,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use lettre::transport::stub::AsyncStubTransport;
-
     use super::*;
+    use lettre::transport::stub::AsyncStubTransport;
 
     #[test]
     fn render_template_substitutes_correctly() {
@@ -110,5 +109,43 @@ mod tests {
         data.insert("d".to_string(), "d".to_string());
         let rendered = render_template(template, data);
         assert_eq!(rendered, "a-b-c");
+    }
+
+    #[tokio::test]
+    async fn send_mail_correctly_sends_an_email() {
+        let mail_transport = Arc::new(AsyncStubTransport::new_ok());
+        let to = "test@test.com".to_string();
+        let subject = "test subject";
+        let body = "test body".to_string();
+        send_mail(mail_transport, to, subject, body).await;
+    }
+
+    #[tokio::test]
+    #[should_panic]
+    async fn send_mail_panics_on_empty_to() {
+        let mail_transport = Arc::new(AsyncStubTransport::new_ok());
+        let to = "".to_string();
+        let subject = "test subject";
+        let body = "test body".to_string();
+        send_mail(mail_transport, to, subject, body).await;
+    }
+
+    #[tokio::test]
+    async fn send_mail_correctly_sends_with_empty_subject_and_body() {
+        let mail_transport = Arc::new(AsyncStubTransport::new_ok());
+        let to = "test@test.com".to_string();
+        let subject = "";
+        let body = "".to_string();
+        send_mail(mail_transport, to, subject, body).await;
+    }
+
+    #[tokio::test]
+    #[should_panic]
+    async fn send_mail_panics_when_transport_fails() {
+        let mail_transport = Arc::new(AsyncStubTransport::new_error());
+        let to = "test to".to_string();
+        let subject = "test subject";
+        let body = "test body".to_string();
+        send_mail(mail_transport, to, subject, body).await;
     }
 }
