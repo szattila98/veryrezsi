@@ -117,7 +117,8 @@ mod tests {
         let to = "test@test.com".to_string();
         let subject = "test subject";
         let body = "test body".to_string();
-        send_mail(mail_transport, to, subject, body).await;
+        send_mail(mail_transport.clone(), to, subject, body).await;
+        assert_eq!(mail_transport.messages().await.len(), 1);
     }
 
     #[tokio::test]
@@ -136,7 +137,8 @@ mod tests {
         let to = "test@test.com".to_string();
         let subject = "";
         let body = "".to_string();
-        send_mail(mail_transport, to, subject, body).await;
+        send_mail(mail_transport.clone(), to, subject, body).await;
+        assert_eq!(mail_transport.messages().await.len(), 1);
     }
 
     #[tokio::test]
