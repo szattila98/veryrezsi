@@ -29,3 +29,65 @@ impl From<TransactionError<UserError>> for UserError {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn transaction_connection_err_converts_to_database_user_err() {
+        let dbe = DbErr::Custom("test".to_string());
+        let tre = TransactionError::<UserError>::Connection(dbe);
+        let ue = UserError::from(tre);
+        match ue {
+            UserError::DatabaseError(e) => match e {
+                DbErr::Custom(s) => assert_eq!(s, "test".to_string()),
+                _ => panic!(),
+            },
+            _ => panic!(),
+        };
+    }
+
+    #[test]
+    fn transaction_err_returns_user_err() {
+        let ue = UserError::UserNotFound("test".to_string());
+        let tre = TransactionError::<UserError>::Transaction(ue);
+        let ue = UserError::from(tre);
+        match ue {
+            UserError::UserNotFound(e) => assert_eq!(e, "test".to_string()),
+            _ => panic!(),
+        };
+
+        let ue = UserError::EmailAlreadyExists("test".to_string());
+        let tre = TransactionError::<UserError>::Transaction(ue);
+        let ue = UserError::from(tre);
+        match ue {
+            UserError::EmailAlreadyExists(e) => assert_eq!(e, "test".to_string()),
+            _ => panic!(),
+        };
+
+        let ue = UserError::PasswordCannotBeHashed(PwHashError::RandomError("test".to_string()));
+        let tre = TransactionError::<UserError>::Transaction(ue);
+        let ue = UserError::from(tre);
+        match ue {
+            UserError::PasswordCannotBeHashed(e) => assert_eq!(e.to_string(), "test".to_string()),
+            _ => panic!(),
+        };
+
+        let ue = UserError::ActivationTokenNotFound("test".to_string());
+        let tre = TransactionError::<UserError>::Transaction(ue);
+        let ue = UserError::from(tre);
+        match ue {
+            UserError::ActivationTokenNotFound(e) => assert_eq!(e, "test".to_string()),
+            _ => panic!(),
+        };
+
+        let ue = UserError::ActivationTokenExpired;
+        let tre = TransactionError::<UserError>::Transaction(ue);
+        let ue = UserError::from(tre);
+        match ue {
+            UserError::ActivationTokenExpired => (),
+            _ => panic!(),
+        };
+    }
+}

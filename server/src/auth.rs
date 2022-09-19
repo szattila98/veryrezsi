@@ -58,6 +58,6 @@ impl From<ExtensionRejection> for ErrorMsg<()> {
 impl From<ParseIntError> for ErrorMsg<()> {
     fn from(e: ParseIntError) -> Self {
         debug!("{e}");
-        ErrorMsg::new(StatusCode::BAD_REQUEST, "malformed cookie, non-parseable")
+        ErrorMsg::new(StatusCode::BAD_REQUEST, "malformed cookie, non-parsable")
     }
 }
