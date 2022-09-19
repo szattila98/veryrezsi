@@ -39,13 +39,14 @@ mod tests {
         let dbe = DbErr::Custom("test".to_string());
         let tre = TransactionError::<UserError>::Connection(dbe);
         let ue = UserError::from(tre);
-        match ue {
+        let res = match ue {
             UserError::DatabaseError(e) => match e {
-                DbErr::Custom(s) => assert_eq!(s, "test".to_string()),
-                _ => panic!(),
+                DbErr::Custom(s) => s == "test".to_string(),
+                _ => false,
             },
-            _ => panic!(),
+            _ => false,
         };
+        assert!(res);
     }
 
     #[test]
@@ -53,41 +54,46 @@ mod tests {
         let ue = UserError::UserNotFound("test".to_string());
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
-        match ue {
-            UserError::UserNotFound(e) => assert_eq!(e, "test".to_string()),
-            _ => panic!(),
+        let res = match ue {
+            UserError::UserNotFound(e) => e == "test".to_string(),
+            _ => false,
         };
+        assert!(res);
 
         let ue = UserError::EmailAlreadyExists("test".to_string());
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
-        match ue {
-            UserError::EmailAlreadyExists(e) => assert_eq!(e, "test".to_string()),
-            _ => panic!(),
+        let res = match ue {
+            UserError::EmailAlreadyExists(e) => e == "test".to_string(),
+            _ => false,
         };
+        assert!(res);
 
         let ue = UserError::PasswordCannotBeHashed(PwHashError::RandomError("test".to_string()));
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
-        match ue {
-            UserError::PasswordCannotBeHashed(e) => assert_eq!(e.to_string(), "test".to_string()),
-            _ => panic!(),
+        let res = match ue {
+            UserError::PasswordCannotBeHashed(e) => e.to_string() == "test".to_string(),
+            _ => false,
         };
+        assert!(res);
 
         let ue = UserError::ActivationTokenNotFound("test".to_string());
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
-        match ue {
-            UserError::ActivationTokenNotFound(e) => assert_eq!(e, "test".to_string()),
-            _ => panic!(),
+        let res = match ue {
+            UserError::ActivationTokenNotFound(e) => e == "test".to_string(),
+            _ => false,
         };
+        assert!(res);
 
         let ue = UserError::ActivationTokenExpired;
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
-        match ue {
-            UserError::ActivationTokenExpired => (),
-            _ => panic!(),
+        let res = match ue {
+            UserError::ActivationTokenExpired => true,
+            _ => false,
         };
+        assert!(res)
     }
 }
