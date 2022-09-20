@@ -31,7 +31,7 @@ pub struct NewExpenseRequest {
 
 	pub predefined_expense_id: Id,
 
-	// TODO: Date format validator
+	#[validate(custom = "validate_date")]
 	pub start_date: String,
 
 	pub value: MoneyAmount,

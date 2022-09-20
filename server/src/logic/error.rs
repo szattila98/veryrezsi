@@ -25,6 +25,8 @@ pub enum UserError {
 pub enum ExpenseError {
     #[error("No expense found for user '{0}'")]
     NoExpenseFoundForUser(String),
+    #[error("database error: '{0}'")]
+    DatabaseError(#[from] DbErr),
 }
 
 impl From<TransactionError<UserError>> for UserError {

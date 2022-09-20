@@ -1,6 +1,6 @@
 #![allow(missing_docs)]
 
-use crate::logic::error::UserError;
+use crate::logic::error::{ExpenseError, UserError};
 use axum::{
     extract::rejection::JsonRejection,
     http::StatusCode,
@@ -87,6 +87,17 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
             }
             UserError::ActivationTokenExpired => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
             UserError::DatabaseError(_) => {
+                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+            }
+        }
+    }
+}
+
+impl<D: Serialize> From<ExpenseError> for ErrorMsg<D> {
+    fn from(e: ExpenseError) -> Self {
+        match e {
+            ExpenseError::NoExpenseFoundForUser(_) => Self::new(StatusCode::NOT_FOUND, e.to_string()),
+            ExpenseError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
         }
