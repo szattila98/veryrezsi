@@ -1,6 +1,7 @@
 use entity::{currency_type, expense, transaction};
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
+use sea_orm_migration::sea_orm::prelude::Decimal;
 use sea_orm_migration::sea_orm::Set;
 
 #[derive(DeriveMigrationName)]
@@ -27,7 +28,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(transaction::Column::Value)
-                            .big_integer()
+                            .decimal_len(12, 2)
                             .not_null(),
                     )
                     .col(
@@ -69,7 +70,7 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(1),
             donor_name: Set("Kate".to_string()),
-            value: Set(500),
+            value: Set(Decimal::new(5, 2)),
             date: Set(chrono::Local::now()),
             currency_type_id: Set(1),
             expense_id: Set(1),
@@ -79,7 +80,7 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(2),
             donor_name: Set("David".to_string()),
-            value: Set(700),
+            value: Set(Decimal::new(7, 0)),
             date: Set(chrono::Local::now()),
             currency_type_id: Set(1),
             expense_id: Set(1),
@@ -89,7 +90,7 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(3),
             donor_name: Set("Wifey".to_string()),
-            value: Set(5000),
+            value: Set(Decimal::new(50, 0)),
             date: Set(chrono::Local::now()),
             currency_type_id: Set(1),
             expense_id: Set(2),
@@ -99,7 +100,7 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(4),
             donor_name: Set("My colleague who use exotic Hungarian Forint".to_string()),
-            value: Set(1000),
+            value: Set(Decimal::new(10, 0)),
             date: Set(chrono::Local::now()),
             currency_type_id: Set(1),
             expense_id: Set(2),

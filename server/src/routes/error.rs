@@ -96,9 +96,14 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
 impl<D: Serialize> From<ExpenseError> for ErrorMsg<D> {
     fn from(e: ExpenseError) -> Self {
         match e {
-            ExpenseError::NoExpenseFoundForUser(_) => Self::new(StatusCode::NOT_FOUND, e.to_string()),
+            ExpenseError::NoExpenseFoundForUser(_) => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
+            }
             ExpenseError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+            }
+            ExpenseError::InvalidExpenseData(_) => {
+                Self::new(StatusCode::BAD_REQUEST, e.to_string())
             }
         }
     }

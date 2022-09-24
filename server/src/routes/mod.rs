@@ -14,10 +14,10 @@ pub mod common;
 pub mod dto;
 /// Error handling on the controller level.
 pub mod error;
-/// User route handlers.
-pub mod users;
 /// Expense route handlers.
 pub mod expenses;
+/// User route handlers.
+pub mod users;
 
 /// Initializes the router with the extension layers and the route handlers.
 pub fn init(
