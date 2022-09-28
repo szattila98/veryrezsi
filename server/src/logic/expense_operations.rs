@@ -3,7 +3,10 @@ use super::error::ExpenseError;
 use crate::routes::dto::expenses::NewExpenseRequest;
 
 use chrono::NaiveDate;
+use entity::currency_type::{self, Entity as CurrencyType};
 use entity::expense::{self, Entity as Expense};
+use entity::predefined_expense::{self, Entity as PredefinedExpense};
+use entity::recurrence_type::{self, Entity as RecurrenceType};
 
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
@@ -28,6 +31,32 @@ pub async fn create_expense(
     user_id: i64,
     req: NewExpenseRequest,
 ) -> Result<i64, ExpenseError> {
+    if req.predefined_expense_id.is_some()
+        && PredefinedExpense::find()
+            .filter(predefined_expense::Column::Id.eq(req.predefined_expense_id))
+            .one(conn)
+            .await?
+            .is_none()
+    {
+        return Err(ExpenseError::InvalidExpenseData(String::from(
+            "Predefined expense id is defined but we have no expense with this id.",
+        )));
+    }
+
+    let referred_recurrence_type = RecurrenceType::find()
+        .filter(recurrence_type::Column::Id.eq(req.recurrence_type_id))
+        .one(conn);
+
+    let referred_currency_type = CurrencyType::find()
+        .filter(currency_type::Column::Id.eq(req.currency_type_id))
+        .one(conn);
+
+    if referred_recurrence_type.await?.is_none() || referred_currency_type.await?.is_none() {
+        return Err(ExpenseError::InvalidExpenseData(String::from(
+            "We have no recurrence or currency type with the given id.",
+        )));
+    }
+
     let parsed_date = NaiveDate::parse_from_str(&req.start_date, "%d-%m-%Y")?;
 
     let expense = expense::ActiveModel {

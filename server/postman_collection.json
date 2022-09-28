@@ -2,7 +2,8 @@
 	"info": {
 		"_postman_id": "b6949edc-30d7-45dc-97c6-eb825c6503d6",
 		"name": "veryrezsi",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3871640"
 	},
 	"item": [
 		{
@@ -152,6 +153,34 @@
 							"path": [
 								"expense",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_expense",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Disney+\",\r\n    \"description\": \"We need princesses and Jedis\",\r\n    \"recurrenceTypeId\": 1,\r\n    \"currencyTypeId\": 2,\r\n    \"predefinedExpenseId\": null,\r\n    \"startDate\": \"29-08-2019\",\r\n    \"value\": 14.99\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/expense/",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"expense",
+								""
 							]
 						}
 					},
