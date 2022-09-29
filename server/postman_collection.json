@@ -173,14 +173,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}:{{port}}{{apiBase}}/expense/",
+							"raw": "{{host}}:{{port}}{{apiBase}}/expense",
 							"host": [
 								"{{host}}"
 							],
 							"port": "{{port}}{{apiBase}}",
 							"path": [
-								"expense",
-								""
+								"expense"
 							]
 						}
 					},

@@ -24,7 +24,7 @@ pub async fn login(
             return if user.activated {
                 return if bcrypt::verify(login_data.password, &user.pw_hash) {
                     let mut cookie = Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string());
-                    cookie.set_path("/api/");
+                    cookie.set_path("/api");
                     Ok(cookies.add(cookie))
                 } else {
                     Err(ErrorMsg::new(
