@@ -1,3 +1,6 @@
+/// Common definitions for all logic code.
+mod common;
+
 /// Errors that can happen during the execution of logic.
 pub mod error;
 

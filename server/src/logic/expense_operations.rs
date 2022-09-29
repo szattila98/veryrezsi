@@ -1,3 +1,4 @@
+use super::common;
 use super::error::ExpenseError;
 
 use crate::routes::dto::expenses::NewExpenseRequest;
@@ -43,21 +44,24 @@ pub async fn create_expense(
         )));
     }
 
-    let referred_recurrence_type = RecurrenceType::find()
+    let referred_recurrence_query = RecurrenceType::find()
         .filter(recurrence_type::Column::Id.eq(req.recurrence_type_id))
         .one(conn);
 
-    let referred_currency_type = CurrencyType::find()
+    let referred_currency_query = CurrencyType::find()
         .filter(currency_type::Column::Id.eq(req.currency_type_id))
         .one(conn);
 
-    if referred_recurrence_type.await?.is_none() || referred_currency_type.await?.is_none() {
+    let (referred_recurrence_type, referred_currency_type) =
+        tokio::join!(referred_currency_query, referred_recurrence_query);
+
+    if referred_recurrence_type.unwrap().is_none() || referred_currency_type.unwrap().is_none() {
         return Err(ExpenseError::InvalidExpenseData(String::from(
             "We have no recurrence or currency type with the given id.",
         )));
     }
 
-    let parsed_date = NaiveDate::parse_from_str(&req.start_date, "%d-%m-%Y")?;
+    let parsed_date = NaiveDate::parse_from_str(&req.start_date, common::DATE_FORMAT)?;
 
     let expense = expense::ActiveModel {
         id: NotSet,
