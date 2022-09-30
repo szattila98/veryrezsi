@@ -21,9 +21,6 @@ pub async fn find_expenses_by_user_id(
         .all(conn)
         .await?;
 
-    if expenses.is_empty() {
-        return Err(ExpenseError::NoExpenseFoundForUser(user_id.to_string()));
-    }
     Ok(expenses)
 }
 
