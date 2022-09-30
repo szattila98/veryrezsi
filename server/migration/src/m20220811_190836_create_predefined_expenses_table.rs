@@ -1,6 +1,7 @@
 use entity::{currency_type, predefined_expense, recurrence_type};
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
+use sea_orm_migration::sea_orm::prelude::Decimal;
 use sea_orm_migration::sea_orm::Set;
 
 #[derive(DeriveMigrationName)]
@@ -32,7 +33,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(predefined_expense::Column::Value)
-                            .big_integer()
+                            .decimal_len(12, 2)
                             .not_null(),
                     )
                     .col(
@@ -70,7 +71,7 @@ impl MigrationTrait for Migration {
             id: Set(1),
             name: Set("Netflix Basic".to_string()),
             description: Set("Cheapest monthly plan of Netflix".to_string()),
-            value: Set(2490),
+            value: Set(Decimal::new(249, 1)),
             currency_type_id: Set(1),
             recurrence_type_id: Set(1),
         }
@@ -80,7 +81,7 @@ impl MigrationTrait for Migration {
             id: Set(2),
             name: Set("Netflix Standard".to_string()),
             description: Set("Budget monthly plan of Netflix".to_string()),
-            value: Set(3490),
+            value: Set(Decimal::new(349, 1)),
             currency_type_id: Set(1),
             recurrence_type_id: Set(1),
         }
@@ -90,7 +91,7 @@ impl MigrationTrait for Migration {
             id: Set(3),
             name: Set("Netflix Premium".to_string()),
             description: Set("Fully flashed monthly plan of Netflix".to_string()),
-            value: Set(4490),
+            value: Set(Decimal::new(449, 1)),
             currency_type_id: Set(1),
             recurrence_type_id: Set(1),
         }
@@ -102,7 +103,7 @@ impl MigrationTrait for Migration {
             description: Set(
                 "The most popular IDE of JetBrains with all of its features".to_string()
             ),
-            value: Set(499),
+            value: Set(Decimal::new(499, 2)),
             currency_type_id: Set(2),
             recurrence_type_id: Set(2),
         }

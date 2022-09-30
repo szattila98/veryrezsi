@@ -1,7 +1,7 @@
 use super::error::UserError;
 use crate::config;
 use crate::email::{render_template, Mailer, ACTIVATION_EMAIL_TEMPLATE};
-use crate::routes::dto::NewUserRequest;
+use crate::routes::dto::users::NewUserRequest;
 use chrono::Duration;
 use entity::account_activation::{self, Entity as AccountActivation};
 use entity::user::{self, Entity as User};

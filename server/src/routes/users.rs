@@ -1,6 +1,6 @@
 use super::common::ValidatedJson;
-use super::dto::NewUserRequest;
-use super::{dto::LoginRequest, error::ErrorMsg};
+use super::dto::users::NewUserRequest;
+use super::{dto::users::LoginRequest, error::ErrorMsg};
 use crate::auth::{self, AUTH_COOKIE_NAME};
 use crate::config::AppConfig;
 use crate::email::Mailer;
@@ -23,7 +23,9 @@ pub async fn login(
         Ok(user) => {
             return if user.activated {
                 return if bcrypt::verify(login_data.password, &user.pw_hash) {
-                    Ok(cookies.add(Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string())))
+                    let mut cookie = Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string());
+                    cookie.set_path("/api");
+                    Ok(cookies.add(cookie))
                 } else {
                     Err(ErrorMsg::new(
                         StatusCode::UNAUTHORIZED,

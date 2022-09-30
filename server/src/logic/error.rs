@@ -21,11 +21,36 @@ pub enum UserError {
     DatabaseError(#[from] DbErr),
 }
 
+#[derive(Error, Debug)]
+pub enum ExpenseError {
+    #[error("no expense found for user: '{0}'")]
+    NoExpenseFoundForUser(String),
+    #[error("some data provided for expense is invalid or cannot be parsed: '{0}'")]
+    InvalidExpenseData(String),
+    #[error("database error: '{0}'")]
+    DatabaseError(#[from] DbErr),
+}
+
 impl From<TransactionError<UserError>> for UserError {
     fn from(e: TransactionError<UserError>) -> Self {
         match e {
             TransactionError::Connection(e) => e.into(),
             TransactionError::Transaction(e) => e,
         }
+    }
+}
+
+impl From<TransactionError<ExpenseError>> for ExpenseError {
+    fn from(e: TransactionError<ExpenseError>) -> Self {
+        match e {
+            TransactionError::Connection(e) => e.into(),
+            TransactionError::Transaction(e) => e,
+        }
+    }
+}
+
+impl From<chrono::ParseError> for ExpenseError {
+    fn from(e: chrono::ParseError) -> Self {
+        ExpenseError::InvalidExpenseData(e.to_string())
     }
 }

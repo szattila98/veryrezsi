@@ -14,6 +14,8 @@ pub mod common;
 pub mod dto;
 /// Error handling on the controller level.
 pub mod error;
+/// Expense route handlers.
+pub mod expenses;
 /// User route handlers.
 pub mod users;
 
@@ -31,7 +33,13 @@ pub fn init(
         .route("/register", post(users::register))
         .route("/activate/:token", get(users::activate_account));
 
-    let api = Router::new().nest("/user", user_api);
+    let expense_api = Router::new()
+        .route("/", post(expenses::create_expense))
+        .route("/:userid", get(expenses::get_expenses));
+
+    let api = Router::new()
+        .nest("/user", user_api)
+        .nest("/expense", expense_api);
 
     Router::new().nest("/api", api).layer(
         ServiceBuilder::new()

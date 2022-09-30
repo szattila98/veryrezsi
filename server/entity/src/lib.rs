@@ -1,3 +1,5 @@
+use sea_orm::prelude::Decimal;
+
 pub mod account_activation;
 pub mod currency_type;
 pub mod expense;
@@ -7,4 +9,4 @@ pub mod transaction;
 pub mod user;
 
 pub type Id = i64;
-pub type MoneyAmount = i64;
+pub type MoneyAmount = Decimal;
