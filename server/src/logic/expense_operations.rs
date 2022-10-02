@@ -52,7 +52,7 @@ pub async fn create_expense(
     let (referred_recurrence_type, referred_currency_type) =
         tokio::join!(referred_currency_query, referred_recurrence_query);
 
-    if referred_recurrence_type.unwrap().is_none() || referred_currency_type.unwrap().is_none() {
+    if referred_recurrence_type?.is_none() || referred_currency_type?.is_none() {
         return Err(ExpenseError::InvalidExpenseData(String::from(
             "We have no recurrence or currency type with the given id.",
         )));
@@ -74,4 +74,11 @@ pub async fn create_expense(
     let expense = expense.insert(conn).await?;
 
     Ok(expense.id)
+}
+
+pub async fn find_predefined_expenses(
+    conn: &DatabaseConnection,
+) -> Result<Vec<predefined_expense::Model>, ExpenseError> {
+    let predefined_expenses = PredefinedExpense::find().all(conn).await?;
+    Ok(predefined_expenses)
 }
