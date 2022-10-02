@@ -4,7 +4,6 @@ use pwhash::error::Error as PwHashError;
 use sea_orm::{error::DbErr, TransactionError};
 use thiserror::Error;
 
-/// Errors that can happen during the execution of user logic.
 #[derive(Error, Debug)]
 pub enum UserError {
     #[error("user with identifier '{0}' not found")]
@@ -21,6 +20,15 @@ pub enum UserError {
     DatabaseError(#[from] DbErr),
 }
 
+impl From<TransactionError<UserError>> for UserError {
+    fn from(e: TransactionError<UserError>) -> Self {
+        match e {
+            TransactionError::Connection(e) => e.into(),
+            TransactionError::Transaction(e) => e,
+        }
+    }
+}
+
 #[derive(Error, Debug)]
 pub enum ExpenseError {
     #[error("no expense found for user: '{0}'")]
@@ -29,15 +37,6 @@ pub enum ExpenseError {
     InvalidExpenseData(String),
     #[error("database error: '{0}'")]
     DatabaseError(#[from] DbErr),
-}
-
-impl From<TransactionError<UserError>> for UserError {
-    fn from(e: TransactionError<UserError>) -> Self {
-        match e {
-            TransactionError::Connection(e) => e.into(),
-            TransactionError::Transaction(e) => e,
-        }
-    }
 }
 
 impl From<TransactionError<ExpenseError>> for ExpenseError {
@@ -53,4 +52,16 @@ impl From<chrono::ParseError> for ExpenseError {
     fn from(e: chrono::ParseError) -> Self {
         ExpenseError::InvalidExpenseData(e.to_string())
     }
+}
+
+#[derive(Error, Debug)]
+pub enum CurrencyError {
+    #[error("database error: '{0}'")]
+    DatabaseError(#[from] DbErr),
+}
+
+#[derive(Error, Debug)]
+pub enum RecurrenceError {
+    #[error("database error: '{0}'")]
+    DatabaseError(#[from] DbErr),
 }

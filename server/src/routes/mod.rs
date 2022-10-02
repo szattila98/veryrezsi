@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use crate::{config::AppConfig, email::Mailer};
 use axum::{
     routing::{get, post},
@@ -8,15 +10,12 @@ use sea_orm::DatabaseConnection;
 use std::sync::Arc;
 use tower::ServiceBuilder;
 
-/// Common code for all routes.
 pub mod common;
-/// DTOs used in routes.
+pub mod currency_types;
 pub mod dto;
-/// Error handling on the controller level.
 pub mod error;
-/// Expense route handlers.
 pub mod expenses;
-/// User route handlers.
+pub mod recurrence_types;
 pub mod users;
 
 /// Initializes the router with the extension layers and the route handlers.
@@ -35,11 +34,18 @@ pub fn init(
 
     let expense_api = Router::new()
         .route("/", post(expenses::create_expense))
-        .route("/:userid", get(expenses::get_expenses));
+        .route("/:userid", get(expenses::get_expenses))
+        .route("/predefined", get(expenses::get_predefined_expenses));
+
+    let currency_api = Router::new().route("/", get(currency_types::get_currency_types));
+
+    let recurrence_api = Router::new().route("/", get(recurrence_types::get_recurrence_types));
 
     let api = Router::new()
         .nest("/user", user_api)
-        .nest("/expense", expense_api);
+        .nest("/expense", expense_api)
+        .nest("/currency", currency_api)
+        .nest("/recurrence", recurrence_api);
 
     Router::new().nest("/api", api).layer(
         ServiceBuilder::new()
