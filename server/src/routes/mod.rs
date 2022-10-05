@@ -33,9 +33,10 @@ pub fn init(
         .route("/activate/:token", get(users::activate_account));
 
     let expense_api = Router::new()
-        .route("/", post(expenses::create_expense))
         .route("/:userid", get(expenses::get_expenses))
-        .route("/predefined", get(expenses::get_predefined_expenses));
+        .route("/", post(expenses::create_expense))
+        .route("/predefined", get(expenses::get_predefined_expenses))
+        .route("/predefined", post(expenses::create_predefined_expense));
 
     let currency_api = Router::new().route("/", get(currency_types::get_currency_types));
 

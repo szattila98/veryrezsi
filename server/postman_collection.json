@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1ca2fde4-445e-4f54-a526-324e8e6b7415",
+		"_postman_id": "1747271a-ed41-446a-b090-dd3b4f3f46c3",
 		"name": "veryrezsi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -198,6 +198,34 @@
 							"port": "{{port}}{{apiBase}}",
 							"path": [
 								"expense"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_predefined_expense",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Bribes\",\r\n    \"description\": \"For whom it may concern\",\r\n    \"value\": \"500.0\",\r\n    \"currencyTypeId\": 1,\r\n    \"recurrenceTypeId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/expense/predefined",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"expense",
+								"predefined"
 							]
 						}
 					},

@@ -10,7 +10,7 @@ pub struct NewExpenseRequest {
     #[validate(length(
         min = 1,
         max = 255,
-        message = "expense name must not be empty or longer than 255 chararcters"
+        message = "expense name must not be empty or longer than 255 characters"
     ))]
     pub name: String,
 
@@ -29,4 +29,23 @@ pub struct NewExpenseRequest {
     pub start_date: String,
 
     pub value: MoneyAmount,
+}
+
+#[derive(Deserialize, Validate)]
+#[serde(rename_all = "camelCase")]
+pub struct NewPredefinedExpenseRequest {
+    #[validate(length(
+        min = 1,
+        max = 255,
+        message = "predefined expense name must not be empty or longer than 255 characters"
+    ))]
+    pub name: String,
+    #[validate(length(
+        max = 2000,
+        message = "predefined expense description must not be longer than 2000 characters"
+    ))]
+    pub description: String,
+    pub value: MoneyAmount,
+    pub currency_type_id: Id,
+    pub recurrence_type_id: Id,
 }
