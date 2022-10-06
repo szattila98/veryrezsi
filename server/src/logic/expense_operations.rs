@@ -93,11 +93,10 @@ async fn validate_recurrence_and_currency_types(
             .filter(currency_type::Column::Id.eq(currency_type_id))
             .one(conn)
     );
-    if referred_recurrence_type?.is_some() && referred_currency_type?.is_some() {
-        Ok(())
-    } else {
-        Err(ExpenseError::InvalidExpenseData(String::from(
+    if referred_recurrence_type?.is_none() || referred_currency_type?.is_none() {
+        return Err(ExpenseError::InvalidExpenseData(String::from(
             "We have no recurrence or currency type with the given id.",
-        )))
-    }
+        )));
+    };
+    Ok(())
 }
