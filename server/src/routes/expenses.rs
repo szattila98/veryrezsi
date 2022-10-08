@@ -1,4 +1,5 @@
 use super::common::ValidatedJson;
+use super::dto::expenses::NewPredefinedExpenseRequest;
 use super::{dto::expenses::NewExpenseRequest, error::ErrorMsg};
 use crate::auth;
 use crate::logic::expense_operations;
@@ -38,6 +39,18 @@ pub async fn get_predefined_expenses(
 ) -> Result<Json<Vec<predefined_expense::Model>>, ErrorMsg<()>> {
     match expense_operations::find_predefined_expenses(conn).await {
         Ok(expenses) => Ok(Json(expenses)),
+        Err(e) => Err(e.into()),
+    }
+}
+
+/// Handles new predefined expense creation route
+pub async fn create_predefined_expense(
+    ValidatedJson(req): ValidatedJson<NewPredefinedExpenseRequest>,
+    _: auth::AuthenticatedUser,
+    Extension(ref conn): Extension<DatabaseConnection>,
+) -> Result<Json<Id>, ErrorMsg<()>> {
+    match expense_operations::create_predefined_expense(conn, req).await {
+        Ok(predefined_expense_id) => Ok(Json(predefined_expense_id)),
         Err(e) => Err(e.into()),
     }
 }
