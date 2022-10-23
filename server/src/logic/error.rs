@@ -16,6 +16,8 @@ pub enum UserError {
     ActivationTokenNotFound(String),
     #[error("activation token expired")]
     ActivationTokenExpired,
+    #[error("user has no right to complete action")]
+    UserHasNoRightForAction,
     #[error("database error: '{0}'")]
     DatabaseError(#[from] DbErr),
 }
@@ -31,9 +33,7 @@ impl From<TransactionError<UserError>> for UserError {
 
 #[derive(Error, Debug)]
 pub enum ExpenseError {
-    #[error("no expense found for user: '{0}'")]
-    NoExpenseFoundForUser(String),
-    #[error("some data provided for expense is invalid or cannot be parsed: '{0}'")]
+    #[error("some data provided for expense creation is invalid or cannot be parsed: '{0}'")]
     InvalidExpenseData(String),
     #[error("database error: '{0}'")]
     DatabaseError(#[from] DbErr),
@@ -51,6 +51,32 @@ impl From<TransactionError<ExpenseError>> for ExpenseError {
 impl From<chrono::ParseError> for ExpenseError {
     fn from(e: chrono::ParseError) -> Self {
         ExpenseError::InvalidExpenseData(e.to_string())
+    }
+}
+
+#[derive(Error, Debug)]
+pub enum ExpenseTransactionError {
+    #[error("some data provided for transaction creation is invalid or cannot be parsed: '{0}'")]
+    InvalidTransactionData(String),
+    #[error("the transaction requested to be deleted does not exist")]
+    TransactionToDeletedDoesNotExist,
+    #[error("you do not have permission to add transaction for this expense")]
+    ParentExpenseIsNotOwnedByTheUser,
+    #[error("database error: '{0}'")]
+    DatabaseError(#[from] DbErr),
+}
+
+impl From<UserError> for ExpenseTransactionError {
+    fn from(e: UserError) -> Self {
+        match e {
+            UserError::UserHasNoRightForAction => e.into(),
+        }
+    }
+}
+
+impl From<chrono::ParseError> for ExpenseTransactionError {
+    fn from(e: chrono::ParseError) -> Self {
+        ExpenseTransactionError::InvalidTransactionData(e.to_string())
     }
 }
 

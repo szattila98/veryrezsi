@@ -1,5 +1,6 @@
-use chrono::NaiveDate;
 use entity::{currency_type, expense, predefined_expense, recurrence_type, user};
+
+use chrono::NaiveDate;
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
 use sea_orm_migration::sea_orm::prelude::Decimal;

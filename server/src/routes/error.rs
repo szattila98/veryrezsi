@@ -1,6 +1,6 @@
 #![allow(missing_docs)]
 
-use crate::logic::error::{CurrencyError, ExpenseError, RecurrenceError, UserError};
+use crate::logic::error::{ExpenseError, ExpenseTransactionError, CurrencyError, RecurrenceError, UserError};
 use axum::{
     extract::rejection::JsonRejection,
     http::StatusCode,
@@ -86,6 +86,7 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
                 Self::new(StatusCode::BAD_REQUEST, e.to_string())
             }
             UserError::ActivationTokenExpired => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
+            UserError::UserHasNoRightForAction => Self::new(StatusCode::FORBIDDEN, e.to_string()),
             UserError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
@@ -96,15 +97,28 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
 impl<D: Serialize> From<ExpenseError> for ErrorMsg<D> {
     fn from(e: ExpenseError) -> Self {
         match e {
-            ExpenseError::NoExpenseFoundForUser(_) => {
-                Self::new(StatusCode::NOT_FOUND, e.to_string())
+            ExpenseError::InvalidExpenseData(_) => {
+                Self::new(StatusCode::BAD_REQUEST, e.to_string())
             }
             ExpenseError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
-            ExpenseError::InvalidExpenseData(_) => {
+        }
+    }
+}
+
+impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
+    fn from(e: ExpenseTransactionError) -> Self {
+        match e {
+            ExpenseTransactionError::InvalidTransactionData(_) => {
                 Self::new(StatusCode::BAD_REQUEST, e.to_string())
             }
+            ExpenseTransactionError::DatabaseError(_) => {
+                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+            }
+            ExpenseTransactionError::TransactionToDeletedDoesNotExist => Self::new(StatusCode::NO_CONTENT, e.to_string()),
+            ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser => Self::new(StatusCode::FORBIDDEN, e.to_string()),
+
         }
     }
 }

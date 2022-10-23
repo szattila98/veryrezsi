@@ -1,4 +1,5 @@
 use entity::{currency_type, predefined_expense, recurrence_type};
+
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
 use sea_orm_migration::sea_orm::prelude::Decimal;

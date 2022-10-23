@@ -1,4 +1,5 @@
 use entity::{account_activation, user};
+
 use sea_orm_migration::prelude::*;
 
 #[derive(DeriveMigrationName)]

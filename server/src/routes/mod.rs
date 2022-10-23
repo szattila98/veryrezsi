@@ -2,7 +2,7 @@
 
 use crate::{config::AppConfig, email::Mailer};
 use axum::{
-    routing::{get, post},
+    routing::{get, post, delete},
     Extension, Router,
 };
 use axum_extra::extract::cookie::Key;
@@ -15,6 +15,7 @@ pub mod currency_types;
 pub mod dto;
 pub mod error;
 pub mod expenses;
+pub mod transactions;
 pub mod recurrence_types;
 pub mod users;
 
@@ -33,10 +34,14 @@ pub fn init(
         .route("/activate/:token", get(users::activate_account));
 
     let expense_api = Router::new()
-        .route("/:userid", get(expenses::get_expenses))
+        .route("/:user_id", get(expenses::get_expenses))
         .route("/", post(expenses::create_expense))
         .route("/predefined", get(expenses::get_predefined_expenses))
         .route("/predefined", post(expenses::create_predefined_expense));
+
+    let transaction_api = Router::new()
+        .route("/", post(transactions::create_transaction))
+        .route("/:transaction_id", delete(transactions::delete_transaction));
 
     let currency_api = Router::new().route("/", get(currency_types::get_currency_types));
 
@@ -45,6 +50,7 @@ pub fn init(
     let api = Router::new()
         .nest("/user", user_api)
         .nest("/expense", expense_api)
+        .nest("/transaction/", transaction_api)
         .nest("/currency", currency_api)
         .nest("/recurrence", recurrence_api);
 

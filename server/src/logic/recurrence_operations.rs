@@ -1,4 +1,5 @@
 use entity::recurrence_type::{self, Entity as RecurrenceType};
+
 use sea_orm::{DatabaseConnection, EntityTrait};
 
 use super::error::RecurrenceError;

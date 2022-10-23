@@ -18,7 +18,7 @@ pub struct Model {
     pub id: Id,
     pub donor_name: String,
     pub value: MoneyAmount,
-    pub date: DateTimeLocal,
+    pub date: Date,
     pub currency_type_id: Id,
     pub expense_id: Id,
 }

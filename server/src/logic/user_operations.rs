@@ -2,10 +2,12 @@ use super::error::UserError;
 use crate::config;
 use crate::email::{render_template, Mailer, ACTIVATION_EMAIL_TEMPLATE};
 use crate::routes::dto::users::NewUserRequest;
-use chrono::Duration;
+
 use entity::account_activation::{self, Entity as AccountActivation};
 use entity::user::{self, Entity as User};
 use entity::Id;
+
+use chrono::Duration;
 use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
@@ -141,4 +143,18 @@ pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Resul
         }
         None => Err(UserError::ActivationTokenNotFound(token)),
     }
+}
+
+/**
+ * Utility method to authorize if a user should be able to access a resouce.
+ * Checks the equality of two user_ids.
+ */
+pub fn authorize_user_by_id(
+	user_id: Id,
+	user_id_in_resource: Id,
+) -> Result<(), UserError> {
+	if user_id != user_id_in_resource {
+		return Err(UserError::UserHasNoRightForAction);
+	}
+	Ok(())
 }
