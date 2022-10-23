@@ -5,7 +5,7 @@ use crate::auth;
 use crate::logic::user_operations;
 use crate::logic::expense_operations;
 
-use axum::{http::StatusCode, Extension, Json};
+use axum::{Extension, Json};
 use axum::extract::Path;
 use entity::{expense, predefined_expense, Id};
 use sea_orm::DatabaseConnection;
