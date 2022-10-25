@@ -5,7 +5,7 @@ use crate::logic::transaction_operations;
 use entity::Id;
 
 use axum::extract::Path;
-use axum::{Extension, Json};
+use axum::{http::StatusCode, Extension, Json};
 use sea_orm::DatabaseConnection;
 
 /// Handles new transaction creation route
@@ -25,9 +25,9 @@ pub async fn delete_transaction(
     Extension(ref conn): Extension<DatabaseConnection>,
     Path(transaction_id): Path<i64>,
     user: auth::AuthenticatedUser,
-) -> Result<&'static str, ErrorMsg<()>> {
+) -> Result<StatusCode, ErrorMsg<()>> {
     match transaction_operations::delete_transaction_by_id(conn, user.id, transaction_id).await {
-        Ok(_) => Ok("Transaction was deleted"),
+        Ok(_) => Ok(StatusCode::NO_CONTENT),
         Err(e) => Err(e.into()),
     }
 }
