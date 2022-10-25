@@ -2,7 +2,7 @@
 
 use crate::{config::AppConfig, email::Mailer};
 use axum::{
-    routing::{get, post, delete},
+    routing::{delete, get, post},
     Extension, Router,
 };
 use axum_extra::extract::cookie::Key;
@@ -15,8 +15,8 @@ pub mod currency_types;
 pub mod dto;
 pub mod error;
 pub mod expenses;
-pub mod transactions;
 pub mod recurrence_types;
+pub mod transactions;
 pub mod users;
 
 /// Initializes the router with the extension layers and the route handlers.

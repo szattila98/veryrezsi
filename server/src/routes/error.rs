@@ -1,6 +1,8 @@
 #![allow(missing_docs)]
 
-use crate::logic::error::{ExpenseError, ExpenseTransactionError, CurrencyError, RecurrenceError, UserError};
+use crate::logic::error::{
+    CurrencyError, ExpenseError, ExpenseTransactionError, RecurrenceError, UserError,
+};
 use axum::{
     extract::rejection::JsonRejection,
     http::StatusCode,
@@ -116,9 +118,12 @@ impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
             ExpenseTransactionError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
-            ExpenseTransactionError::TransactionToDeletedDoesNotExist => Self::new(StatusCode::NO_CONTENT, e.to_string()),
-            ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser => Self::new(StatusCode::FORBIDDEN, e.to_string()),
-
+            ExpenseTransactionError::TransactionToDeletedDoesNotExist => {
+                Self::new(StatusCode::NO_CONTENT, e.to_string())
+            }
+            ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser => {
+                Self::new(StatusCode::FORBIDDEN, e.to_string())
+            }
         }
     }
 }

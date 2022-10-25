@@ -68,9 +68,7 @@ pub enum ExpenseTransactionError {
 
 impl From<UserError> for ExpenseTransactionError {
     fn from(e: UserError) -> Self {
-        match e {
-            UserError::UserHasNoRightForAction => e.into(),
-        }
+        e.into()
     }
 }
 
