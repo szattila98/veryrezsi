@@ -8,6 +8,11 @@
 - _docker_ 20.10.17 or higher
 - _docker-compose_ 1.29.2 or higher
 
+IDE
+ - _Visual Studio Code_ is recommended.
+   - with rust-analyzer (rust-lang.rust-analyzer) extension to work with rust
+   - with CodeLLDB (vadimcn.vscode-lldb) extension to debug
+
 ## Starting a dev database
 
 - There are two options:

@@ -121,7 +121,7 @@ impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
             ExpenseTransactionError::TransactionToDeletedDoesNotExist => {
                 Self::new(StatusCode::NO_CONTENT, e.to_string())
             }
-            ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser => {
+            ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser(_) => {
                 Self::new(StatusCode::FORBIDDEN, e.to_string())
             }
         }

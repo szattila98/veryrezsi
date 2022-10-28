@@ -60,15 +60,15 @@ pub enum ExpenseTransactionError {
     InvalidTransactionData(String),
     #[error("the transaction requested to be deleted does not exist")]
     TransactionToDeletedDoesNotExist,
-    #[error("you do not have permission to add transaction for this expense")]
-    ParentExpenseIsNotOwnedByTheUser,
+    #[error("you do not have permission for the parent expense: '{0}'")]
+    ParentExpenseIsNotOwnedByTheUser(String),
     #[error("database error: '{0}'")]
     DatabaseError(#[from] DbErr),
 }
 
 impl From<UserError> for ExpenseTransactionError {
     fn from(e: UserError) -> Self {
-        e.into()
+        ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser(e.to_string())
     }
 }
 
