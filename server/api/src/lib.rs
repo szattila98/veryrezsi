@@ -5,7 +5,7 @@
 use axum::Server;
 use axum_extra::extract::cookie::Key;
 use tokio::signal;
-use tracing::{info, Level};
+use tracing::info;
 use veryrezsi_core::config::AppConfig;
 
 mod auth;
@@ -18,8 +18,9 @@ pub async fn start() {
     let config = AppConfig::init();
 
     info!("Initializing logging...");
-    let level: Level = config.log_level.clone().into();
-    tracing_subscriber::fmt().with_max_level(level).init();
+    tracing_subscriber::fmt()
+        .with_max_level(&config.log_level)
+        .init();
     info!("Successfully initialized logging");
 
     info!("Establishing database connection...");

@@ -1,7 +1,7 @@
 use confique::Config;
 use serde::Deserialize;
 use std::net::SocketAddr;
-use tracing::Level;
+use tracing::metadata::LevelFilter;
 
 /// Contains basic configuration entries.
 #[derive(Debug, Clone, Config)]
@@ -57,14 +57,14 @@ pub enum LogLevel {
     Error,
 }
 
-impl From<LogLevel> for Level {
-    fn from(l: LogLevel) -> Self {
+impl From<&LogLevel> for LevelFilter {
+    fn from(l: &LogLevel) -> Self {
         match l {
-            LogLevel::Trace => Level::TRACE,
-            LogLevel::Debug => Level::DEBUG,
-            LogLevel::Info => Level::INFO,
-            LogLevel::Warn => Level::WARN,
-            LogLevel::Error => Level::ERROR,
+            LogLevel::Trace => LevelFilter::TRACE,
+            LogLevel::Debug => LevelFilter::DEBUG,
+            LogLevel::Info => LevelFilter::INFO,
+            LogLevel::Warn => LevelFilter::WARN,
+            LogLevel::Error => LevelFilter::ERROR,
         }
     }
 }
