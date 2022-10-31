@@ -8,6 +8,11 @@
 - _docker_ 20.10.17 or higher
 - _docker-compose_ 1.29.2 or higher
 
+IDE
+ - _Visual Studio Code_ is recommended.
+   - with rust-analyzer (rust-lang.rust-analyzer) extension to work with rust
+   - with CodeLLDB (vadimcn.vscode-lldb) extension to debug
+
 ## Starting a dev database
 
 - There are two options:
@@ -25,8 +30,13 @@
 
 - Build and run with `cargo run`, it will automatically run database migrations
   - When developing use `cargo watch -x run` for hot-reloading, provided `cargo-watch` is installed
+  - Do not forget that you will need a database up and running to properly run the application. The easiest way is to run `docker-compose up -d database` in the root of the project
 - To manipulate migrations, refer to the README.md in the `server/migration` directory and use the CLI tool
   - It uses the outer `.env` file for the connection string but it can be supplied with it's own file in the `server/migration` directory if needed
+
+## Use the API
+- There is a Postman collection file, ready to be used for testing during development at `server/postman_collections.json`
+  - Don't just use it, remember to update it when any of the API schema changes. 
 
 # Frontend dev setup
 

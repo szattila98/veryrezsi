@@ -19,7 +19,7 @@ pub struct Model {
     pub name: String,
     pub description: String,
     pub value: MoneyAmount,
-    pub start_date: DateTimeLocal,
+    pub start_date: Date,
     pub user_id: Id,
     pub currency_type_id: Id,
     pub recurrence_type_id: Id,

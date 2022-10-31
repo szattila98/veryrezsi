@@ -1,6 +1,9 @@
 use entity::{currency_type, expense, transaction};
+
+use chrono::NaiveDate;
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
+use sea_orm_migration::sea_orm::prelude::Decimal;
 use sea_orm_migration::sea_orm::Set;
 
 #[derive(DeriveMigrationName)]
@@ -27,14 +30,10 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(transaction::Column::Value)
-                            .big_integer()
+                            .decimal_len(12, 2)
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(transaction::Column::Date)
-                            .timestamp()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(transaction::Column::Date).date().not_null())
                     .col(
                         ColumnDef::new(transaction::Column::CurrencyTypeId)
                             .big_integer()
@@ -69,9 +68,9 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(1),
             donor_name: Set("Kate".to_string()),
-            value: Set(500),
-            date: Set(chrono::Local::now()),
-            currency_type_id: Set(1),
+            value: Set(Decimal::new(5, 2)),
+            date: Set(NaiveDate::from_ymd(2022, 9, 29)),
+            currency_type_id: Set(2),
             expense_id: Set(1),
         }
         .insert(db)
@@ -79,9 +78,9 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(2),
             donor_name: Set("David".to_string()),
-            value: Set(700),
-            date: Set(chrono::Local::now()),
-            currency_type_id: Set(1),
+            value: Set(Decimal::new(7, 0)),
+            date: Set(NaiveDate::from_ymd(2022, 10, 23)),
+            currency_type_id: Set(2),
             expense_id: Set(1),
         }
         .insert(db)
@@ -89,9 +88,9 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(3),
             donor_name: Set("Wifey".to_string()),
-            value: Set(5000),
-            date: Set(chrono::Local::now()),
-            currency_type_id: Set(1),
+            value: Set(Decimal::new(50, 0)),
+            date: Set(NaiveDate::from_ymd(2022, 4, 12)),
+            currency_type_id: Set(2),
             expense_id: Set(2),
         }
         .insert(db)
@@ -99,8 +98,8 @@ impl MigrationTrait for Migration {
         transaction::ActiveModel {
             id: Set(4),
             donor_name: Set("My colleague who use exotic Hungarian Forint".to_string()),
-            value: Set(1000),
-            date: Set(chrono::Local::now()),
+            value: Set(Decimal::new(1000, 0)),
+            date: Set(NaiveDate::from_ymd(2022, 5, 13)),
             currency_type_id: Set(1),
             expense_id: Set(2),
         }

@@ -1,4 +1,5 @@
 use entity::user;
+
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
 use sea_orm_migration::sea_orm::Set;

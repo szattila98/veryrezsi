@@ -1,6 +1,9 @@
 use entity::{currency_type, expense, predefined_expense, recurrence_type, user};
+
+use chrono::NaiveDate;
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
+use sea_orm_migration::sea_orm::prelude::Decimal;
 use sea_orm_migration::sea_orm::Set;
 
 #[derive(DeriveMigrationName)]
@@ -32,14 +35,10 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(expense::Column::Value)
-                            .big_integer()
+                            .decimal_len(12, 2)
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(expense::Column::StartDate)
-                            .timestamp()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(expense::Column::StartDate).date().not_null())
                     .col(
                         ColumnDef::new(expense::Column::UserId)
                             .big_integer()
@@ -101,8 +100,8 @@ impl MigrationTrait for Migration {
             id: Set(1),
             name: Set("Netflix for my little family".to_string()),
             description: Set("Cheapest monthly plan of Netflix - Maybe upgrade later".to_string()),
-            value: Set(2490),
-            start_date: Set(chrono::Local::now()),
+            value: Set(Decimal::new(2490, 2)),
+            start_date: Set(NaiveDate::from_ymd(2022, 9, 24)),
             user_id: Set(1),
             currency_type_id: Set(1),
             recurrence_type_id: Set(1),
@@ -114,8 +113,8 @@ impl MigrationTrait for Migration {
             id: Set(2),
             name: Set("Synology C2 backup".to_string()),
             description: Set("Its not much but it keeps our photos safe".to_string()),
-            value: Set(3499),
-            start_date: Set(chrono::Local::now()),
+            value: Set(Decimal::new(3499, 2)),
+            start_date: Set(NaiveDate::from_ymd(2022, 3, 15)),
             user_id: Set(1),
             currency_type_id: Set(2),
             recurrence_type_id: Set(2),

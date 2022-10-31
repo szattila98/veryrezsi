@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "8b96ae98-04f7-4d73-ab22-8ed507974149",
+		"_postman_id": "b3be52ec-f147-4f89-8698-c64d91cccf69",
 		"name": "veryrezsi",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "22217881"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -24,13 +23,12 @@
 							"raw": "{\n\t\"email\": \"bob@ross.com\",\n\t\"password\": \"admin\"\n}"
 						},
 						"url": {
-							"raw": "localhost:8000/api/user/auth",
+							"raw": "{{host}}:{{port}}{{apiBase}}/user/auth",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "8000",
+							"port": "{{port}}{{apiBase}}",
 							"path": [
-								"api",
 								"user",
 								"auth"
 							]
@@ -44,13 +42,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8000/api/user/me",
+							"raw": "{{host}}:{{port}}{{apiBase}}/user/me",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "8000",
+							"port": "{{port}}{{apiBase}}",
 							"path": [
-								"api",
 								"user",
 								"me"
 							]
@@ -64,13 +61,12 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "localhost:8000/api/user/logout",
+							"raw": "{{host}}:{{port}}{{apiBase}}/user/logout",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "8000",
+							"port": "{{port}}{{apiBase}}",
 							"path": [
-								"api",
 								"user",
 								"logout"
 							]
@@ -93,13 +89,12 @@
 							"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"Password123!\",\n    \"confirmPassword\": \"Password123!\"\n}"
 						},
 						"url": {
-							"raw": "localhost:8000/api/user/register",
+							"raw": "{{host}}:{{port}}{{apiBase}}/user/register",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "8000",
+							"port": "{{port}}{{apiBase}}",
 							"path": [
-								"api",
 								"user",
 								"register"
 							]
@@ -118,13 +113,12 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:8000/api/user/activate/:token",
+							"raw": "{{host}}:{{port}}{{apiBase}}/user/activate/:token",
 							"host": [
-								"localhost"
+								"{{host}}"
 							],
-							"port": "8000",
+							"port": "{{port}}{{apiBase}}",
 							"path": [
-								"api",
 								"user",
 								"activate",
 								":token"
@@ -132,7 +126,7 @@
 							"variable": [
 								{
 									"key": "token",
-									"value": "token"
+									"value": "168bd775-59dd-48b6-ab7d-fcf572fc7165"
 								}
 							]
 						}
@@ -140,6 +134,238 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "expenses",
+			"item": [
+				{
+					"name": "get_expenses_of_user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/expense/1",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"expense",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_predefined_expenses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/expense/predefined",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"expense",
+								"predefined"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_expense",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Disney+\",\r\n    \"description\": \"We need princesses and Jedis\",\r\n    \"recurrenceTypeId\": 1,\r\n    \"currencyTypeId\": 2,\r\n    \"predefinedExpenseId\": null,\r\n    \"startDate\": \"29-08-2019\",\r\n    \"value\": 14.99\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/expense",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"expense"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create_predefined_expense",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Bribes\",\r\n    \"description\": \"For whom it may concern\",\r\n    \"value\": \"500.0\",\r\n    \"currencyTypeId\": 1,\r\n    \"recurrenceTypeId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/expense/predefined",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"expense",
+								"predefined"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "currency_types",
+			"item": [
+				{
+					"name": "get_currency_types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/currency",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"currency"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "recurrence_types",
+			"item": [
+				{
+					"name": "get_recurrence_types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/recurrence",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"recurrence"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "transactions",
+			"item": [
+				{
+					"name": "create_transaction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"donorName\": \"Ralf uncle\",\r\n    \"currencyTypeId\": 1,\r\n    \"value\": 500,\r\n    \"date\": \"25-10-2022\",\r\n    \"expenseId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/transaction",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"transaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_transaction",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}{{apiBase}}/transaction/1",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}{{apiBase}}",
+							"path": [
+								"transaction",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "8000",
+			"type": "string"
+		},
+		{
+			"key": "apiBase",
+			"value": "/api",
+			"type": "string"
 		}
 	]
 }

@@ -7,7 +7,7 @@ export type NewExpense = {
 	currencyTypeId: number;
 	predefinedExpenseId: number | null;
 	startDate: string;
-	value: string;
+	value: number;
 	userId: number; // TODO not needed with actual backend
 };
 

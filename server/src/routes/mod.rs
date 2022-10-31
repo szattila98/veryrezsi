@@ -1,6 +1,8 @@
+#![allow(missing_docs)]
+
 use crate::{config::AppConfig, email::MailTransport};
 use axum::{
-    routing::{get, post},
+    routing::{delete, get, post},
     Extension, Router,
 };
 use axum_extra::extract::cookie::Key;
@@ -8,13 +10,13 @@ use sea_orm::DatabaseConnection;
 use std::sync::Arc;
 use tower::ServiceBuilder;
 
-/// Common code for all routes.
 pub mod common;
-/// DTOs used in routes.
+pub mod currency_types;
 pub mod dto;
-/// Error handling on the controller level.
 pub mod error;
-/// User route handlers.
+pub mod expenses;
+pub mod recurrence_types;
+pub mod transactions;
 pub mod users;
 
 /// Initializes the router with the extension layers and the route handlers.
@@ -31,7 +33,26 @@ pub fn init(
         .route("/register", post(users::register))
         .route("/activate/:token", get(users::activate_account));
 
-    let api = Router::new().nest("/user", user_api);
+    let expense_api = Router::new()
+        .route("/:user_id", get(expenses::get_expenses))
+        .route("/", post(expenses::create_expense))
+        .route("/predefined", get(expenses::get_predefined_expenses))
+        .route("/predefined", post(expenses::create_predefined_expense));
+
+    let transaction_api = Router::new()
+        .route("/", post(transactions::create_transaction))
+        .route("/:transaction_id", delete(transactions::delete_transaction));
+
+    let currency_api = Router::new().route("/", get(currency_types::get_currency_types));
+
+    let recurrence_api = Router::new().route("/", get(recurrence_types::get_recurrence_types));
+
+    let api = Router::new()
+        .nest("/user", user_api)
+        .nest("/expense", expense_api)
+        .nest("/transaction/", transaction_api)
+        .nest("/currency", currency_api)
+        .nest("/recurrence", recurrence_api);
 
     Router::new().nest("/api", api).layer(
         ServiceBuilder::new()

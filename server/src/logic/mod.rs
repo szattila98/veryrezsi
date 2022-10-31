@@ -1,4 +1,7 @@
-/// Errors that can happen during the execution of logic.
+mod common;
+pub mod currency_operations;
 pub mod error;
-/// User operations logic.
+pub mod expense_operations;
+pub mod recurrence_operations;
+pub mod transaction_operations;
 pub mod user_operations;
