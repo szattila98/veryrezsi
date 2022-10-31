@@ -1,10 +1,10 @@
+use crate::auth;
+
+use super::error::ErrorMsg;
 use axum::{Extension, Json};
 use entity::currency_type;
 use sea_orm::DatabaseConnection;
-
-use crate::{auth, logic::currency_operations};
-
-use super::error::ErrorMsg;
+use veryrezsi_core::logic::currency_operations;
 
 /// Handles currency type listing
 pub async fn get_currency_types(

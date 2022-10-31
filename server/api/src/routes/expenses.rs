@@ -1,9 +1,9 @@
+use veryrezsi_core::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
+use veryrezsi_core::logic::{expense_operations, user_operations};
+
 use super::common::ValidatedJson;
-use super::dto::expenses::NewPredefinedExpenseRequest;
-use super::{dto::expenses::NewExpenseRequest, error::ErrorMsg};
+use super::error::ErrorMsg;
 use crate::auth;
-use crate::logic::expense_operations;
-use crate::logic::user_operations;
 
 use axum::extract::Path;
 use axum::{Extension, Json};

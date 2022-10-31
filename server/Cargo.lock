@@ -1116,9 +1116,9 @@ checksum = "c4a1e36c821dbe04574f602848a19f742f4fb3c98d40449f11bcad18d6b17421"
 
 [[package]]
 name = "hyper"
-version = "0.14.20"
+version = "0.14.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02c929dc5c39e335a03c405292728118860721b10190d98c2a0f0efd5baafbac"
+checksum = "41a2df176f359a22aee9c8657e674f7aa54e9ba48b512a798e5ca36a1f51065c"
 dependencies = [
  "bytes",
  "futures-channel",
@@ -2841,6 +2841,40 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 [[package]]
 name = "veryrezsi"
 version = "0.2.0"
+dependencies = [
+ "veryrezsi-api",
+]
+
+[[package]]
+name = "veryrezsi-api"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "axum-extra",
+ "chrono",
+ "confique",
+ "entity",
+ "fancy-regex",
+ "handlebars",
+ "lazy_static",
+ "lettre",
+ "migration",
+ "pwhash",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tower",
+ "tracing",
+ "tracing-subscriber",
+ "validator",
+ "veryrezsi-core",
+]
+
+[[package]]
+name = "veryrezsi-core"
+version = "0.1.0"
 dependencies = [
  "axum",
  "axum-extra",

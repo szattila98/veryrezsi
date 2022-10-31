@@ -1,5 +1,7 @@
 [workspace]
 members = [
+    "api",
+    "core",
     "migration",
     "entity"
 ]
@@ -23,23 +25,4 @@ keywords = ["api", "calculator", "web-app", "expenses-manager", "rocket"]
 categories = ["web-programming"]
 
 [dependencies]
-tokio = { version = "1.21.2", features = ["full"] }
-axum = "0.5.17"
-axum-extra = { version = "0.3.7", features = ["cookie-private"] }
-tower = "0.4.13"
-serde = "1.0.147"
-serde_json = "1.0.87"
-sea-orm = { version = "0.10.1", features = [ "sqlx-mysql", "runtime-tokio-rustls", "macros" ] }
-entity = { path = "entity" }
-migration = { path = "migration" }
-tracing = "0.1.37"
-tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
-thiserror = "1.0.37"
-pwhash = "1.0.0"
-validator = { version = "0.16.0", features = ["derive"] }
-chrono = "0.4.22"
-lettre = { version = "0.10.1", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
-fancy-regex = "0.10.0"
-lazy_static = "1.4.0"
-handlebars = "4.3.5"
-confique = { version = "0.2.0", default-features = false, features = ["toml"] }
+veryrezsi-api = { path = "api" }

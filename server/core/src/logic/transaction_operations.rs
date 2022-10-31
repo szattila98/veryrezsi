@@ -1,7 +1,7 @@
 use super::common;
 use super::error::ExpenseTransactionError;
 use super::user_operations::authorize_user_by_id;
-use crate::routes::dto::transactions::NewTransactionRequest;
+use crate::dto::transactions::NewTransactionRequest;
 
 use entity::currency_type::{self, Entity as CurrencyType};
 use entity::expense::{self, Entity as Expense};

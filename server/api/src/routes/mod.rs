@@ -1,6 +1,5 @@
 #![allow(missing_docs)]
 
-use crate::{config::AppConfig, email::MailTransport};
 use axum::{
     routing::{delete, get, post},
     Extension, Router,
@@ -9,10 +8,10 @@ use axum_extra::extract::cookie::Key;
 use sea_orm::DatabaseConnection;
 use std::sync::Arc;
 use tower::ServiceBuilder;
+use veryrezsi_core::{config::AppConfig, email::MailTransport};
 
 pub mod common;
 pub mod currency_types;
-pub mod dto;
 pub mod error;
 pub mod expenses;
 pub mod recurrence_types;

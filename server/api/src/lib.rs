@@ -2,25 +2,18 @@
 
 //! Veryrezsi library, which makes serving the server-side logic possible.
 
-use axum::Router;
+use axum::Server;
 use axum_extra::extract::cookie::Key;
-use config::AppConfig;
-use std::net::SocketAddr;
+use tokio::signal;
 use tracing::{info, Level};
-
-use crate::email::get_mail_transport;
+use veryrezsi_core::config::AppConfig;
 
 mod auth;
-mod config;
-mod database;
-mod email;
-mod logic;
-/// Exports the router for the binary.
-pub mod routes;
+mod routes;
 
-/// Initializes every part of the application.
-/// Returns the address of the server and the configured router.
-pub async fn init() -> (SocketAddr, Router) {
+/// Initializes every part of the application and starts the server.
+#[tokio::main]
+pub async fn start() {
     print_logo();
     let config = AppConfig::init();
 
@@ -30,11 +23,11 @@ pub async fn init() -> (SocketAddr, Router) {
     info!("Successfully initialized logging");
 
     info!("Establishing database connection...");
-    let conn = database::init(&config).await;
+    let conn = veryrezsi_core::database::init(&config).await;
     info!("Successfully established database connection");
 
     info!("Initializing mail transport...");
-    let mail_transport = get_mail_transport(&config.mail_config);
+    let mail_transport = veryrezsi_core::email::get_mail_transport(&config.mail_config);
     info!("Successfully initialized mail transport");
 
     info!("Creating api routes and loading extensions...");
@@ -47,7 +40,11 @@ pub async fn init() -> (SocketAddr, Router) {
     info!("Successfully created api routes with extensions");
 
     info!("Server is listening on {}...", config.server_address);
-    (config.server_address, router)
+    let _ = Server::bind(&config.server_address)
+        .serve(router.into_make_service())
+        .with_graceful_shutdown(shutdown_signal())
+        .await;
+    info!("Shutting down...");
 }
 
 /// Prints the logo of the application.
@@ -68,4 +65,29 @@ __     __                                _______                                
                                  \$$$$$$                                             
 ====================================================================================="#
     );
+}
+
+/// Makes graceful shutdown possible.
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
 }

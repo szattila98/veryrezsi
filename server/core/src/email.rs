@@ -10,7 +10,7 @@ use std::sync::Arc;
 use std::{collections::HashMap, hash::Hash};
 
 pub const ACTIVATION_EMAIL_TEMPLATE: &str =
-    include_str!("./../resources/email/activation_email.html");
+    include_str!("./../../resources/email/activation_email.html");
 
 pub type MailTransport = AsyncSmtpTransport<Tokio1Executor>;
 

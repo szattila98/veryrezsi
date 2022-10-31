@@ -1,8 +1,5 @@
 #![allow(missing_docs)]
 
-use crate::logic::error::{
-    CurrencyError, ExpenseError, ExpenseTransactionError, RecurrenceError, UserError,
-};
 use axum::{
     extract::rejection::JsonRejection,
     http::StatusCode,
@@ -11,6 +8,9 @@ use axum::{
 };
 use serde::Serialize;
 use validator::ValidationErrors;
+use veryrezsi_core::logic::error::{
+    CurrencyError, ExpenseError, ExpenseTransactionError, RecurrenceError, UserError,
+};
 
 /// A struct that can be returned from route handlers on error.
 /// It has an optional generic details parameter, which is used to return more detailed information about the error (e.g. validation errors).

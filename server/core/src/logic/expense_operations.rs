@@ -1,6 +1,6 @@
 use super::common;
 use super::error::ExpenseError;
-use crate::routes::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
+use crate::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
 
 use entity::currency_type::{self, Entity as CurrencyType};
 use entity::expense::{self, Entity as Expense};

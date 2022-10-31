@@ -1,7 +1,9 @@
+use veryrezsi_core::dto::transactions::NewTransactionRequest;
+use veryrezsi_core::logic::transaction_operations;
+
 use super::common::ValidatedJson;
-use super::{dto::transactions::NewTransactionRequest, error::ErrorMsg};
+use super::error::ErrorMsg;
 use crate::auth;
-use crate::logic::transaction_operations;
 use entity::Id;
 
 use axum::extract::Path;

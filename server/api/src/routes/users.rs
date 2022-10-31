@@ -1,10 +1,6 @@
 use super::common::ValidatedJson;
-use super::dto::users::NewUserRequest;
-use super::{dto::users::LoginRequest, error::ErrorMsg};
+use super::error::ErrorMsg;
 use crate::auth::{self, AUTH_COOKIE_NAME};
-use crate::config::AppConfig;
-use crate::email::MailTransport;
-use crate::logic::user_operations;
 use axum::extract::Path;
 use axum::{http::StatusCode, Extension, Json};
 use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
@@ -12,6 +8,10 @@ use entity::user;
 use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
 use std::sync::Arc;
+use veryrezsi_core::config::AppConfig;
+use veryrezsi_core::dto::users::{LoginRequest, NewUserRequest};
+use veryrezsi_core::email::MailTransport;
+use veryrezsi_core::logic::user_operations;
 
 /// Handles the login route.
 pub async fn login(
