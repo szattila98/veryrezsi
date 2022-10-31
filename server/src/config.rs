@@ -43,27 +43,28 @@ impl AppConfig {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+/// Intermediate config enum for log levels as actual struct cannot be deserialized directly.
 pub enum LogLevel {
-    #[serde(alias = "trace")]
-    TRACE,
-    #[serde(alias = "debug")]
-    DEBUG,
-    #[serde(alias = "info")]
-    INFO,
-    #[serde(alias = "warn")]
-    WARN,
-    #[serde(alias = "error")]
-    ERROR,
+    #[serde(alias = "trace", alias = "TRACE")]
+    Trace,
+    #[serde(alias = "debug", alias = "DEBUG")]
+    Debug,
+    #[serde(alias = "info", alias = "INFO")]
+    Info,
+    #[serde(alias = "warn", alias = "WARN")]
+    Warn,
+    #[serde(alias = "error", alias = "ERROR")]
+    Error,
 }
 
 impl From<LogLevel> for Level {
     fn from(l: LogLevel) -> Self {
         match l {
-            LogLevel::TRACE => Level::TRACE,
-            LogLevel::DEBUG => Level::DEBUG,
-            LogLevel::INFO => Level::INFO,
-            LogLevel::WARN => Level::WARN,
-            LogLevel::ERROR => Level::ERROR,
+            LogLevel::Trace => Level::TRACE,
+            LogLevel::Debug => Level::DEBUG,
+            LogLevel::Info => Level::INFO,
+            LogLevel::Warn => Level::WARN,
+            LogLevel::Error => Level::ERROR,
         }
     }
 }
