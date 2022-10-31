@@ -2851,19 +2851,12 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "axum-extra",
- "chrono",
- "confique",
  "entity",
- "fancy-regex",
- "handlebars",
- "lazy_static",
- "lettre",
  "migration",
  "pwhash",
  "sea-orm",
  "serde",
  "serde_json",
- "thiserror",
  "tokio",
  "tower",
  "tracing",
@@ -2876,8 +2869,6 @@ dependencies = [
 name = "veryrezsi-core"
 version = "0.1.0"
 dependencies = [
- "axum",
- "axum-extra",
  "chrono",
  "confique",
  "entity",
@@ -2892,7 +2883,6 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tokio",
- "tower",
  "tracing",
  "tracing-subscriber",
  "validator",
