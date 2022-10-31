@@ -6,7 +6,7 @@ use axum::Router;
 use axum_extra::extract::cookie::Key;
 use config::AppConfig;
 use std::net::SocketAddr;
-use tracing::{debug, info};
+use tracing::{info, Level};
 
 use crate::email::get_mail_transport;
 
@@ -22,13 +22,12 @@ pub mod routes;
 /// Returns the address of the server and the configured router.
 pub async fn init() -> (SocketAddr, Router) {
     print_logo();
-    dotenvy::dotenv().ok();
-    tracing_subscriber::fmt::init();
-
-    info!("Loading config from env...");
     let config = AppConfig::init();
-    info!("Successfully loaded config");
-    debug!("{config:#?}");
+
+    info!("Initializing logging...");
+    let level: Level = config.log_level.clone().into();
+    tracing_subscriber::fmt().with_max_level(level).init();
+    info!("Successfully initialized logging");
 
     info!("Establishing database connection...");
     let conn = database::init(&config).await;
