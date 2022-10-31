@@ -10,19 +10,21 @@ documentation = { workspace = true }
 description = { workspace = true }
 
 [dependencies]
-# Remove after we have dtos
-sea-orm = { version = "0.10.1", features = [ "sqlx-mysql", "runtime-tokio-rustls", "macros" ] }
+# TODO Remove after we have dtos
+sea-orm = { workspace = true, features = [ "sqlx-mysql", "runtime-tokio-rustls", "macros" ] }
 entity = { path = "../entity" }
 
 veryrezsi-core = { path = "../core" }
 migration = { path = "../migration" }
-tokio = { version = "1.21.2", features = ["full"] }
+
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+pwhash = { workspace = true }
+validator = { workspace = true }
+
 axum = "0.5.17"
 axum-extra = { version = "0.3.7", features = ["cookie-private"] }
 tower = "0.4.13"
-serde = "1.0.147"
-serde_json = "1.0.87"
-tracing = "0.1.37"
-tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
-pwhash = "1.0.0"
-validator = { version = "0.16.0", features = ["derive"] }
