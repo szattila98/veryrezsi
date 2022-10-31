@@ -22,11 +22,10 @@ A backend for the expense calculator. It is a Rust project, which uses the Axum 
 
 ## Environment
 
-Variables can be set as EVs or in the `.env` file.
-Used variables are:
+Configuration options can be set as environment variables or in the `/resources/app-config.toml` file.
+The environment variable names are:
 
-- **HOST** - the host of the application
-- **PORT** - the port the appliaction will listen to
+- **SERVER_ADDRESS** - the host and port of the application
 - **DATABASE_URL**
   - the database the application will attempt to connect to
   - should be a valid mysql connection string
@@ -34,7 +33,7 @@ Used variables are:
 - **COOKIE_KEY**
   - cookies will be encrypted using this key
   - should be equal or greater than **64**
-- **RUST_LOG** - log level, possible value are _info_, _debug_, _error_, _warn_, _trace_
+- **LOG_LEVEL** - log level, possible value are _info_, _debug_, _error_, _warn_, _trace_
 - **SMTP_ADDRESS** - the address of the smtp server
 - **SMTP_PORT** - the port of the smtp server
 - **SMTP_USERNAME** - the username for the smtp server
