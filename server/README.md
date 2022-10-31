@@ -14,7 +14,7 @@ A backend for the expense calculator. It is a Rust project, which uses the Axum 
   - _cargo-llvm-cov_ - test coverage tool, use with `cargo llvm-cov`
   - _cargo-cache_ - dependency and build cache manager
   - _cargo-update_ - updates installed binaries with `cargo install-update -a` (this is different from the `cargo update` command, which updates project dependencies)
-  - _cargo-edit_ - `cargo upgrade` automatically updates dependencies in Cargo.toml
+  - _cargo-edit_ - `cargo upgrade --workspace --to-lockfile` automatically updates dependencies in Cargo.toml
 - _sea-orm-cli_
   - install with `cargo install sea-orm-cli`
   - has many uses, but heavily optional because it is only used here for the generation of base migration files with `sea-orm-cli migrate generate migration_name`, which saves us some hassle
