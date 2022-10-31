@@ -1,5 +1,7 @@
 use super::error::CurrencyError;
+
 use entity::currency_type::{self, Entity as CurrencyType};
+
 use sea_orm::{DatabaseConnection, EntityTrait};
 
 pub async fn find_currency_types(

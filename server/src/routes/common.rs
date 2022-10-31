@@ -8,7 +8,7 @@ use axum::{
 use serde::de::DeserializeOwned;
 use validator::{Validate, ValidationErrors};
 
-/// A generic structure that reperesents a requests body, that is validated according to its defined validation rules.
+/// A generic structure that represents a requests body, that is validated according to its defined validation rules.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct ValidatedJson<T>(pub T);
 

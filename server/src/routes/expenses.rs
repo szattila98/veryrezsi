@@ -3,7 +3,9 @@ use super::dto::expenses::NewPredefinedExpenseRequest;
 use super::{dto::expenses::NewExpenseRequest, error::ErrorMsg};
 use crate::auth;
 use crate::logic::expense_operations;
+use crate::logic::user_operations;
 
+use axum::extract::Path;
 use axum::{Extension, Json};
 use entity::{expense, predefined_expense, Id};
 use sea_orm::DatabaseConnection;
@@ -12,9 +14,12 @@ use sea_orm::DatabaseConnection;
 // FIXME: Not a good idea to return with domain model
 pub async fn get_expenses(
     Extension(ref conn): Extension<DatabaseConnection>,
+    Path(user_id): Path<i64>,
     user: auth::AuthenticatedUser,
 ) -> Result<Json<Vec<expense::Model>>, ErrorMsg<()>> {
-    match expense_operations::find_expenses_by_user_id(conn, user.id).await {
+    user_operations::authorize_user_by_id(user_id, user.id)?;
+
+    match expense_operations::find_expenses_by_user_id(conn, user_id).await {
         Ok(expenses) => Ok(Json(expenses)),
         Err(e) => Err(e.into()),
     }
