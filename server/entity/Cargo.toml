@@ -1,12 +1,13 @@
 [package]
 name = "entity"
-version = "0.2.0"
-edition = "2021"
-publish = false
-
-[lib]
-name = "entity"
-path = "src/lib.rs"
+version = "0.3.0"
+authors = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+description = { workspace = true }
 
 [dependencies]
 sea-orm = "0.10.1"

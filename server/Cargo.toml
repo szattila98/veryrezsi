@@ -1,3 +1,7 @@
+[package]
+name = "veryrezsi"
+version = "0.3.0"
+
 [workspace]
 members = [
     "api",
@@ -6,23 +10,17 @@ members = [
     "entity"
 ]
 
-[package]
-authors = ["Attila Szőke <szokeattila9801@gmail.com>"]
-name = "veryrezsi"
-version = "0.2.0"
+[workspace.package]
+authors = [
+    "Attila Szőke <szokeattila9801@gmail.com>",
+    # TODO dönisz was here
+]
 edition = "2021"
 license = "MIT"
-
 homepage = "https://github.com/szattila98/veryrezsi"
 repository = "https://github.com/szattila98/veryrezsi"
 documentation = "https://github.com/szattila98/veryrezsi"
-
-description = """
-Expense and subscription calculator web-server.
-"""
-readme = "README.md"
-keywords = ["api", "calculator", "web-app", "expenses-manager", "rocket"]
-categories = ["web-programming"]
+description = "Expense and subscription calculator web-server."
 
 [dependencies]
-veryrezsi-api = { path = "api" }
+veryrezsi-api = { path = "./api" }

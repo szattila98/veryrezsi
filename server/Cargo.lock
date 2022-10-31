@@ -794,7 +794,7 @@ checksum = "b1b32a7a2580c4473f10f66b512c34bdd7d33c5e3473227ca833abdb5afe4809"
 
 [[package]]
 name = "entity"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "sea-orm",
  "serde",
@@ -1366,7 +1366,7 @@ checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 
 [[package]]
 name = "migration"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "async-std",
  "chrono",
@@ -2840,14 +2840,14 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
 name = "veryrezsi"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "veryrezsi-api",
 ]
 
 [[package]]
 name = "veryrezsi-api"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "axum",
  "axum-extra",
@@ -2867,7 +2867,7 @@ dependencies = [
 
 [[package]]
 name = "veryrezsi-core"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "chrono",
  "confique",
