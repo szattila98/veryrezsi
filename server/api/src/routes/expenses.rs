@@ -10,7 +10,6 @@ use axum::{Extension, Json};
 use entity::{expense, predefined_expense, Id};
 use sea_orm::DatabaseConnection;
 
-/// Handles all expenses by current user query route
 // FIXME: Not a good idea to return with domain model
 pub async fn get_expenses(
     Extension(ref conn): Extension<DatabaseConnection>,

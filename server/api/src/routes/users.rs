@@ -13,7 +13,6 @@ use veryrezsi_core::dto::users::{LoginRequest, NewUserRequest};
 use veryrezsi_core::email::MailTransport;
 use veryrezsi_core::logic::user_operations;
 
-/// Handles the login route.
 pub async fn login(
     ValidatedJson(login_data): ValidatedJson<LoginRequest>,
     Extension(ref conn): Extension<DatabaseConnection>,
@@ -43,7 +42,6 @@ pub async fn login(
     }
 }
 
-/// Handles the current user query route.
 pub async fn me(
     Extension(ref conn): Extension<DatabaseConnection>,
     user: auth::AuthenticatedUser,
@@ -54,7 +52,6 @@ pub async fn me(
     }
 }
 
-/// Handles the logout route.
 pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, ErrorMsg<()>> {
     match cookies.get(AUTH_COOKIE_NAME) {
         Some(cookie) => Ok(cookies.remove(cookie)),
@@ -62,7 +59,6 @@ pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, Error
     }
 }
 
-/// Handles the registration route.
 pub async fn register(
     Extension(ref config): Extension<AppConfig>,
     Extension(ref conn): Extension<DatabaseConnection>,
@@ -75,7 +71,6 @@ pub async fn register(
     }
 }
 
-/// Handles the account activation route.
 pub async fn activate_account(
     Extension(ref conn): Extension<DatabaseConnection>,
     Path(token): Path<String>,

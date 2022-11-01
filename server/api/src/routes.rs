@@ -1,5 +1,3 @@
-#![allow(missing_docs)]
-
 use axum::{
     routing::{delete, get, post},
     Extension, Router,

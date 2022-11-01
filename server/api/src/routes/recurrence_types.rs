@@ -7,7 +7,6 @@ use crate::auth;
 
 use super::error::ErrorMsg;
 
-/// Handles recurrence type listing
 pub async fn get_recurrence_types(
     Extension(ref conn): Extension<DatabaseConnection>,
     _: auth::AuthenticatedUser,

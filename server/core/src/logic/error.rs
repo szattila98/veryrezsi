@@ -1,5 +1,3 @@
-#![allow(missing_docs)]
-
 use pwhash::error::Error as PwHashError;
 use sea_orm::{error::DbErr, TransactionError};
 use thiserror::Error;

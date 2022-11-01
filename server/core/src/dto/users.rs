@@ -1,5 +1,3 @@
-#![allow(missing_docs)]
-
 use fancy_regex::Regex;
 use lazy_static::lazy_static;
 use serde::Deserialize;

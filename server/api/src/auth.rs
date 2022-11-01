@@ -19,7 +19,6 @@ pub struct AuthenticatedUser {
 }
 
 impl AuthenticatedUser {
-    /// Creates a new authenticated user.
     fn new(id: Id) -> Self {
         AuthenticatedUser { id }
     }

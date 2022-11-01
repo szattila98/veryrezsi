@@ -10,7 +10,6 @@ use axum::extract::Path;
 use axum::{http::StatusCode, Extension, Json};
 use sea_orm::DatabaseConnection;
 
-/// Handles new transaction creation route
 pub async fn create_transaction(
     ValidatedJson(new_transaction_data): ValidatedJson<NewTransactionRequest>,
     user: auth::AuthenticatedUser,
@@ -22,7 +21,6 @@ pub async fn create_transaction(
     }
 }
 
-/// Handles transaction deletion route
 pub async fn delete_transaction(
     Extension(ref conn): Extension<DatabaseConnection>,
     Path(transaction_id): Path<i64>,

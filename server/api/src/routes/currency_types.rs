@@ -6,7 +6,6 @@ use entity::currency_type;
 use sea_orm::DatabaseConnection;
 use veryrezsi_core::logic::currency_operations;
 
-/// Handles currency type listing
 pub async fn get_currency_types(
     Extension(ref conn): Extension<DatabaseConnection>,
     _: auth::AuthenticatedUser,

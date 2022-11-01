@@ -1,5 +1,3 @@
-#![allow(missing_docs)]
-
 use axum::{
     extract::rejection::JsonRejection,
     http::StatusCode,

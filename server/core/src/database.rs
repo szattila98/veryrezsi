@@ -3,7 +3,7 @@ use migration::{Migrator, MigratorTrait};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use std::time::Duration;
 
-/// Creates a database connection pool and runs migrations.
+/// Creates a database connection pool and runs migrations if needed.
 pub async fn init(config: &AppConfig) -> DatabaseConnection {
     let mut opt = ConnectOptions::new(config.database_url.clone());
     opt.max_connections(100)

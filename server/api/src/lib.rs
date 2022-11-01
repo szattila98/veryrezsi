@@ -1,7 +1,3 @@
-#![warn(missing_docs)]
-
-//! Veryrezsi library, which makes serving the server-side logic possible.
-
 use axum::Server;
 use axum_extra::extract::cookie::Key;
 use tokio::signal;
@@ -48,7 +44,6 @@ pub async fn start() {
     info!("Shutting down...");
 }
 
-/// Prints the logo of the application.
 fn print_logo() {
     println!(
         r#"

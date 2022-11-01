@@ -42,8 +42,8 @@ impl AppConfig {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
 /// Intermediate config enum for log levels as actual struct cannot be deserialized directly.
+#[derive(Debug, Clone, Deserialize)]
 pub enum LogLevel {
     #[serde(alias = "trace", alias = "TRACE")]
     Trace,

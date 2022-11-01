@@ -18,7 +18,6 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::debug;
 
-/// Finds a user by its email in the database.
 pub async fn find_user_by_email(
     conn: &DatabaseConnection,
     email: String,
@@ -33,7 +32,6 @@ pub async fn find_user_by_email(
     }
 }
 
-/// Finds a user by its id in the database.
 pub async fn find_user_by_id(conn: &DatabaseConnection, id: Id) -> Result<user::Model, UserError> {
     match User::find_by_id(id).one(conn).await? {
         Some(user) => Ok(user),
@@ -41,7 +39,6 @@ pub async fn find_user_by_id(conn: &DatabaseConnection, id: Id) -> Result<user::
     }
 }
 
-/// Saves a new user to the database, encrypts the password and sends an activation email.
 pub async fn save_user<M>(
     config: &config::AppConfig,
     conn: &DatabaseConnection,
@@ -107,7 +104,6 @@ where
     }
 }
 
-/// Activates a newly registered user.
 pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Result<(), UserError> {
     let account_activation = AccountActivation::find()
         .filter(account_activation::Column::Token.eq(token.clone()))
@@ -142,10 +138,8 @@ pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Resul
     }
 }
 
-/**
- * Utility method to authorize if a user should be able to access a resouce.
- * Checks the equality of two user_ids.
- */
+/// Utility method to authorize if a user should be able to access a resouce.
+/// Checks the equality of two user_ids.
 pub fn authorize_user_by_id(user_id: Id, user_id_in_resource: Id) -> Result<(), UserError> {
     if user_id != user_id_in_resource {
         return Err(UserError::UserHasNoRightForAction);

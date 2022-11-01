@@ -1,5 +1,3 @@
-#![allow(missing_docs)]
-
 use entity::{Id, MoneyAmount};
 use serde::Deserialize;
 use validator::Validate;
