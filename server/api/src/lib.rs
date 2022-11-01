@@ -1,4 +1,6 @@
-use axum::Server;
+use std::net::SocketAddr;
+
+use axum::{Router, Server};
 use axum_extra::extract::cookie::Key;
 use tokio::signal;
 use tracing::info;
@@ -7,9 +9,19 @@ use veryrezsi_core::config::AppConfig;
 mod auth;
 mod routes;
 
-/// Initializes every part of the application and starts the server.
 #[tokio::main]
 pub async fn start() {
+    let (server_address, router) = init().await;
+    info!("Server is listening on {}...", server_address);
+    let _ = Server::bind(&server_address)
+        .serve(router.into_make_service())
+        .with_graceful_shutdown(shutdown_signal())
+        .await;
+    info!("Shutting down...");
+}
+
+/// Initializes every part of the application.
+async fn init() -> (SocketAddr, Router) {
     print_logo();
     let config = AppConfig::init();
 
@@ -36,12 +48,7 @@ pub async fn start() {
     );
     info!("Successfully created api routes with extensions");
 
-    info!("Server is listening on {}...", config.server_address);
-    let _ = Server::bind(&config.server_address)
-        .serve(router.into_make_service())
-        .with_graceful_shutdown(shutdown_signal())
-        .await;
-    info!("Shutting down...");
+    (config.server_address, router)
 }
 
 fn print_logo() {
