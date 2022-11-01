@@ -7,7 +7,7 @@ use tracing::info;
 use veryrezsi_core::config::AppConfig;
 
 mod auth;
-mod routes;
+pub mod routes;
 
 #[tokio::main]
 pub async fn start() {

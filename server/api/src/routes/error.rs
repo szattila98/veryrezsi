@@ -14,7 +14,7 @@ use veryrezsi_core::logic::error::{
 /// It has an optional generic details parameter, which is used to return more detailed information about the error (e.g. validation errors).
 /// If none, it won't be serialized.
 /// ```
-/// use veryrezsi::routes::error::ErrorMsg;
+/// use veryrezsi_api::routes::error::ErrorMsg;
 /// use axum::http::StatusCode;
 /// use validator::ValidationErrors;
 ///
@@ -23,7 +23,7 @@ use veryrezsi_core::logic::error::{
 /// ```
 /// On empty details use `()` as the generic parameter.
 /// ```
-/// use veryrezsi::routes::error::ErrorMsg;
+/// use veryrezsi_api::routes::error::ErrorMsg;
 /// use axum::http::StatusCode;
 /// use validator::ValidationErrors;
 ///
