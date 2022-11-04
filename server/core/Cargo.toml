@@ -12,6 +12,7 @@ description = { workspace = true }
 [dependencies]
 entity = { path = "../entity" }
 migration = { path = "../migration" }
+proc_macros = { path = "../proc_macros" }
 
 tokio = { workspace = true, features = ["full"] }
 serde = { workspace = true, features = ["derive"] }

@@ -1,0 +1,20 @@
+[package]
+name = "proc_macros"
+version = "0.1.0"
+authors = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+documentation = { workspace = true }
+description = { workspace = true }
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "1.0.103", features = ["full"] }
+quote = "1.0.21"
+proc-macro2 = "1.0.47"
+css-inline = "0.8.4"
+minify-html-onepass = "0.10.3"

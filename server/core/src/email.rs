@@ -5,12 +5,13 @@ use lettre::{
     transport::smtp::{authentication::Credentials, PoolConfig},
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
+use proc_macros::include_email_template;
 use serde::Serialize;
 use std::sync::Arc;
 use std::{collections::HashMap, hash::Hash};
 
 pub const ACTIVATION_EMAIL_TEMPLATE: &str =
-    include_str!("./../../resources/email/activation_email.html");
+    include_email_template!("./resources/email/activation_email.html");
 
 pub type MailTransport = AsyncSmtpTransport<Tokio1Executor>;
 

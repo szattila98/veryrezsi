@@ -138,7 +138,7 @@ pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Resul
     }
 }
 
-/// Utility method to authorize if a user should be able to access a resouce.
+/// Utility method to authorize if a user should be able to access a resource.
 /// Checks the equality of two user_ids.
 pub fn authorize_user_by_id(user_id: Id, user_id_in_resource: Id) -> Result<(), UserError> {
     if user_id != user_id_in_resource {

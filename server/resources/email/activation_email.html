@@ -1,15 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activation email</title>
-</head>
-<body>
-    <h1>Hello {{ username }}!</h1>
-    <p>You have registered a VeryRezsi account</p>
-    <p>Click this <a href="{{ activation_link }}">link</a> to activate your account</p>
-    <p>Thank you and welcome aboard!</p>
-</body>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+      body {
+        font-size: 1.2rem;
+      }
+
+      h1 {
+        text-align: center;
+        padding: 25px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .button a {
+        font-size: 1.2rem;
+        margin-block: 15px;
+        padding: 14px;
+        background-color: hsl(121, 64%, 17%);
+        color: white;
+        border: 0px;
+        border-radius: 15px;
+        text-decoration: none;
+      }
+
+      .button a:hover {
+        cursor: pointer;
+        background-color: hsl(121, 64%, 28%);
+      }
+
+      .button {
+        text-align: center;
+        max-width: 40vw;
+        padding-block: 15px;
+      }
+
+      .main {
+        max-width: 40vw;
+        margin-left: 30vw;
+        border: 1px solid hsl(96, 50%, 37%);
+        border-radius: 10px;
+      }
+
+      .end p {
+        margin: 0 0 0 20px;
+      }
+
+      .end {
+        padding-bottom: 10px;
+      }
+
+      .link,
+      .text {
+        text-align: center;
+        padding-inline: 15px;
+      }
+
+      .link {
+        margin-bottom: 30px;
+      }
+
+      /*Mobile*/
+      @media only screen and (max-width: 600px) {
+        .main {
+          max-width: 90vw;
+          margin-left: 2.5vw;
+        }
+
+        .button {
+          max-width: 90vw;
+        }
+
+        .button a:active {
+          background-color: hsl(121, 64%, 28%);
+        }
+      }
+
+      /*Laptop and Tablet*/
+      @media only screen and (min-width: 600px) and (max-width: 1200px) {
+        .main {
+          max-width: 60vw;
+          margin-left: 20vw;
+        }
+
+        .button {
+          max-width: 60vw;
+        }
+
+        .button a:active {
+          background-color: hsl(121, 64%, 28%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <h1>Üdvözlünk {{ username }}!</h1>
+      <p class="text">
+        Kérem erősítse meg a Veryrezsi felhasználói fiókjának regisztrációját! A
+        regisztráció megerősítéséhez kérem kattintson az alábi gombra.
+      </p>
+      <div class="button">
+        <a href="{{ activation_link }}">Regisztráció megerősítése</a>
+      </div>
+      <p class="text">
+        Vagy használja az alábbi linket ha a gomb nem jelenne meg vagy nem
+        müködne:
+      </p>
+      <p class="link">
+        <a href="{{ activation_link }}">{{ activation_link }}</a>
+      </p>
+      <div class="end">
+        <p>Üdvözlettel,</p>
+        <p>A Veryrezsi csapata!</p>
+      </div>
+    </div>
+  </body>
 </html>
