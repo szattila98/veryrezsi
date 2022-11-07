@@ -3,7 +3,7 @@ import type { NewTransactionResponse, NewTransaction } from '$shared/api/newTran
 import type { RequestEvent } from '@sveltejs/kit';
 
 /** @type {import('./[id]').RequestHandler} */
-export async function post({ request }: RequestEvent): Promise<NewTransactionResponse> {
+export async function POST({ request }: RequestEvent): Promise<NewTransactionResponse> {
 	const body: NewTransaction = await request.json();
 	return mockNewTransaction({ newTransaction: body });
 }
