@@ -4,7 +4,7 @@ import type { NewExpenseResponse, NewExpense } from '$shared/api/newExpense';
 import type { RequestEvent } from '@sveltejs/kit';
 
 /** @type {import('./[id]').RequestHandler} */
-export async function post({ request }: RequestEvent): Promise<NewExpenseResponse> {
+export async function POST({ request }: RequestEvent): Promise<NewExpenseResponse> {
 	const body: NewExpense = await request.json();
 	return mockNewExpense({ newExpense: body });
 }
