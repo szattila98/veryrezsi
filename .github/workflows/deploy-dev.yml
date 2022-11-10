@@ -29,5 +29,5 @@ jobs:
         run: >
           aws lightsail create-container-service-deployment
           --service-name veryrezsi
-          --containers file://${{ github.action_path }}/lightsail/deployment-containers.json
-          --public-endpoint file://${{ github.action_path }}/lightsail/deployment-endpoint.json
+          --containers file://./.github/workflows/lightsail/deployment-containers.json
+          --public-endpoint file://./.github/workflows/lightsail/deployment-endpoint.json
