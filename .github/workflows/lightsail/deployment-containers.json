@@ -1,9 +1,8 @@
 {
-	"rezsi-client": {
-      "image": "846422419469.dkr.ecr.eu-central-1.amazonaws.com/rezsi-client:latest",
-      "command": [],
-      "environment": {},
-      "ports": {"3000": "HTTP"}
-    }
- }
- 
+  "rezsi-client": {
+    "image": "846422419469.dkr.ecr.eu-central-1.amazonaws.com/rezsi-client:latest",
+    "command": [],
+    "environment": {},
+    "ports": {"3000": "HTTP"}
+  }
+}
