@@ -5,6 +5,8 @@ on:
     workflows: ['Build & Publish Docker Images']
     types:
       - completed
+  pull_request:
+    branches: ["**"]
   workflow_dispatch:
 
 jobs:
