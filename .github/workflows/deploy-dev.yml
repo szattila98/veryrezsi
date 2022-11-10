@@ -1,0 +1,31 @@
+name: Deploy to dev environment
+
+on:
+  workflow_run:
+    workflows: ['Build & Publish Docker Images']
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy latest images into Lightsail container
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Authenticate into AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Create new Lightsail deployment
+        run: >
+          aws lightsail create-container-service-deployment
+            --service-name veryrezsi
+            --containers file://${{ github.action_path }}/lightsail/deployment-containers.json
+            --public-endpoint file://${{ github.action_path }}/lightsail/deployment-endpoint.json
