@@ -30,3 +30,10 @@ thiserror = "1.0.37"
 lettre = { version = "0.10.1", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
 handlebars = "4.3.5"
 confique = { version = "0.2.0", default-features = false, features = ["toml"] }
+
+[features]
+mock = ["sea-orm/mock"]
+
+[[test]]
+name = "mock"
+required-features = ["mock"]

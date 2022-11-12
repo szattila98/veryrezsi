@@ -38,3 +38,7 @@ The environment variable names are:
 - **SMTP_PORT** - the port of the smtp server
 - **SMTP_USERNAME** - the username for the smtp server
 - **SMTP_PASSWORD** - the password for the smtp server
+
+## Tests
+Use aforementioned cargo plugin for coverage.
+Use `cargo test --workspace` to run all tests and doctests.

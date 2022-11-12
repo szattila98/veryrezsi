@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - _rustup_ 1.25.1 or higher
-- _rustc_ 1.63.0 or higher
+- _rustc_ 1.65.0 or higher
 - _mysql_ 8 or higher
 - _docker_ 20.10.17 or higher
 - _docker-compose_ 1.29.2 or higher

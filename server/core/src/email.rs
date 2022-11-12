@@ -5,13 +5,17 @@ use lettre::{
     transport::smtp::{authentication::Credentials, PoolConfig},
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
-use proc_macros::include_email_template;
 use serde::Serialize;
 use std::sync::Arc;
 use std::{collections::HashMap, hash::Hash};
 
+// This is a workaround because cargo doc-test does not like our macro because the path cannot be relative to the current file, see our macro's doc for more info.
+#[cfg(not(doctest))]
 pub const ACTIVATION_EMAIL_TEMPLATE: &str =
-    include_email_template!("./resources/email/activation_email.html");
+    proc_macros::include_email_template!("./resources/email/activation_email.html");
+#[cfg(doctest)]
+pub const ACTIVATION_EMAIL_TEMPLATE: &str =
+    include_str!("../../resources/email/activation_email.html");
 
 pub type MailTransport = AsyncSmtpTransport<Tokio1Executor>;
 

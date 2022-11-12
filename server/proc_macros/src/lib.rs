@@ -7,7 +7,8 @@ use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
 /// Compiles an email template into the binary as a &str, also inlines the css and minifies it.
-/// The file path can be relative to the workspace Cargo.toml.
+/// The file path should be relative to the workspace Cargo.toml.
+/// TODO Make it so path can be relative to the file the macro runs in at compile time, basically wait for [this](https://doc.rust-lang.org/stable/proc_macro/struct.Span.html#method.source_file) to become stable.
 #[proc_macro]
 pub fn include_email_template(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as LitStr);
