@@ -33,7 +33,3 @@ confique = { version = "0.2.0", default-features = false, features = ["toml"] }
 
 [features]
 mock = ["sea-orm/mock"]
-
-[[test]]
-name = "mock"
-required-features = ["mock"]

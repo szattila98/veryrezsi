@@ -41,4 +41,6 @@ The environment variable names are:
 
 ## Tests
 Use aforementioned cargo plugin for coverage.
-Use `cargo test --workspace` to run all tests and doctests.
+Use `cargo test --workspace` to run all tests and doctests, except tests that require a mock database in __core__.
+Use `cd core [&&|;] cargo test --features mock` to run tests in core that require a mock. (This is a workaround because axum doesn't like when the MockDatabase is around)
+To make rust-analyzer not grey out the tests, open the rust-analyzer extension settings and edit the __Cargo features__ option to also include `"mocks"`. Only do this temporarily until you have written the tests, then switch back.

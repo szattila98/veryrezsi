@@ -10,3 +10,14 @@ pub async fn find_currency_types(
     let currency_types = CurrencyType::find().all(conn).await?;
     Ok(currency_types)
 }
+
+#[cfg(all(test, feature = "mock"))]
+mod tests {
+    use super::*;
+    use sea_orm::MockDatabase;
+
+    #[test]
+    fn fun() {
+        assert_eq!(1, 1);
+    }
+}
