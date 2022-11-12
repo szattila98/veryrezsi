@@ -15,6 +15,5 @@ proc-macro = true
 [dependencies]
 syn = { version = "1.0.103", features = ["full"] }
 quote = "1.0.21"
-proc-macro2 = "1.0.47"
 css-inline = "0.8.4"
 minify-html-onepass = "0.10.3"

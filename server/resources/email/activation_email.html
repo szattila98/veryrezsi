@@ -10,15 +10,17 @@
 
       h1 {
         text-align: center;
-        padding: 25px;
+        padding-inline: 50px;
+        margin-block: 50px;
         overflow: hidden;
         text-overflow: ellipsis;
-        -webkit-line-clamp: 2;
+        overflow-wrap: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
       }
 
       .button a {
-        font-size: 1.2rem;
         margin-block: 15px;
         padding: 14px;
         background-color: hsl(121, 64%, 17%);
@@ -62,6 +64,16 @@
 
       .link {
         margin-bottom: 30px;
+        padding-inline: 50px;
+        max-width: 40vw;
+      }
+
+      .linkText {
+        overflow: hidden;
+        overflow-wrap: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
       }
 
       /*Mobile*/
@@ -71,12 +83,21 @@
           margin-left: 2.5vw;
         }
 
-        .button {
+        .button,
+        .link {
           max-width: 90vw;
         }
 
         .button a:active {
           background-color: hsl(121, 64%, 28%);
+        }
+
+        .button a {
+          padding: 10px;
+        }
+
+        h1 {
+          padding-inline: 25px;
         }
       }
 
@@ -87,7 +108,8 @@
           margin-left: 20vw;
         }
 
-        .button {
+        .button,
+        .link {
           max-width: 60vw;
         }
 
@@ -112,7 +134,9 @@
         müködne:
       </p>
       <p class="link">
-        <a href="{{ activation_link }}">{{ activation_link }}</a>
+        <a class="linkText" href="{{ activation_link }}"
+          >{{ activation_link }}</a
+        >
       </p>
       <div class="end">
         <p>Üdvözlettel,</p>

@@ -6,8 +6,8 @@ use proc_macro::{self, TokenStream};
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
-/// Compiles an email template into the binary at compile time, also inlines the css and minifies it.
-/// The file path can be relative to the Cargo.toml or relative to the file the macro is used in.
+/// Compiles an email template into the binary as a &str, also inlines the css and minifies it.
+/// The file path can be relative to the workspace Cargo.toml.
 #[proc_macro]
 pub fn include_email_template(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as LitStr);

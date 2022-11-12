@@ -2283,7 +2283,6 @@ version = "0.1.0"
 dependencies = [
  "css-inline",
  "minify-html-onepass",
- "proc-macro2",
  "quote",
  "syn",
 ]
