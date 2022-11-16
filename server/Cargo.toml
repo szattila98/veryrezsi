@@ -36,3 +36,8 @@ validator = "0.16.0"
 
 [dependencies]
 veryrezsi-api = { path = "./api" }
+
+# [profile.release]
+# strip = true
+# lto = true
+# codegen-units = 1

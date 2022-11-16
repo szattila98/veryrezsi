@@ -32,4 +32,5 @@ handlebars = "4.3.5"
 confique = { version = "0.2.0", default-features = false, features = ["toml"] }
 
 [features]
+default = ["mock"]
 mock = ["sea-orm/mock"]

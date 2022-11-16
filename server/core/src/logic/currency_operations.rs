@@ -11,7 +11,7 @@ pub async fn find_currency_types(
     Ok(currency_types)
 }
 
-#[cfg(all(test, feature = "mock"))]
+#[cfg(test)]
 mod tests {
     use super::*;
     use sea_orm::MockDatabase;
