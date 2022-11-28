@@ -10,10 +10,10 @@ pub async fn find_currency_types(
     Ok(CurrencyType::find().all(conn).await?)
 }
 
-/*
 #[cfg(test)]
 mod tests {
     use super::*;
+    use migration::DbErr;
     use sea_orm::{DatabaseBackend, MockDatabase};
 
     #[tokio::test]
@@ -44,8 +44,11 @@ mod tests {
     }
 
     #[tokio::test]
+    #[should_panic]
     async fn find_returns_error() {
-        assert_eq!(1, 1);
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            .append_query_errors(vec![DbErr::Custom("Mozsojuc".to_string())])
+            .into_connection();
+        find_currency_types(&conn).await.unwrap();
     }
 }
-*/
