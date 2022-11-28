@@ -1,11 +1,11 @@
 use axum::{
     routing::{delete, get, post},
-    Extension, Router,
+    Router,
 };
 use axum_extra::extract::cookie::Key;
+use axum_macros::FromRef;
 use sea_orm::DatabaseConnection;
 use std::sync::Arc;
-use tower::ServiceBuilder;
 use veryrezsi_core::{config::AppConfig, email::MailTransport};
 
 pub mod common;
@@ -15,6 +15,14 @@ pub mod expenses;
 pub mod recurrence_types;
 pub mod transactions;
 pub mod users;
+
+#[derive(Clone, FromRef)]
+pub struct AppState {
+    pub config: AppConfig,
+    pub conn: DatabaseConnection,
+    pub secret_key: Key,
+    pub mail_transport: Arc<MailTransport>,
+}
 
 /// Initializes the router with the extension layers and the route handlers.
 pub fn init(
@@ -51,11 +59,12 @@ pub fn init(
         .nest("/currency", currency_api)
         .nest("/recurrence", recurrence_api);
 
-    Router::new().nest("/api", api).layer(
-        ServiceBuilder::new()
-            .layer(Extension(config))
-            .layer(Extension(conn))
-            .layer(Extension(secret_key))
-            .layer(Extension(Arc::new(mail_transport))),
-    )
+    let state = AppState {
+        config,
+        conn,
+        secret_key,
+        mail_transport: Arc::new(mail_transport),
+    };
+
+    Router::new().nest("/api", api).with_state(state)
 }

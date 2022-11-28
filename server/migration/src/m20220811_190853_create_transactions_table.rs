@@ -69,7 +69,7 @@ impl MigrationTrait for Migration {
             id: Set(1),
             donor_name: Set("Kate".to_string()),
             value: Set(Decimal::new(5, 2)),
-            date: Set(NaiveDate::from_ymd(2022, 9, 29)),
+            date: Set(NaiveDate::from_ymd_opt(2022, 9, 29).unwrap()),
             currency_type_id: Set(2),
             expense_id: Set(1),
         }
@@ -79,7 +79,7 @@ impl MigrationTrait for Migration {
             id: Set(2),
             donor_name: Set("David".to_string()),
             value: Set(Decimal::new(7, 0)),
-            date: Set(NaiveDate::from_ymd(2022, 10, 23)),
+            date: Set(NaiveDate::from_ymd_opt(2022, 10, 23).unwrap()),
             currency_type_id: Set(2),
             expense_id: Set(1),
         }
@@ -89,7 +89,7 @@ impl MigrationTrait for Migration {
             id: Set(3),
             donor_name: Set("Wifey".to_string()),
             value: Set(Decimal::new(50, 0)),
-            date: Set(NaiveDate::from_ymd(2022, 4, 12)),
+            date: Set(NaiveDate::from_ymd_opt(2022, 4, 12).unwrap()),
             currency_type_id: Set(2),
             expense_id: Set(2),
         }
@@ -99,7 +99,7 @@ impl MigrationTrait for Migration {
             id: Set(4),
             donor_name: Set("My colleague who use exotic Hungarian Forint".to_string()),
             value: Set(Decimal::new(1000, 0)),
-            date: Set(NaiveDate::from_ymd(2022, 5, 13)),
+            date: Set(NaiveDate::from_ymd_opt(2022, 5, 13).unwrap()),
             currency_type_id: Set(1),
             expense_id: Set(2),
         }

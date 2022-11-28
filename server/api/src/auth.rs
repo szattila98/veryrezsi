@@ -1,10 +1,10 @@
 use std::num::ParseIntError;
 
-use crate::routes::error::ErrorMsg;
+use crate::routes::{error::ErrorMsg, AppState};
 use axum::{
     async_trait,
-    extract::{rejection::ExtensionRejection, FromRequest, RequestParts},
-    http::StatusCode,
+    extract::FromRequestParts,
+    http::{request::Parts, StatusCode},
 };
 use axum_extra::extract::cookie::{Key, PrivateCookieJar};
 use entity::Id;
@@ -25,15 +25,17 @@ impl AuthenticatedUser {
 }
 
 #[async_trait]
-impl<B> FromRequest<B> for AuthenticatedUser
-where
-    B: Send, // required by `async_trait`
-{
+impl FromRequestParts<AppState> for AuthenticatedUser {
     type Rejection = ErrorMsg<()>;
 
     /// Extracts the authenticated user from the request.
-    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let jar = PrivateCookieJar::<Key>::from_request(req).await?;
+    async fn from_request_parts(
+        parts: &mut Parts,
+        state: &AppState,
+    ) -> Result<Self, Self::Rejection> {
+        let jar = PrivateCookieJar::<Key>::from_request_parts(parts, &state.secret_key)
+            .await
+            .expect("this should be infallible");
         return if let Some(cookie) = jar.get(AUTH_COOKIE_NAME) {
             let id = cookie.value().parse()?;
             Ok(AuthenticatedUser::new(id))
@@ -41,16 +43,6 @@ where
             debug!("No authentication cookie found");
             Err(ErrorMsg::new(StatusCode::UNAUTHORIZED, "not logged in"))
         };
-    }
-}
-
-impl From<ExtensionRejection> for ErrorMsg<()> {
-    fn from(e: ExtensionRejection) -> Self {
-        debug!("{e}");
-        ErrorMsg::new(
-            StatusCode::BAD_REQUEST,
-            "malformed request, cannot extract cookies",
-        )
     }
 }
 

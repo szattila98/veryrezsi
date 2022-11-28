@@ -40,7 +40,7 @@ The environment variable names are:
 - **SMTP_PASSWORD** - the password for the smtp server
 
 ## Tests
+
 Use aforementioned cargo plugin for coverage.
-Use `cargo test --workspace` to run all tests and doctests, except tests that require a mock database in __core__.
-Use `cd core [&&|;] cargo test --features mock` to run tests in core that require a mock. (This is a workaround because axum doesn't like when the MockDatabase is around)
-To make rust-analyzer not grey out the tests, open the rust-analyzer extension settings and edit the __Cargo features__ option to also include `"mocks"`. Only do this temporarily until you have written the tests, then switch back.
+Tests are mainly in the **core** workspace member so cd into it and use `cargo test` to run all tests and doctests.
+There can be errors shown in the **api** by rust-analyzer, this is a false positive, it is because the extension thinks that the mock default feature is enabled by the **core**, but it is not. If it is the project does not compile because Axum does not like the sea_orm mock feature.

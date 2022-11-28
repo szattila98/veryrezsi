@@ -1,3 +1,4 @@
+use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::transactions::NewTransactionRequest;
 use veryrezsi_core::logic::transaction_operations;
 
@@ -6,14 +7,13 @@ use super::error::ErrorMsg;
 use crate::auth;
 use entity::Id;
 
-use axum::extract::Path;
-use axum::{http::StatusCode, Extension, Json};
-use sea_orm::DatabaseConnection;
+use axum::extract::{Path, State};
+use axum::{http::StatusCode, Json};
 
 pub async fn create_transaction(
-    ValidatedJson(new_transaction_data): ValidatedJson<NewTransactionRequest>,
     user: auth::AuthenticatedUser,
-    Extension(ref conn): Extension<DatabaseConnection>,
+    State(ref conn): State<DatabaseConnection>,
+    ValidatedJson(new_transaction_data): ValidatedJson<NewTransactionRequest>,
 ) -> Result<Json<Id>, ErrorMsg<()>> {
     match transaction_operations::create_transaction(conn, user.id, new_transaction_data).await {
         Ok(transaction_id) => Ok(Json(transaction_id)),
@@ -22,9 +22,9 @@ pub async fn create_transaction(
 }
 
 pub async fn delete_transaction(
-    Extension(ref conn): Extension<DatabaseConnection>,
-    Path(transaction_id): Path<i64>,
     user: auth::AuthenticatedUser,
+    State(ref conn): State<DatabaseConnection>,
+    Path(transaction_id): Path<i64>,
 ) -> Result<StatusCode, ErrorMsg<()>> {
     match transaction_operations::delete_transaction_by_id(conn, user.id, transaction_id).await {
         Ok(_) => Ok(StatusCode::NO_CONTENT),
