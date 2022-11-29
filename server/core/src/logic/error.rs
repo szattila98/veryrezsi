@@ -57,7 +57,7 @@ pub enum ExpenseTransactionError {
     #[error("some data provided for transaction creation is invalid or cannot be parsed: '{0}'")]
     InvalidTransactionData(String),
     #[error("the transaction requested to be deleted does not exist")]
-    TransactionToDeletedDoesNotExist,
+    TransactionToDeleteDoesNotExist,
     #[error("you do not have permission for the parent expense: '{0}'")]
     ParentExpenseIsNotOwnedByTheUser(String),
     #[error("database error: '{0}'")]
@@ -94,12 +94,12 @@ mod tests {
 
     #[test]
     fn transaction_connection_err_converts_to_database_user_err() {
-        let dbe = DbErr::Custom("test".to_string());
+        let dbe = DbErr::Custom("SqMPqEYywurqXiDEKzNU".to_string());
         let tre = TransactionError::<UserError>::Connection(dbe);
         let ue = UserError::from(tre);
         let res = match ue {
             UserError::DatabaseError(e) => match e {
-                DbErr::Custom(s) => s == "test".to_string(),
+                DbErr::Custom(s) => s == "SqMPqEYywurqXiDEKzNU".to_string(),
                 _ => false,
             },
             _ => false,
@@ -109,38 +109,42 @@ mod tests {
 
     #[test]
     fn transaction_err_returns_user_err() {
-        let ue = UserError::UserNotFound("test".to_string());
+        let ue = UserError::UserNotFound("LMMOVfLkzaTedkqPnyam".to_string());
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
         let res = match ue {
-            UserError::UserNotFound(e) => e == "test".to_string(),
+            UserError::UserNotFound(e) => e == "LMMOVfLkzaTedkqPnyam".to_string(),
             _ => false,
         };
         assert!(res);
 
-        let ue = UserError::EmailAlreadyExists("test".to_string());
+        let ue = UserError::EmailAlreadyExists("fTsobToWEkJETIpefNLN".to_string());
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
         let res = match ue {
-            UserError::EmailAlreadyExists(e) => e == "test".to_string(),
+            UserError::EmailAlreadyExists(e) => e == "fTsobToWEkJETIpefNLN".to_string(),
             _ => false,
         };
         assert!(res);
 
-        let ue = UserError::PasswordCannotBeHashed(PwHashError::RandomError("test".to_string()));
+        let ue = UserError::PasswordCannotBeHashed(PwHashError::RandomError(
+            "temtwhEzvTaLnbWLGXmZJWst".to_string(),
+        ));
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
         let res = match ue {
-            UserError::PasswordCannotBeHashed(e) => e.to_string() == "test".to_string(),
+            UserError::PasswordCannotBeHashed(e) => {
+                e.to_string() == "temtwhEzvTaLnbWLGXmZJWst".to_string()
+            }
             _ => false,
         };
         assert!(res);
 
-        let ue = UserError::ActivationTokenNotFound("test".to_string());
+        let ue = UserError::ActivationTokenNotFound("teBlwJsmuUsAmiogKmdsecst".to_string());
         let tre = TransactionError::<UserError>::Transaction(ue);
         let ue = UserError::from(tre);
         let res = match ue {
-            UserError::ActivationTokenNotFound(e) => e == "test".to_string(),
+            UserError::ActivationTokenNotFound(e) => e == "teBlwJsmuUsAmiogKmdsecst".to_string(),
             _ => false,
         };
         assert!(res);

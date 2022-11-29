@@ -53,20 +53,24 @@ where
     T: AsyncTransport + Send + Sync,
     <T as AsyncTransport>::Error: std::fmt::Debug,
 {
+    let to = to.parse().expect("to should be a valid email address");
+    let from = "Veryrezsi <noreply@veryrezsi.com>"
+        .parse()
+        .expect("from should be a valid email address");
     let email = Message::builder()
-        .to(to.parse().unwrap())
-        .from("Veryrezsi <noreply@veryrezsi.com>".parse().unwrap())
+        .to(to)
+        .from(from)
         .subject(subject)
         .singlepart(
             SinglePart::builder()
                 .header(ContentType::TEXT_HTML)
                 .body(body),
         )
-        .expect("Error while building a message");
+        .expect("error while building a message");
     transport
         .send(email)
         .await
-        .expect("Error while sending an email");
+        .expect("error while sending an email");
 }
 
 #[cfg(test)]
@@ -119,9 +123,9 @@ mod tests {
     #[tokio::test]
     async fn send_mail_correctly_sends_an_email() {
         let mail_transport = Arc::new(AsyncStubTransport::new_ok());
-        let to = "test@test.com".to_string();
-        let subject = "test subject";
-        let body = "test body".to_string();
+        let to = "aru@pizvo.jo".to_string();
+        let subject = "UAmgResRKr";
+        let body = "JghUysMeIASWJCCQMThIxqSanWRbIN".to_string();
         send_mail(mail_transport.clone(), to, subject, body).await;
         assert_eq!(mail_transport.messages().await.len(), 1);
     }
@@ -131,15 +135,15 @@ mod tests {
     async fn send_mail_panics_on_empty_to() {
         let mail_transport = Arc::new(AsyncStubTransport::new_ok());
         let to = "".to_string();
-        let subject = "test subject";
-        let body = "test body".to_string();
+        let subject = "BNqEeDcTSC";
+        let body = "GTwZHvlJKsVrVmXzXHKOrePFxqZyHw".to_string();
         send_mail(mail_transport, to, subject, body).await;
     }
 
     #[tokio::test]
     async fn send_mail_correctly_sends_with_empty_subject_and_body() {
         let mail_transport = Arc::new(AsyncStubTransport::new_ok());
-        let to = "test@test.com".to_string();
+        let to = "colet@ku.aw".to_string();
         let subject = "";
         let body = "".to_string();
         send_mail(mail_transport.clone(), to, subject, body).await;
@@ -150,9 +154,9 @@ mod tests {
     #[should_panic]
     async fn send_mail_panics_when_transport_fails() {
         let mail_transport = Arc::new(AsyncStubTransport::new_error());
-        let to = "test to".to_string();
-        let subject = "test subject";
-        let body = "test body".to_string();
+        let to = "bojwe@ahamef.bm".to_string();
+        let subject = "ElcSmycmNq";
+        let body = "CQkjGVIsVDuYwokwjOKRLdxlzCyXwM".to_string();
         send_mail(mail_transport, to, subject, body).await;
     }
 }

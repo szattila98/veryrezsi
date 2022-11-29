@@ -35,7 +35,7 @@ impl FromRequestParts<AppState> for AuthenticatedUser {
     ) -> Result<Self, Self::Rejection> {
         let jar = PrivateCookieJar::<Key>::from_request_parts(parts, &state.secret_key)
             .await
-            .expect("this should be infallible");
+            .expect("this should have been infalliable");
         return if let Some(cookie) = jar.get(AUTH_COOKIE_NAME) {
             let id = cookie.value().parse()?;
             Ok(AuthenticatedUser::new(id))

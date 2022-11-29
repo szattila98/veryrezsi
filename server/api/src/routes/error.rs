@@ -116,7 +116,7 @@ impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
             ExpenseTransactionError::DatabaseError(_) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
             }
-            ExpenseTransactionError::TransactionToDeletedDoesNotExist => {
+            ExpenseTransactionError::TransactionToDeleteDoesNotExist => {
                 Self::new(StatusCode::NO_CONTENT, e.to_string())
             }
             ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser(_) => {

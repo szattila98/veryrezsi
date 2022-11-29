@@ -102,3 +102,49 @@ async fn validate_recurrence_and_currency_types(
     };
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use migration::DbErr;
+    use sea_orm::{DatabaseBackend, MockDatabase};
+
+    #[tokio::test]
+    async fn find_expense_on_correct_types_returns_ok() {}
+
+    #[tokio::test]
+    async fn find_expense_on_dberr_returns_err() {}
+
+    #[tokio::test]
+    async fn create_expense_on_correct_types_returns_ok() {}
+
+    #[tokio::test]
+    async fn create_expense_on_incorrect_data_returns_err() {}
+
+    #[tokio::test]
+    async fn create_expense_on_dberr_returns_err() {}
+
+    #[tokio::test]
+    async fn find_predefined_on_correct_types_returns_ok() {}
+
+    #[tokio::test]
+    async fn find_predefined_on_dberr_returns_err() {}
+
+    #[tokio::test]
+    async fn create_predefined_on_correct_types_returns_ok() {}
+
+    #[tokio::test]
+    async fn create_predefined_on_incorrect_data_returns_err() {}
+
+    #[tokio::test]
+    async fn create_predefined_on_dberr_returns_err() {}
+
+    #[tokio::test]
+    async fn validate_on_correct_types_returns_ok() {}
+
+    #[tokio::test]
+    async fn validate_on_incorrect_data_returns_err() {}
+
+    #[tokio::test]
+    async fn validate_on_dberr_returns_err() {}
+}

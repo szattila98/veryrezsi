@@ -15,7 +15,8 @@ pub fn include_email_template(input: TokenStream) -> TokenStream {
     let filepath = input.value();
     let mut file = File::open(filepath).expect("file could not be found");
     let mut html = String::new();
-    file.read_to_string(&mut html).unwrap();
+    file.read_to_string(&mut html)
+        .expect("file content could not be read to string");
     let mut html = CSSInliner::compact()
         .inline(&html)
         .expect("css could not be inlined");

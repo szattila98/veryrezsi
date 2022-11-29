@@ -25,7 +25,7 @@ tracing-subscriber = { workspace = true }
 pwhash = { workspace = true }
 validator = { workspace = true }
 
-axum = "0.6.0"
-axum-extra = { version = "0.4.0", features = ["cookie-private"] }
+axum = "0.6.1"
+axum-extra = { version = "0.4.1", features = ["cookie-private"] }
 axum-macros = "0.3.0"
 tower = "0.4.13"

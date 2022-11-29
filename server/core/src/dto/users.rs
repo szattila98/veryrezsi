@@ -6,8 +6,8 @@ use validator::{Validate, ValidationError};
 lazy_static! {
     /// Password validation regex.
     static ref PASSWORD_REGEX: Regex =
-        Regex::new(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-            .unwrap();
+        Regex::new(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,120}$")
+            .expect("incorrect password regex");
 }
 
 #[derive(Deserialize, Validate)]
@@ -53,8 +53,11 @@ pub struct NewUserRequest {
 
 /// Password validation function supplied to NewUserRequest.
 fn validate_password(value: &str) -> Result<(), ValidationError> {
-    if PASSWORD_REGEX.is_match(value).unwrap() {
-        return Ok(());
+    let Ok(result) = PASSWORD_REGEX.is_match(value) else {
+        return Err(ValidationError::new("password cannot be matched agains regex"));
+    };
+    if !result {
+        return Err(ValidationError::new("password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character"));
     }
-    Err(ValidationError::new("password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character"))
+    Ok(())
 }

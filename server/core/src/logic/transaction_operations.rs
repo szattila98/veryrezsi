@@ -61,7 +61,7 @@ async fn get_transaction_by_id_if_exists(
 
     match transaction.await? {
         Some(res) => Ok(res),
-        None => Err(ExpenseTransactionError::TransactionToDeletedDoesNotExist),
+        None => Err(ExpenseTransactionError::TransactionToDeleteDoesNotExist),
     }
 }
 

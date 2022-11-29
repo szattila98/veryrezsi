@@ -76,7 +76,7 @@ where
                             user_id: Set(user.id),
                             expiration: Set(chrono::Local::now()
                                 .checked_add_signed(Duration::days(1))
-                                .unwrap()),
+                                .expect("we should not be this far ahead into the future Marty, the date overflowed the bounds")),
                         };
                         let activation = activation.insert(txn).await?;
 

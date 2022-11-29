@@ -10,3 +10,19 @@ pub async fn find_recurrence_types(
     let currency_types = RecurrenceType::find().all(conn).await?;
     Ok(currency_types)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use migration::DbErr;
+    use sea_orm::{DatabaseBackend, MockDatabase};
+
+    #[tokio::test]
+    async fn find_returns_all() {}
+
+    #[tokio::test]
+    #[should_panic]
+    async fn find_returns_error() {
+        panic!()
+    }
+}
