@@ -138,13 +138,4 @@ mod tests {
 
     #[tokio::test]
     async fn create_predefined_on_dberr_returns_err() {}
-
-    #[tokio::test]
-    async fn validate_on_correct_types_returns_ok() {}
-
-    #[tokio::test]
-    async fn validate_on_incorrect_data_returns_err() {}
-
-    #[tokio::test]
-    async fn validate_on_dberr_returns_err() {}
 }

@@ -95,3 +95,40 @@ async fn validate_referred_currency_type(
     };
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use migration::DbErr;
+    use sea_orm::{DatabaseBackend, MockDatabase};
+
+    #[tokio::test]
+    async fn create_transaction_on_correct_data_returns_ok() {}
+
+    #[tokio::test]
+    async fn create_transaction_on_wrong_expense_id_returns_err() {}
+
+    #[tokio::test]
+    async fn create_transaction_on_wrong_currency_id_returns_err() {}
+
+    #[tokio::test]
+    async fn create_transaction_on_date_parse_error_returns_err() {}
+
+    #[tokio::test]
+    async fn create_transaction_on_dberr_returns_err() {}
+
+    #[tokio::test]
+    async fn delete_transaction_on_correct_data_returns_ok() {}
+
+    #[tokio::test]
+    async fn delete_transaction_on_wrong_expense_id_returns_err() {}
+
+    #[tokio::test]
+    async fn delete_transaction_on_wrong_transaction_id_returns_err() {}
+
+    #[tokio::test]
+    async fn delete_transaction_on_unauthorised_user_returns_err() {}
+
+    #[tokio::test]
+    async fn delete_transaction_on_dberr_returns_err() {}
+}
