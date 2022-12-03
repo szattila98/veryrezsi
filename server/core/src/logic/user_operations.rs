@@ -146,3 +146,55 @@ pub fn authorize_user_by_id(user_id: Id, user_id_in_resource: Id) -> Result<(), 
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn find_by_email_on_correct_email_found() {}
+
+    #[test]
+    fn find_by_email_on_incorrect_email_not_found() {}
+
+    #[test]
+    fn find_by_email_on_db_err_correct_error() {}
+
+    #[test]
+    fn find_by_id_on_correct_id_found() {}
+
+    #[test]
+    fn find_by_id_on_incorrect_id_not_found() {}
+
+    #[test]
+    fn find_by_id_on_db_err_correct_error() {}
+
+    #[test]
+    fn save_user_happy_path() {}
+
+    #[test]
+    fn save_user_on_already_existing_email_correct_error() {}
+
+    #[test]
+    fn save_user_on_bcrypt_error_correct_error() {}
+
+    #[test]
+    fn save_user_on_db_err_correct_error() {}
+
+    #[test]
+    fn activate_account_happy_path() {}
+
+    #[test]
+    fn activate_account_on_incorrect_token_not_found() {}
+
+    #[test]
+    fn activate_account_on_token_expired_correct_error() {}
+
+    #[test]
+    fn activate_account_on_db_err_correct_error() {}
+
+    #[test]
+    fn authorize_user_by_id_happy_path() {}
+
+    #[test]
+    fn authorize_user_by_id_on_no_right_unauthorized() {}
+}
