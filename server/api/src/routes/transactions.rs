@@ -24,7 +24,7 @@ pub async fn create_transaction(
 pub async fn delete_transaction(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
-    Path(transaction_id): Path<i64>,
+    Path(transaction_id): Path<Id>,
 ) -> Result<StatusCode, ErrorMsg<()>> {
     match transaction_operations::delete_transaction_by_id(conn, user.id, transaction_id).await {
         Ok(_) => Ok(StatusCode::NO_CONTENT),

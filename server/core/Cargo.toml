@@ -26,9 +26,9 @@ validator = { workspace = true, features = ["derive"] }
 
 lazy_static = "1.4.0"
 fancy-regex = "0.10.0"
-thiserror = "1.0.37"
+thiserror = "1.0.38"
 lettre = { version = "0.10.1", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
-handlebars = "4.3.5"
+handlebars = "4.3.6"
 confique = { version = "0.2.2", default-features = false, features = ["toml"] }
 
 [features]

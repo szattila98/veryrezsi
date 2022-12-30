@@ -2,7 +2,7 @@ use entity::{Id, MoneyAmount};
 use serde::Deserialize;
 use validator::Validate;
 
-#[derive(Deserialize, Validate)]
+#[derive(Clone, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NewExpenseRequest {
     #[validate(length(

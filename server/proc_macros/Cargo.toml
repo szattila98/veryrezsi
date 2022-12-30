@@ -13,7 +13,7 @@ description = { workspace = true }
 proc-macro = true
 
 [dependencies]
-syn = { version = "1.0.104", features = ["full"] }
-quote = "1.0.21"
+syn = { version = "1.0.107", features = ["full"] }
+quote = "1.0.23"
 css-inline = "0.8.5"
 minify-html-onepass = "0.10.3"

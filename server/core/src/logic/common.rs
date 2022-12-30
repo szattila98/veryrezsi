@@ -1,1 +1,1 @@
-pub const DATE_FORMAT: &str = "%d-%m-%Y";
+pub static DATE_FORMAT: &str = "%d-%m-%Y";
