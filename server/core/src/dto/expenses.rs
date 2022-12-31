@@ -29,7 +29,7 @@ pub struct NewExpenseRequest {
     pub value: MoneyAmount,
 }
 
-#[derive(Deserialize, Validate)]
+#[derive(Clone, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NewPredefinedExpenseRequest {
     #[validate(length(

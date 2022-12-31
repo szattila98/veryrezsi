@@ -4,14 +4,12 @@ use axum::{
     response::{IntoResponse, Response},
     Json,
 };
+use migration::DbErr;
 use serde::Serialize;
 use validator::ValidationErrors;
 use veryrezsi_core::logic::{
     error::{CurrencyError, ExpenseTransactionError, RecurrenceError, UserError},
-    expense_operations::errors::{
-        CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
-        FindPredefinedExpensesError, ValidateRecurrenceAndCurrencyTypesError,
-    },
+    expense_operations::errors::{CreateExpenseError, CreatePredefinedExpenseError},
 };
 
 /// A struct that can be returned from route handlers on error.
@@ -78,6 +76,12 @@ impl From<ValidationErrors> for ErrorMsg<ValidationErrors> {
     }
 }
 
+impl<D: Serialize> From<DbErr> for ErrorMsg<D> {
+    fn from(e: DbErr) -> Self {
+        Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+    }
+}
+
 impl<D: Serialize> From<UserError> for ErrorMsg<D> {
     fn from(e: UserError) -> Self {
         match e {
@@ -91,19 +95,7 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
             }
             UserError::ActivationTokenExpired => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
             UserError::UserHasNoRightForAction => Self::new(StatusCode::FORBIDDEN, e.to_string()),
-            UserError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
-        }
-    }
-}
-
-impl<D: Serialize> From<FindExpensesByUserIdError> for ErrorMsg<D> {
-    fn from(e: FindExpensesByUserIdError) -> Self {
-        match e {
-            FindExpensesByUserIdError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
+            UserError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }
@@ -111,22 +103,8 @@ impl<D: Serialize> From<FindExpensesByUserIdError> for ErrorMsg<D> {
 impl<D: Serialize> From<CreateExpenseError> for ErrorMsg<D> {
     fn from(e: CreateExpenseError) -> Self {
         match e {
-            CreateExpenseError::InvalidExpenseData(_) => {
-                Self::new(StatusCode::BAD_REQUEST, e.to_string())
-            }
-            CreateExpenseError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
-        }
-    }
-}
-
-impl<D: Serialize> From<FindPredefinedExpensesError> for ErrorMsg<D> {
-    fn from(e: FindPredefinedExpensesError) -> Self {
-        match e {
-            FindPredefinedExpensesError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
+            CreateExpenseError::DatabaseError(db_error) => db_error.into(),
+            _ => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
         }
     }
 }
@@ -134,25 +112,8 @@ impl<D: Serialize> From<FindPredefinedExpensesError> for ErrorMsg<D> {
 impl<D: Serialize> From<CreatePredefinedExpenseError> for ErrorMsg<D> {
     fn from(e: CreatePredefinedExpenseError) -> Self {
         match e {
-            CreatePredefinedExpenseError::InvalidExpenseData(_) => {
-                Self::new(StatusCode::BAD_REQUEST, e.to_string())
-            }
-            CreatePredefinedExpenseError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
-        }
-    }
-}
-
-impl<D: Serialize> From<ValidateRecurrenceAndCurrencyTypesError> for ErrorMsg<D> {
-    fn from(e: ValidateRecurrenceAndCurrencyTypesError) -> Self {
-        match e {
-            ValidateRecurrenceAndCurrencyTypesError::InvalidExpenseData(_) => {
-                Self::new(StatusCode::BAD_REQUEST, e.to_string())
-            }
-            ValidateRecurrenceAndCurrencyTypesError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
+            CreatePredefinedExpenseError::DatabaseError(db_error) => db_error.into(),
+            _ => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
         }
     }
 }
@@ -163,15 +124,13 @@ impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
             ExpenseTransactionError::InvalidTransactionData(_) => {
                 Self::new(StatusCode::BAD_REQUEST, e.to_string())
             }
-            ExpenseTransactionError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
             ExpenseTransactionError::TransactionToDeleteDoesNotExist => {
                 Self::new(StatusCode::NO_CONTENT, e.to_string())
             }
             ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser(_) => {
                 Self::new(StatusCode::FORBIDDEN, e.to_string())
             }
+            ExpenseTransactionError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }
@@ -179,9 +138,7 @@ impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
 impl<D: Serialize> From<CurrencyError> for ErrorMsg<D> {
     fn from(e: CurrencyError) -> Self {
         match e {
-            CurrencyError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
+            CurrencyError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }
@@ -189,9 +146,7 @@ impl<D: Serialize> From<CurrencyError> for ErrorMsg<D> {
 impl<D: Serialize> From<RecurrenceError> for ErrorMsg<D> {
     fn from(e: RecurrenceError) -> Self {
         match e {
-            RecurrenceError::DatabaseError(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
+            RecurrenceError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }
