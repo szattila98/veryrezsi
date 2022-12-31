@@ -8,7 +8,7 @@ use migration::DbErr;
 use serde::Serialize;
 use validator::ValidationErrors;
 use veryrezsi_core::logic::{
-    error::{CurrencyError, ExpenseTransactionError, RecurrenceError, UserError},
+    error::{ExpenseTransactionError, UserError},
     expense_operations::errors::{CreateExpenseError, CreatePredefinedExpenseError},
 };
 
@@ -131,22 +131,6 @@ impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
                 Self::new(StatusCode::FORBIDDEN, e.to_string())
             }
             ExpenseTransactionError::DatabaseError(db_error) => db_error.into(),
-        }
-    }
-}
-
-impl<D: Serialize> From<CurrencyError> for ErrorMsg<D> {
-    fn from(e: CurrencyError) -> Self {
-        match e {
-            CurrencyError::DatabaseError(db_error) => db_error.into(),
-        }
-    }
-}
-
-impl<D: Serialize> From<RecurrenceError> for ErrorMsg<D> {
-    fn from(e: RecurrenceError) -> Self {
-        match e {
-            RecurrenceError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }

@@ -75,15 +75,3 @@ impl From<chrono::ParseError> for ExpenseTransactionError {
         ExpenseTransactionError::InvalidTransactionData(e.to_string())
     }
 }
-
-#[derive(Error, Debug)]
-pub enum CurrencyError {
-    #[error("database error: '{0}'")]
-    DatabaseError(#[from] DbErr),
-}
-
-#[derive(Error, Debug)]
-pub enum RecurrenceError {
-    #[error("database error: '{0}'")]
-    DatabaseError(#[from] DbErr),
-}
