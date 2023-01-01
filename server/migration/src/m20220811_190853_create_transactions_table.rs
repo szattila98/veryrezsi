@@ -18,7 +18,7 @@ impl MigrationTrait for Migration {
                     .table(transaction::Entity)
                     .col(
                         ColumnDef::new(transaction::Column::Id)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),
@@ -36,12 +36,12 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(transaction::Column::Date).date().not_null())
                     .col(
                         ColumnDef::new(transaction::Column::CurrencyTypeId)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(transaction::Column::ExpenseId)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null(),
                     )
                     .foreign_key(

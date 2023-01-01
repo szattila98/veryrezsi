@@ -4,11 +4,11 @@ use self::errors::{
 
 use super::common;
 use crate::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
+use crate::logic::currency_operations::find_currency_type_by_id;
+use crate::logic::recurrence_operations::find_recurrence_type_by_id;
 
-use entity::currency_type::{self, Entity as CurrencyType};
 use entity::expense::{self, Entity as Expense};
 use entity::predefined_expense::{self, Entity as PredefinedExpense};
-use entity::recurrence_type::{self, Entity as RecurrenceType};
 use entity::Id;
 
 use chrono::NaiveDate;
@@ -90,12 +90,8 @@ async fn validate_recurrence_and_currency_types(
     recurrence_type_id: Id,
 ) -> Result<(), ValidateRecurrenceAndCurrencyTypesError> {
     let (referred_recurrence_type, referred_currency_type) = tokio::join!(
-        RecurrenceType::find()
-            .filter(recurrence_type::Column::Id.eq(recurrence_type_id))
-            .one(conn),
-        CurrencyType::find()
-            .filter(currency_type::Column::Id.eq(currency_type_id))
-            .one(conn)
+        find_recurrence_type_by_id(conn, recurrence_type_id),
+        find_currency_type_by_id(conn, currency_type_id)
     );
     let Some(_) = referred_currency_type? else {
         return Err(ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType)
@@ -144,6 +140,7 @@ pub mod errors {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use entity::{currency_type, recurrence_type};
     use migration::DbErr;
     use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
 

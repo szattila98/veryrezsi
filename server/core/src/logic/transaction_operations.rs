@@ -65,6 +65,7 @@ async fn get_transaction_by_id_if_exists(
     }
 }
 
+// TODO extract into expense operations and write tests
 async fn get_expense_by_id_if_exists(
     conn: &DatabaseConnection,
     expense_id: Id,
@@ -81,6 +82,7 @@ async fn get_expense_by_id_if_exists(
     }
 }
 
+// TODO use currency type query instead
 async fn validate_referred_currency_type(
     conn: &DatabaseConnection,
     currency_type_id: Id,
@@ -95,6 +97,8 @@ async fn validate_referred_currency_type(
     };
     Ok(())
 }
+
+mod errors {}
 
 #[cfg(test)]
 mod tests {

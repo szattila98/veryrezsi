@@ -16,7 +16,7 @@ impl MigrationTrait for Migration {
                     .table(currency_type::Entity)
                     .col(
                         ColumnDef::new(currency_type::Column::Id)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),

@@ -16,7 +16,7 @@ impl MigrationTrait for Migration {
                     .table(user::Entity)
                     .col(
                         ColumnDef::new(user::Column::Id)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),

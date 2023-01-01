@@ -6,12 +6,15 @@ WORKDIR /veryrezsi
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./entity ./entity
 COPY ./migration ./migration
+COPY ./core ./core
+COPY ./api ./api
+COPY ./proc_macros ./proc_macros
 COPY ./src ./src
 COPY ./resources/email ./resources/email
 
 RUN cargo build --release
 
-FROM debian:buster-slim
+FROM debian:bullseye
 ARG APP=/usr/src/app
 
 RUN apt-get update \
