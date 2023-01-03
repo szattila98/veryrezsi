@@ -51,27 +51,3 @@ impl From<chrono::ParseError> for ExpenseError {
         ExpenseError::InvalidExpenseData(e.to_string())
     }
 }
-
-#[derive(Error, Debug)]
-pub enum ExpenseTransactionError {
-    #[error("some data provided for transaction creation is invalid or cannot be parsed: '{0}'")]
-    InvalidTransactionData(String),
-    #[error("the transaction requested to be deleted does not exist")]
-    TransactionToDeleteDoesNotExist,
-    #[error("you do not have permission for the parent expense: '{0}'")]
-    ParentExpenseIsNotOwnedByTheUser(String),
-    #[error("database error: '{0}'")]
-    DatabaseError(#[from] DbErr),
-}
-
-impl From<UserError> for ExpenseTransactionError {
-    fn from(e: UserError) -> Self {
-        ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser(e.to_string())
-    }
-}
-
-impl From<chrono::ParseError> for ExpenseTransactionError {
-    fn from(e: chrono::ParseError) -> Self {
-        ExpenseTransactionError::InvalidTransactionData(e.to_string())
-    }
-}

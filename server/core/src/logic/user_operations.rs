@@ -1,3 +1,5 @@
+use self::errors::AuthorizeUserError;
+
 use super::error::UserError;
 use crate::config;
 use crate::dto::users::NewUserRequest;
@@ -140,11 +142,22 @@ pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Resul
 
 /// Utility method to authorize if a user should be able to access a resource.
 /// Checks the equality of two user_ids.
-pub fn authorize_user_by_id(user_id: Id, user_id_in_resource: Id) -> Result<(), UserError> {
+pub fn authorize_user_by_id(
+    user_id: Id,
+    user_id_in_resource: Id,
+) -> Result<(), AuthorizeUserError> {
     if user_id != user_id_in_resource {
-        return Err(UserError::UserHasNoRightForAction);
+        return Err(AuthorizeUserError);
     }
     Ok(())
+}
+
+pub mod errors {
+    use thiserror::Error;
+
+    #[derive(Error, Debug, PartialEq, Eq)]
+    #[error("user is not authorized")]
+    pub struct AuthorizeUserError;
 }
 
 #[cfg(test)]

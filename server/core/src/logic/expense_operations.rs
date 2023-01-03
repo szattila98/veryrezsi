@@ -1,8 +1,10 @@
 use self::errors::{
-    CreateExpenseError, CreatePredefinedExpenseError, ValidateRecurrenceAndCurrencyTypesError,
+    CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
+    ValidateRecurrenceAndCurrencyTypesError,
 };
 
 use super::common;
+use super::user_operations::authorize_user_by_id;
 use crate::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
 use crate::logic::currency_operations::find_currency_type_by_id;
 use crate::logic::recurrence_operations::find_recurrence_type_by_id;
@@ -18,8 +20,10 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, Qu
 
 pub async fn find_expenses_by_user_id(
     conn: &DatabaseConnection,
+    authenticated_user_id: Id,
     user_id: Id,
-) -> Result<Vec<expense::Model>, DbErr> {
+) -> Result<Vec<expense::Model>, FindExpensesByUserIdError> {
+    authorize_user_by_id(authenticated_user_id, user_id)?;
     let expenses = Expense::find()
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)
@@ -27,17 +31,25 @@ pub async fn find_expenses_by_user_id(
     Ok(expenses)
 }
 
+pub async fn find_expense_by_id(
+    conn: &DatabaseConnection,
+    id: Id,
+) -> Result<Option<expense::Model>, DbErr> {
+    let expense = Expense::find_by_id(id).one(conn).await?;
+    Ok(expense)
+}
+
 pub async fn create_expense(
     conn: &DatabaseConnection,
     user_id: Id,
     req: NewExpenseRequest,
 ) -> Result<Id, CreateExpenseError> {
-    if let Some(predefined_expense_id)= req.predefined_expense_id {
-        let Some(_) = PredefinedExpense::find()
+    if let Some(predefined_expense_id) = req.predefined_expense_id {
+        let opt = PredefinedExpense::find()
             .filter(predefined_expense::Column::Id.eq(predefined_expense_id))
             .one(conn)
-            .await? 
-        else {
+            .await?;
+        let Some(_) = opt else {
             return Err(CreateExpenseError::InvalidPredefinedExpense);
         };
     }
@@ -106,12 +118,22 @@ pub mod errors {
     use migration::DbErr;
     use thiserror::Error;
 
+    use crate::logic::user_operations::errors::AuthorizeUserError;
+
+    #[derive(Error, Debug, PartialEq, Eq)]
+    pub enum FindExpensesByUserIdError {
+        #[error("{0}")]
+        UnauthorizedUser(#[from] AuthorizeUserError),
+        #[error("database error: '{0}'")]
+        DatabaseError(#[from] DbErr),
+    }
+
     #[derive(Error, Debug, PartialEq, Eq)]
     pub enum CreateExpenseError {
-        #[error("predefined expense does not exist with the given id")]
+        #[error("predefined expense is invalid")]
         InvalidPredefinedExpense,
-        #[error("start_date could not be parsed as a date")]
-        InvalidExpenseStartDate(#[from] chrono::ParseError),
+        #[error("start_date could not be parsed")]
+        InvalidStartDate(#[from] chrono::ParseError),
         #[error("invalid related type: '{0}'")]
         InvalidRelatedType(#[from] ValidateRecurrenceAndCurrencyTypesError),
         #[error("database error: '{0}'")]
@@ -128,9 +150,9 @@ pub mod errors {
 
     #[derive(Error, Debug, PartialEq, Eq)]
     pub enum ValidateRecurrenceAndCurrencyTypesError {
-        #[error("provided currency type is non existent")]
+        #[error("currency type is invalid")]
         InvalidCurrencyType,
-        #[error("provided recurrence type is non existent")]
+        #[error("recurrence type is invalid")]
         InvalidRecurrenceType,
         #[error("database error: '{0}'")]
         DatabaseError(#[from] DbErr),
@@ -139,6 +161,8 @@ pub mod errors {
 
 #[cfg(test)]
 mod tests {
+    use crate::logic::user_operations::errors::AuthorizeUserError;
+
     use super::*;
     use entity::{currency_type, recurrence_type};
     use migration::DbErr;
@@ -184,13 +208,16 @@ mod tests {
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
-        let expenses = find_expenses_by_user_id(&conn, TEST_ID)
+        let expenses = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
             .await
             .expect("not ok");
-        let empty_expenses = find_expenses_by_user_id(&conn, TEST_ID)
+        let empty_expenses = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
             .await
             .expect("not an error");
-        let db_error = find_expenses_by_user_id(&conn, TEST_ID)
+        let unauthorized_error = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID + 1)
+            .await
+            .expect_err("not an error");
+        let db_error = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
             .await
             .expect_err("not an error");
 
@@ -199,6 +226,52 @@ mod tests {
             "returned expenses are not the same as the ones supplied to the mock database"
         );
         assert!(empty_expenses.is_empty(), "returned expenses are not empty");
+        assert_eq!(
+            unauthorized_error,
+            FindExpensesByUserIdError::UnauthorizedUser(AuthorizeUserError),
+            "mock was supplied with a database error but the function did not return it"
+        );
+        assert_eq!(
+            db_error,
+            FindExpensesByUserIdError::DatabaseError(DbErr::Custom(TEST_STR.to_string())),
+            "mock was supplied with a database error but the function did not return it"
+        );
+    }
+
+    #[tokio::test]
+    async fn find_expense_by_id_all_cases() {
+        let mock_expense = expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN,
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: None,
+        };
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            .append_query_results(vec![vec![mock_expense.clone()], vec![]])
+            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .into_connection();
+
+        let expense = find_expense_by_id(&conn, TEST_ID)
+            .await
+            .expect("not ok")
+            .expect("not some");
+        let none = find_expense_by_id(&conn, TEST_ID)
+            .await
+            .expect("not an error");
+        let db_error = find_expense_by_id(&conn, TEST_ID)
+            .await
+            .expect_err("not an error");
+
+        assert_eq!(
+            expense, mock_expense,
+            "returned expense is not the same as the one supplied to the mock database"
+        );
+        assert_eq!(none, None, "returned option should be None");
         assert_eq!(
             db_error,
             DbErr::Custom(TEST_STR.to_string()),
@@ -419,7 +492,7 @@ mod tests {
         assert!(
             matches!(
                 parse_date_error.expect_err("not an error"),
-                CreateExpenseError::InvalidExpenseStartDate(_)
+                CreateExpenseError::InvalidStartDate(_)
             ),
             "date parse error is different from expected"
         );

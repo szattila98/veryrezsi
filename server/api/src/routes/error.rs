@@ -8,8 +8,11 @@ use migration::DbErr;
 use serde::Serialize;
 use validator::ValidationErrors;
 use veryrezsi_core::logic::{
-    error::{ExpenseTransactionError, UserError},
-    expense_operations::errors::{CreateExpenseError, CreatePredefinedExpenseError},
+    error::UserError,
+    expense_operations::errors::{
+        CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
+    },
+    transaction_operations::errors::{CreateTransactionError, DeleteTransactionByIdError},
 };
 
 /// A struct that can be returned from route handlers on error.
@@ -100,11 +103,30 @@ impl<D: Serialize> From<UserError> for ErrorMsg<D> {
     }
 }
 
+impl<D: Serialize> From<FindExpensesByUserIdError> for ErrorMsg<D> {
+    fn from(e: FindExpensesByUserIdError) -> Self {
+        match e {
+            FindExpensesByUserIdError::UnauthorizedUser(_) => {
+                Self::new(StatusCode::FORBIDDEN, e.to_string())
+            }
+            FindExpensesByUserIdError::DatabaseError(db_error) => db_error.into(),
+        }
+    }
+}
+
 impl<D: Serialize> From<CreateExpenseError> for ErrorMsg<D> {
     fn from(e: CreateExpenseError) -> Self {
         match e {
+            CreateExpenseError::InvalidPredefinedExpense => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
+            }
+            CreateExpenseError::InvalidStartDate(_) => {
+                Self::new(StatusCode::BAD_REQUEST, e.to_string())
+            }
+            CreateExpenseError::InvalidRelatedType(_) => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
+            }
             CreateExpenseError::DatabaseError(db_error) => db_error.into(),
-            _ => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
         }
     }
 }
@@ -112,25 +134,47 @@ impl<D: Serialize> From<CreateExpenseError> for ErrorMsg<D> {
 impl<D: Serialize> From<CreatePredefinedExpenseError> for ErrorMsg<D> {
     fn from(e: CreatePredefinedExpenseError) -> Self {
         match e {
+            CreatePredefinedExpenseError::InvalidRelatedType(_) => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
+            }
             CreatePredefinedExpenseError::DatabaseError(db_error) => db_error.into(),
-            _ => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
         }
     }
 }
 
-impl<D: Serialize> From<ExpenseTransactionError> for ErrorMsg<D> {
-    fn from(e: ExpenseTransactionError) -> Self {
+impl<D: Serialize> From<CreateTransactionError> for ErrorMsg<D> {
+    fn from(e: CreateTransactionError) -> Self {
         match e {
-            ExpenseTransactionError::InvalidTransactionData(_) => {
+            CreateTransactionError::InvalidExpenseId => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
+            }
+            CreateTransactionError::InvalidCurrency => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
+            }
+            CreateTransactionError::UserUnauthorized(_) => {
+                Self::new(StatusCode::UNAUTHORIZED, e.to_string())
+            }
+            CreateTransactionError::InvalidStartDate(_) => {
                 Self::new(StatusCode::BAD_REQUEST, e.to_string())
             }
-            ExpenseTransactionError::TransactionToDeleteDoesNotExist => {
-                Self::new(StatusCode::NO_CONTENT, e.to_string())
+            CreateTransactionError::DatabaseError(db_error) => db_error.into(),
+        }
+    }
+}
+
+impl<D: Serialize> From<DeleteTransactionByIdError> for ErrorMsg<D> {
+    fn from(e: DeleteTransactionByIdError) -> Self {
+        match e {
+            DeleteTransactionByIdError::InvalidTransaction => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
-            ExpenseTransactionError::ParentExpenseIsNotOwnedByTheUser(_) => {
-                Self::new(StatusCode::FORBIDDEN, e.to_string())
+            DeleteTransactionByIdError::InvalidExpenseId => {
+                Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
-            ExpenseTransactionError::DatabaseError(db_error) => db_error.into(),
+            DeleteTransactionByIdError::UserUnauthorized(_) => {
+                Self::new(StatusCode::UNAUTHORIZED, e.to_string())
+            }
+            DeleteTransactionByIdError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }

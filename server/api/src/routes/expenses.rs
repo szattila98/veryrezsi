@@ -16,8 +16,7 @@ pub async fn get_expenses(
     State(ref conn): State<DatabaseConnection>,
     Path(user_id): Path<Id>,
 ) -> Result<Json<Vec<expense::Model>>, ErrorMsg<()>> {
-    user_operations::authorize_user_by_id(user_id, user.id)?;
-    match expense_operations::find_expenses_by_user_id(conn, user_id).await {
+    match expense_operations::find_expenses_by_user_id(conn, user.id, user_id).await {
         Ok(expenses) => Ok(Json(expenses)),
         Err(e) => Err(e.into()),
     }
