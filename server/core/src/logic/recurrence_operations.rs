@@ -24,6 +24,7 @@ mod tests {
     use std::vec;
 
     use super::*;
+    use assert2::check;
     use migration::DbErr;
     use sea_orm::{DatabaseBackend, MockDatabase};
 
@@ -55,25 +56,15 @@ mod tests {
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
-        let recurrence_types = find_recurrence_types(&conn).await.expect("not ok");
-        let empty_vec = find_recurrence_types(&conn).await.expect("not ok");
-        let db_error = find_recurrence_types(&conn)
-            .await
-            .expect_err("not an error");
+        let (recurrence_types, empty_vec, db_error) = tokio::join!(
+            find_recurrence_types(&conn),
+            find_recurrence_types(&conn),
+            find_recurrence_types(&conn)
+        );
 
-        assert_eq!(
-            recurrence_types, mock_recurrence_types,
-            "returned recurrence type vector is different from expected"
-        );
-        assert!(
-            empty_vec.is_empty(),
-            "returned recurrence type vector should have been empty"
-        );
-        assert_eq!(
-            db_error,
-            DbErr::Custom(TEST_STR.to_string()),
-            "returned db error variant is different from expected"
-        );
+        check!(recurrence_types == Ok(mock_recurrence_types));
+        check!(empty_vec == Ok(vec![]));
+        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
     }
 
     #[tokio::test]
@@ -88,29 +79,14 @@ mod tests {
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
-        let recurrence_type = find_recurrence_type_by_id(&conn, TEST_ID)
-            .await
-            .expect("not ok");
-        let none = find_recurrence_type_by_id(&conn, TEST_ID)
-            .await
-            .expect("not ok");
-        let db_error = find_recurrence_type_by_id(&conn, TEST_ID)
-            .await
-            .expect_err("not an error");
+        let (recurrence_type, none, db_error) = tokio::join!(
+            find_recurrence_type_by_id(&conn, TEST_ID),
+            find_recurrence_type_by_id(&conn, TEST_ID),
+            find_recurrence_type_by_id(&conn, TEST_ID)
+        );
 
-        assert_eq!(
-            recurrence_type,
-            Some(mock_recurrence_type),
-            "returned recurrence type is different from expected"
-        );
-        assert_eq!(
-            none, None,
-            "none should have been returned, but it was Some"
-        );
-        assert_eq!(
-            db_error,
-            DbErr::Custom(TEST_STR.to_string()),
-            "returned db error variant is different from expected"
-        );
+        check!(recurrence_type == Ok(Some(mock_recurrence_type)));
+        check!(none == Ok(None));
+        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
     }
 }

@@ -164,6 +164,7 @@ mod tests {
     use crate::logic::user_operations::errors::AuthorizeUserError;
 
     use super::*;
+    use assert2::check;
     use entity::{currency_type, recurrence_type};
     use migration::DbErr;
     use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
@@ -208,33 +209,26 @@ mod tests {
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
-        let expenses = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
-            .await
-            .expect("not ok");
-        let empty_expenses = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
-            .await
-            .expect("not an error");
-        let unauthorized_error = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID + 1)
-            .await
-            .expect_err("not an error");
-        let db_error = find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
-            .await
-            .expect_err("not an error");
+        let (expenses, empty_expenses, unauthorized_error, db_error) = tokio::join!(
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID + 1),
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
+        );
 
-        assert_eq!(
-            expenses, mock_expenses,
-            "returned expenses are not the same as the ones supplied to the mock database"
+        check!(expenses == Ok(mock_expenses));
+        check!(empty_expenses == Ok(vec![]));
+        check!(
+            unauthorized_error
+                == Err(FindExpensesByUserIdError::UnauthorizedUser(
+                    AuthorizeUserError
+                ))
         );
-        assert!(empty_expenses.is_empty(), "returned expenses are not empty");
-        assert_eq!(
-            unauthorized_error,
-            FindExpensesByUserIdError::UnauthorizedUser(AuthorizeUserError),
-            "mock was supplied with a database error but the function did not return it"
-        );
-        assert_eq!(
-            db_error,
-            FindExpensesByUserIdError::DatabaseError(DbErr::Custom(TEST_STR.to_string())),
-            "mock was supplied with a database error but the function did not return it"
+        check!(
+            db_error
+                == Err(FindExpensesByUserIdError::DatabaseError(DbErr::Custom(
+                    TEST_STR.to_string()
+                )))
         );
     }
 
@@ -256,27 +250,15 @@ mod tests {
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
-        let expense = find_expense_by_id(&conn, TEST_ID)
-            .await
-            .expect("not ok")
-            .expect("not some");
-        let none = find_expense_by_id(&conn, TEST_ID)
-            .await
-            .expect("not an error");
-        let db_error = find_expense_by_id(&conn, TEST_ID)
-            .await
-            .expect_err("not an error");
+        let (expense, none, db_error) = tokio::join!(
+            find_expense_by_id(&conn, TEST_ID),
+            find_expense_by_id(&conn, TEST_ID),
+            find_expense_by_id(&conn, TEST_ID)
+        );
 
-        assert_eq!(
-            expense, mock_expense,
-            "returned expense is not the same as the one supplied to the mock database"
-        );
-        assert_eq!(none, None, "returned option should be None");
-        assert_eq!(
-            db_error,
-            DbErr::Custom(TEST_STR.to_string()),
-            "mock was supplied with a database error but the function did not return it"
-        );
+        check!(expense == Ok(Some(mock_expense)));
+        check!(none == Ok(None));
+        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
     }
 
     #[tokio::test]
@@ -325,10 +307,9 @@ mod tests {
                 predefined_expense_id: None,
             },
         )
-        .await
-        .expect("not ok");
+        .await;
 
-        assert_eq!(saved_expense_id, TEST_ID);
+        check!(saved_expense_id == Ok(TEST_ID));
     }
 
     #[tokio::test]
@@ -386,10 +367,9 @@ mod tests {
                 predefined_expense_id: Some(TEST_ID),
             },
         )
-        .await
-        .expect("not ok");
+        .await;
 
-        assert_eq!(saved_expense_id, TEST_ID);
+        check!(saved_expense_id == Ok(TEST_ID));
     }
 
     #[tokio::test]
@@ -454,13 +434,13 @@ mod tests {
         };
 
         let (
-            predefined_expense_not_found_err,
-            recurrence_type_not_found_err,
-            currency_type_not_found_err,
-            predefined_expense_db_err,
-            recurrence_type_db_err,
-            currency_type_db_err,
-            expense_insert_db_err,
+            predefined_expense_not_found,
+            recurrence_type_not_found,
+            currency_type_not_found,
+            predefined_expense_db_error,
+            recurrence_type_db_error,
+            currency_type_db_error,
+            expense_insert_db_error,
         ) = tokio::join!(
             create_expense(&conn, TEST_ID, req.clone()),
             create_expense(&conn, TEST_ID, req.clone()),
@@ -473,52 +453,47 @@ mod tests {
         req.start_date = "wrond_date".to_string();
         let parse_date_error = create_expense(&conn, TEST_ID, req).await;
 
-        assert_eq!(
-            predefined_expense_not_found_err.expect_err("not an error"),
-            CreateExpenseError::InvalidPredefinedExpense
-        );
-        assert_eq!(
-            recurrence_type_not_found_err.expect_err("not an error"),
-            CreateExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::InvalidRecurrenceType
-            )
-        );
-        assert_eq!(
-            currency_type_not_found_err.expect_err("not an error"),
-            CreateExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType
-            )
-        );
-        assert!(
-            matches!(
-                parse_date_error.expect_err("not an error"),
-                CreateExpenseError::InvalidStartDate(_)
-            ),
-            "date parse error is different from expected"
-        );
-        assert_eq!(
-            predefined_expense_db_err.expect_err("not an error"),
-            CreateExpenseError::DatabaseError(DbErr::Custom(TEST_STR.to_string()))
-        );
-        assert_eq!(
-            currency_type_db_err.expect_err("not an error"),
-            CreateExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
+        check!(predefined_expense_not_found == Err(CreateExpenseError::InvalidPredefinedExpense));
+        check!(
+            recurrence_type_not_found
+                == Err(CreateExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::InvalidRecurrenceType
                 ))
-            )
         );
-        assert_eq!(
-            recurrence_type_db_err.expect_err("not an error"),
-            CreateExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
+        check!(
+            currency_type_not_found
+                == Err(CreateExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType
                 ))
-            )
         );
-        assert_eq!(
-            expense_insert_db_err.expect_err("not an error"),
-            CreateExpenseError::DatabaseError(DbErr::Custom(TEST_STR.to_string()))
+        check!(let Err(CreateExpenseError::InvalidStartDate(_)) = parse_date_error);
+        check!(
+            predefined_expense_db_error
+                == Err(CreateExpenseError::DatabaseError(DbErr::Custom(
+                    TEST_STR.to_string()
+                )))
+        );
+        check!(
+            currency_type_db_error
+                == Err(CreateExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
+                        TEST_STR.to_string()
+                    ))
+                ))
+        );
+        check!(
+            recurrence_type_db_error
+                == Err(CreateExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
+                        TEST_STR.to_string()
+                    ))
+                ))
+        );
+        check!(
+            expense_insert_db_error
+                == Err(CreateExpenseError::DatabaseError(DbErr::Custom(
+                    TEST_STR.to_string()
+                )))
         );
     }
 
@@ -553,18 +528,9 @@ mod tests {
             find_predefined_expenses(&conn)
         );
 
-        assert_eq!(
-            predefined_expenses.expect("not ok"), mock_predefined_expenses,
-            "returned predefined expenses are not the same as the ones supplied to the mock database"
-        );
-        assert!(
-            empty_predefined_expenses.expect("not ok").is_empty(),
-            "returned predefined expenses are not empty"
-        );
-        assert!(
-            db_error.is_err(),
-            "mock was supplied with a database error but the function did not return it"
-        );
+        check!(predefined_expenses == Ok(mock_predefined_expenses));
+        check!(empty_predefined_expenses == Ok(vec![]));
+        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
     }
 
     #[tokio::test]
@@ -607,10 +573,9 @@ mod tests {
                 recurrence_type_id: TEST_ID,
             },
         )
-        .await
-        .expect("not ok");
+        .await;
 
-        assert_eq!(saved_predefined_expense_id, TEST_ID);
+        check!(saved_predefined_expense_id == Ok(TEST_ID));
     }
 
     #[tokio::test]
@@ -652,10 +617,10 @@ mod tests {
         };
 
         let (
-            recurrence_type_not_found_err,
-            currency_type_not_found_err,
-            recurrence_type_db_err,
-            currency_type_db_err,
+            recurrence_type_not_found,
+            currency_type_not_found,
+            recurrence_type_db_error,
+            currency_type_db_error,
             insertion_db_error,
         ) = tokio::join!(
             create_predefined_expense(&conn, req.clone()),
@@ -665,37 +630,39 @@ mod tests {
             create_predefined_expense(&conn, req)
         );
 
-        assert_eq!(
-            recurrence_type_not_found_err.expect_err("not an error"),
-            CreatePredefinedExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::InvalidRecurrenceType
-            )
-        );
-        assert_eq!(
-            currency_type_not_found_err.expect_err("not an error"),
-            CreatePredefinedExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType
-            )
-        );
-        assert_eq!(
-            recurrence_type_db_err.expect_err("not an error"),
-            CreatePredefinedExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
+        check!(
+            recurrence_type_not_found
+                == Err(CreatePredefinedExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::InvalidRecurrenceType
                 ))
-            )
         );
-        assert_eq!(
-            currency_type_db_err.expect_err("not an error"),
-            CreatePredefinedExpenseError::InvalidRelatedType(
-                ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
+        check!(
+            currency_type_not_found
+                == Err(CreatePredefinedExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType
                 ))
-            )
         );
-        assert_eq!(
-            insertion_db_error.expect_err("not an error"),
-            CreatePredefinedExpenseError::DatabaseError(DbErr::Custom(TEST_STR.to_string()))
+        check!(
+            recurrence_type_db_error
+                == Err(CreatePredefinedExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
+                        TEST_STR.to_string()
+                    ))
+                ))
+        );
+        check!(
+            currency_type_db_error
+                == Err(CreatePredefinedExpenseError::InvalidRelatedType(
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
+                        TEST_STR.to_string()
+                    ))
+                ))
+        );
+        check!(
+            insertion_db_error
+                == Err(CreatePredefinedExpenseError::DatabaseError(DbErr::Custom(
+                    TEST_STR.to_string()
+                )))
         );
     }
 
@@ -731,10 +698,10 @@ mod tests {
 
         let (
             happy_path,
-            recurrence_type_not_found_err,
-            currency_type_not_found_err,
-            recurrence_type_db_err,
-            currency_type_db_err,
+            recurrence_type_not_found,
+            currency_type_not_found,
+            recurrence_type_db_error,
+            currency_type_db_error,
         ) = tokio::join!(
             validate_recurrence_and_currency_types(&conn, TEST_ID, TEST_ID),
             validate_recurrence_and_currency_types(&conn, TEST_ID, TEST_ID),
@@ -743,26 +710,26 @@ mod tests {
             validate_recurrence_and_currency_types(&conn, TEST_ID, TEST_ID),
         );
 
-        assert!(happy_path.is_ok());
-        assert_eq!(
-            recurrence_type_not_found_err.expect_err("not an error"),
-            ValidateRecurrenceAndCurrencyTypesError::InvalidRecurrenceType
+        check!(happy_path == Ok(()));
+        check!(
+            recurrence_type_not_found
+                == Err(ValidateRecurrenceAndCurrencyTypesError::InvalidRecurrenceType)
         );
-        assert_eq!(
-            currency_type_not_found_err.expect_err("not an error"),
-            ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType
+        check!(
+            currency_type_not_found
+                == Err(ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType)
         );
-        assert_eq!(
-            recurrence_type_db_err.expect_err("not an error"),
-            ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                TEST_STR.to_string()
-            ))
+        check!(
+            recurrence_type_db_error
+                == Err(ValidateRecurrenceAndCurrencyTypesError::DatabaseError(
+                    DbErr::Custom(TEST_STR.to_string())
+                ))
         );
-        assert_eq!(
-            currency_type_db_err.expect_err("not an error"),
-            ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                TEST_STR.to_string()
-            ))
+        check!(
+            currency_type_db_error
+                == Err(ValidateRecurrenceAndCurrencyTypesError::DatabaseError(
+                    DbErr::Custom(TEST_STR.to_string())
+                ))
         );
     }
 }

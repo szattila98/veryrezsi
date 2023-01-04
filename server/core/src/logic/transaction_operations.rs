@@ -104,12 +104,73 @@ pub mod errors {
 
 #[cfg(test)]
 mod tests {
+    use std::vec;
+
     use super::*;
+    use assert2::check;
+    use entity::{currency_type, expense};
     use migration::DbErr;
-    use sea_orm::{DatabaseBackend, MockDatabase};
+    use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
+
+    const TEST_STR: &str = "test";
+    const TEST_ID: u64 = 1;
+    const TEST_DATE: &str = "06-08-1998";
+
+    fn test_decimal() -> Decimal {
+        Decimal::new(1, 2)
+    }
 
     #[tokio::test]
-    async fn create_transaction_happy_path() {}
+    async fn create_transaction_happy_path() {
+        let mock_expense = expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN,
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: None,
+        };
+        let mock_currency_type = currency_type::Model {
+            id: TEST_ID,
+            abbreviation: TEST_STR.to_string(),
+            name: TEST_STR.to_string(),
+        };
+        let mock_transaction = transaction::Model {
+            id: TEST_ID,
+            donor_name: TEST_STR.to_string(),
+            value: test_decimal(),
+            date: NaiveDate::MIN,
+            currency_type_id: TEST_ID,
+            expense_id: TEST_ID,
+        };
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            .append_query_results(vec![vec![mock_currency_type.clone()]])
+            .append_exec_results(vec![MockExecResult {
+                last_insert_id: TEST_ID,
+                rows_affected: 1,
+            }])
+            .append_query_results(vec![vec![mock_transaction.clone()]])
+            .into_connection();
+
+        let saved_transaction_id = create_transaction(
+            &conn,
+            TEST_ID,
+            NewTransactionRequest {
+                donor_name: TEST_STR.to_string(),
+                currency_type_id: TEST_ID,
+                value: test_decimal(),
+                date: TEST_DATE.to_string(),
+                expense_id: TEST_ID,
+            },
+        )
+        .await;
+
+        check!(saved_transaction_id == Ok(TEST_ID));
+    }
 
     #[tokio::test]
     async fn create_transaction_error_cases() {}

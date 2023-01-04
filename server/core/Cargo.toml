@@ -31,6 +31,9 @@ lettre = { version = "0.10.1", default-features = false, features = ["builder", 
 handlebars = "4.3.6"
 confique = { version = "0.2.2", default-features = false, features = ["toml"] }
 
+[dev-dependencies]
+assert2 = { workspace = true }
+
 [features]
 default = ["mock"]
 mock = ["sea-orm/mock"]
