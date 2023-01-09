@@ -7,6 +7,7 @@ use tracing::info;
 use veryrezsi_core::config::AppConfig;
 
 mod auth;
+mod dtos;
 pub mod routes;
 
 #[tokio::main]

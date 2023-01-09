@@ -1,4 +1,4 @@
-use crate::{Id, MoneyAmount};
+use crate::{transaction, Id, MoneyAmount};
 use sea_orm::entity::prelude::*;
 use serde::{self, Deserialize, Serialize};
 
@@ -25,6 +25,7 @@ pub struct Model {
     pub recurrence_type_id: Id,
     #[sea_orm(nullable)]
     pub predefined_expense_id: Option<Id>,
+    pub transactions: Vec<transaction::Model>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

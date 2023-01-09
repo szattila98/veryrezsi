@@ -5,6 +5,7 @@ use veryrezsi_core::logic::{expense_operations, user_operations};
 use super::common::ValidatedJson;
 use super::error::ErrorMsg;
 use crate::auth;
+use crate::dtos::expenses;
 
 use axum::extract::{Path, State};
 use axum::Json;
