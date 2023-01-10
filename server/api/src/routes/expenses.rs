@@ -1,24 +1,25 @@
 use sea_orm::DatabaseConnection;
-use veryrezsi_core::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
-use veryrezsi_core::logic::{expense_operations, transaction_operations, user_operations};
+use veryrezsi_core::dto::expenses::{
+    ExpenseResponse, ExpenseWithTransactions, NewExpenseRequest, NewPredefinedExpenseRequest,
+};
+use veryrezsi_core::logic::{expense_operations, transaction_operations};
 
 use super::common::ValidatedJson;
 use super::error::ErrorMsg;
 use crate::auth;
-use crate::dtos::expenses;
 
 use axum::extract::{Path, State};
 use axum::Json;
-use entity::{expense, predefined_expense, Id};
+use entity::{predefined_expense, Id};
 
 pub async fn get_expenses(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
     Path(user_id): Path<Id>,
-) -> Result<Json<expenses::ExpenseResponse>, ErrorMsg<()>> {
+) -> Result<Json<ExpenseResponse>, ErrorMsg<()>> {
     match expense_operations::find_expenses_by_user_id(conn, user.id, user_id).await {
         Ok(expenses) => {
-            let mut expense: expenses::ExpenseResponse = vec![];
+            let mut expense_response: ExpenseResponse = vec![];
 
             for expense in expenses {
                 let transactions =
@@ -29,13 +30,10 @@ pub async fn get_expenses(
                         Err(e) => vec![],
                     };
 
-                results.push(expenses::ExpenseWithTransactions::from(
-                    expense,
-                    transactions,
-                ))
+                expense_response.push(ExpenseWithTransactions::new(expense, transactions))
             }
 
-            Ok(Json(results))
+            Ok(Json(expense_response))
         }
         Err(e) => Err(e.into()),
     }
