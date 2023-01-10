@@ -1,6 +1,6 @@
 use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
-use veryrezsi_core::logic::{expense_operations, user_operations};
+use veryrezsi_core::logic::{expense_operations, transaction_operations, user_operations};
 
 use super::common::ValidatedJson;
 use super::error::ErrorMsg;
@@ -11,14 +11,32 @@ use axum::extract::{Path, State};
 use axum::Json;
 use entity::{expense, predefined_expense, Id};
 
-// FIXME: Not a good idea to return with domain model
 pub async fn get_expenses(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
     Path(user_id): Path<Id>,
-) -> Result<Json<Vec<expense::Model>>, ErrorMsg<()>> {
+) -> Result<Json<expenses::ExpenseResponse>, ErrorMsg<()>> {
     match expense_operations::find_expenses_by_user_id(conn, user.id, user_id).await {
-        Ok(expenses) => Ok(Json(expenses)),
+        Ok(expenses) => {
+            let mut expense: expenses::ExpenseResponse = vec![];
+
+            for expense in expenses {
+                let transactions =
+                    match transaction_operations::find_transactions_by_expense_id(conn, expense.id)
+                        .await
+                    {
+                        Ok(transactions) => transactions,
+                        Err(e) => vec![],
+                    };
+
+                results.push(expenses::ExpenseWithTransactions::from(
+                    expense,
+                    transactions,
+                ))
+            }
+
+            Ok(Json(results))
+        }
         Err(e) => Err(e.into()),
     }
 }
