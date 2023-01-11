@@ -27,12 +27,11 @@ pub async fn get_expenses(
                         .await
                     {
                         Ok(transactions) => transactions,
-                        Err(e) => vec![],
+                        Err(_e) => vec![],
                     };
 
                 expense_response.push(ExpenseWithTransactions::new(expense, transactions))
             }
-
             Ok(Json(expense_response))
         }
         Err(e) => Err(e.into()),

@@ -76,7 +76,7 @@ impl ExpenseWithTransactions {
             currency_type_id: expense.currency_type_id,
             recurrence_type_id: expense.recurrence_type_id,
             predefined_expense_id: expense.predefined_expense_id,
-            transactions: transactions,
+            transactions,
         }
     }
 }
