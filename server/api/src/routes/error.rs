@@ -148,7 +148,7 @@ impl<D: Serialize> From<CreateTransactionError> for ErrorMsg<D> {
             CreateTransactionError::InvalidExpenseId => {
                 Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
-            CreateTransactionError::InvalidCurrency => {
+            CreateTransactionError::InvalidCurrencyType => {
                 Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
             CreateTransactionError::UserUnauthorized(_) => {

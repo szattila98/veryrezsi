@@ -27,7 +27,7 @@ pub async fn create_transaction(
         return Err(CreateTransactionError::InvalidExpenseId);
     };
     let Some(_) = currency_result? else {
-        return Err(CreateTransactionError::InvalidCurrency);
+        return Err(CreateTransactionError::InvalidCurrencyType);
     };
     authorize_user_by_id(user_id, expense.user_id)?;
 
@@ -80,7 +80,7 @@ pub mod errors {
         #[error("expense id is invalid")]
         InvalidExpenseId,
         #[error("currency type is invalid")]
-        InvalidCurrency,
+        InvalidCurrencyType,
         #[error("user is not authorized")]
         UserUnauthorized(#[from] AuthorizeUserError),
         #[error("start_date could not be parsed")]
@@ -105,6 +105,8 @@ pub mod errors {
 #[cfg(test)]
 mod tests {
     use std::vec;
+
+    use crate::logic::user_operations::errors::AuthorizeUserError;
 
     use super::*;
     use assert2::check;
@@ -173,10 +175,111 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn create_transaction_error_cases() {}
+    async fn create_transaction_error_cases() {
+        let mock_expense = expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN,
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: None,
+        };
+        let mock_currency_type = currency_type::Model {
+            id: TEST_ID,
+            abbreviation: TEST_STR.to_string(),
+            name: TEST_STR.to_string(),
+        };
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            // invalid expense id
+            .append_query_results::<expense::Model>(vec![vec![]])
+            .append_query_results(vec![vec![mock_currency_type.clone()]])
+            // invalid currency type id
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            .append_query_results::<currency_type::Model>(vec![vec![]])
+            // unauthorized
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            .append_query_results(vec![vec![mock_currency_type.clone()]])
+            // date cannot be parsed
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            .append_query_results(vec![vec![mock_currency_type.clone()]])
+            .into_connection();
+
+        let req = NewTransactionRequest {
+            donor_name: TEST_STR.to_string(),
+            currency_type_id: TEST_ID,
+            value: test_decimal(),
+            date: "wrong_date".to_string(),
+            expense_id: TEST_ID,
+        };
+        let (invalid_expense_id, invalid_currency_type_id, user_unauthorized, invalid_start_date) = tokio::join!(
+            create_transaction(&conn, TEST_ID, req.clone()),
+            create_transaction(&conn, TEST_ID, req.clone()),
+            create_transaction(&conn, TEST_ID - 1, req.clone()),
+            create_transaction(&conn, TEST_ID, req),
+        );
+
+        check!(invalid_expense_id == Err(CreateTransactionError::InvalidExpenseId));
+        check!(invalid_currency_type_id == Err(CreateTransactionError::InvalidCurrencyType));
+        check!(
+            user_unauthorized == Err(CreateTransactionError::UserUnauthorized(AuthorizeUserError))
+        );
+        check!(let Err(CreateTransactionError::InvalidStartDate(_)) = invalid_start_date);
+    }
 
     #[tokio::test]
-    async fn create_transaction_db_error_cases() {}
+    async fn create_transaction_db_error_cases() {
+        let mock_expense = expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN,
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: None,
+        };
+        let mock_currency_type = currency_type::Model {
+            id: TEST_ID,
+            abbreviation: TEST_STR.to_string(),
+            name: TEST_STR.to_string(),
+        };
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            // expense query db error
+            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_results(vec![vec![mock_currency_type.clone()]])
+            // currency type query db error
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            // transaction insert db error
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            .append_query_results(vec![vec![mock_currency_type.clone()]])
+            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .into_connection();
+
+        let req = NewTransactionRequest {
+            donor_name: TEST_STR.to_string(),
+            currency_type_id: TEST_ID,
+            value: test_decimal(),
+            date: TEST_DATE.to_string(),
+            expense_id: TEST_ID,
+        };
+        let (expense_db_error, currency_type_db_error, transaction_insert_db_error) = tokio::join!(
+            create_transaction(&conn, TEST_ID, req.clone()),
+            create_transaction(&conn, TEST_ID, req.clone()),
+            create_transaction(&conn, TEST_ID, req),
+        );
+
+        let db_error = Err(CreateTransactionError::DatabaseError(DbErr::Custom(
+            TEST_STR.to_string(),
+        )));
+        check!(expense_db_error == db_error);
+        check!(currency_type_db_error == db_error);
+        check!(transaction_insert_db_error == db_error);
+    }
 
     #[tokio::test]
     async fn delete_transaction_happy_path() {}
@@ -188,5 +291,29 @@ mod tests {
     async fn delete_transaction_db_error_cases() {}
 
     #[tokio::test]
-    async fn get_transaction_by_id_if_exists_all_cases() {}
+    async fn get_transaction_by_id_if_exists_all_cases() {
+        let mock_transaction = transaction::Model {
+            id: TEST_ID,
+            donor_name: TEST_STR.to_string(),
+            value: test_decimal(),
+            date: NaiveDate::MIN,
+            currency_type_id: TEST_ID,
+            expense_id: TEST_ID,
+        };
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            .append_query_results(vec![vec![mock_transaction.clone()]])
+            .append_query_results::<transaction::Model>(vec![vec![]])
+            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .into_connection();
+
+        let (found, not_found, db_error) = tokio::join!(
+            find_transaction_by_id(&conn, TEST_ID),
+            find_transaction_by_id(&conn, TEST_ID),
+            find_transaction_by_id(&conn, TEST_ID),
+        );
+
+        check!(found == Ok(Some(mock_transaction)));
+        check!(not_found == Ok(None));
+        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+    }
 }
