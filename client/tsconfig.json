@@ -16,16 +16,18 @@
 		"allowJs": true,
 		"checkJs": true,
 		"paths": {
+			"$api": ["src/routes/api"],
+			"$api/*": ["src/routes/api/*"],
 			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"],
 			"$mock": ["src/mock"],
 			"$mock/*": ["src/mock/*"],
 			"$routes": ["src/routes"],
 			"$routes/*": ["src/routes/*"],
+			"$services": ["src/services"],
+			"$services/*": ["src/services/*"],
 			"$shared": ["src/shared"],
-			"$shared/*": ["src/shared/*"],
-			"$api": ["src/routes/api"],
-			"$api/*": ["src/routes/api/*"]
+			"$shared/*": ["src/shared/*"]
 		},
 		"types": ["jest"]
 	},

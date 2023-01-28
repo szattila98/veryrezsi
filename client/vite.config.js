@@ -7,8 +7,9 @@ const config = {
 	resolve: {
 		alias: {
 			$mock: resolve('./src/mock'),
-			$routes: resolve('./src/routes'),
 			$api: resolve('./src/routes/api'),
+			$routes: resolve('./src/routes'),
+			$services: resolve('./src/services'),
 		},
 	},
 };

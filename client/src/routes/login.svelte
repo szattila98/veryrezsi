@@ -17,7 +17,7 @@
 
 	function login() {
 		if ($loginForm.valid && $user.value && $password.value) {
-			handleLogin({ user: $user.value, password: $password.value })
+			handleLogin({ email: $user.value, password: $password.value })
 				.then((res) => {
 					if (!res.ok) {
 						openFailedLoginAlert();

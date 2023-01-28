@@ -58,6 +58,7 @@
 		"@smui/snackbar": "^6.0.0",
 		"@smui/textfield": "^6.0.0",
 		"@smui/top-app-bar": "^6.0.0",
+		"axios": "^1.2.2",
 		"cookie": "^0.4.2",
 		"svelte": "3.44.0",
 		"svelte-forms": "^2.2.1",

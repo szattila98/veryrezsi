@@ -1,12 +1,12 @@
-import type { AxiosResponse } from '../../mock/api/_common/axios_response';
-import type { MessageResponseBody } from '../../mock/api/_common/response_body';
+import type { AxiosResponse } from '$shared/axios';
+import type { FailureResponseBody } from '$shared/axios';
 
 export type LoginRequestData = {
-	user: string;
+	email: string;
 	password: string;
 };
 
-type LoginResponseData = MessageResponseBody;
+type LoginResponseData = Record<string, never> | FailureResponseBody;
 
 // Specializing common Axios response to use response data type for its data field
 // This can be safely reused for every concrete response.

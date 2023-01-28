@@ -1,5 +1,5 @@
-import type { AxiosResponse } from '../../mock/api/_common/axios_response';
-import type { MessageResponseBody } from '../../mock/api/_common/response_body';
+import type { AxiosResponse } from '$shared/axios';
+import type { FailureResponseBody } from '$shared/axios';
 
 export type RegisterRequestData = {
 	user: string;
@@ -7,7 +7,7 @@ export type RegisterRequestData = {
 	email: string;
 };
 
-type RegisterResponseData = MessageResponseBody;
+type RegisterResponseData = Record<string, never> | FailureResponseBody;
 
 // Specializing common Axios response to use response data type for its data field
 // This can be safely reused for every concrete response.
