@@ -35,6 +35,8 @@ pub enum Relation {
         to = "super::user::Column::Id"
     )]
     User,
+    #[sea_orm(has_many = "super::transaction::Entity")]
+    Transaction,
     #[sea_orm(
         belongs_to = "super::currency_type::Entity",
         from = "Column::CurrencyTypeId",
@@ -53,4 +55,10 @@ pub enum Relation {
         to = "super::predefined_expense::Column::Id"
     )]
     PredefinedExpense,
+}
+
+impl Related<super::transaction::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Transaction.def()
+    }
 }

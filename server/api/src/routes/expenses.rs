@@ -17,23 +17,10 @@ pub async fn get_expenses(
     State(ref conn): State<DatabaseConnection>,
     Path(user_id): Path<Id>,
 ) -> Result<Json<ExpenseResponse>, ErrorMsg<()>> {
-    match expense_operations::find_expenses_by_user_id(conn, user.id, user_id).await {
-        Ok(expenses) => {
-            let mut expense_response: ExpenseResponse = vec![];
-
-            for expense in expenses {
-                let transactions =
-                    match transaction_operations::find_transactions_by_expense_id(conn, expense.id)
-                        .await
-                    {
-                        Ok(transactions) => transactions,
-                        Err(_e) => vec![],
-                    };
-
-                expense_response.push(ExpenseWithTransactions::new(expense, transactions))
-            }
-            Ok(Json(expense_response))
-        }
+    match expense_operations::find_expenses_with_transactions_by_user_id(conn, user.id, user_id)
+        .await
+    {
+        Ok(expenses_with_transactions) => Ok(Json(expenses_with_transactions)),
         Err(e) => Err(e.into()),
     }
 }

@@ -12,7 +12,7 @@ use entity::Id;
 use chrono::NaiveDate;
 use migration::DbErr;
 use sea_orm::ActiveValue::NotSet;
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, Set};
 
 pub async fn create_transaction(
     conn: &DatabaseConnection,
@@ -42,18 +42,6 @@ pub async fn create_transaction(
     };
     let transaction = transaction.insert(conn).await?;
     Ok(transaction.id)
-}
-
-pub async fn find_transactions_by_expense_id(
-    conn: &DatabaseConnection,
-    expense_id: Id,
-) -> Result<Vec<transaction::Model>, DbErr> {
-    let transactions = Transaction::find()
-        .filter(transaction::Column::ExpenseId.eq(expense_id))
-        .all(conn)
-        .await?;
-
-    Ok(transactions)
 }
 
 pub async fn delete_transaction_by_id(
