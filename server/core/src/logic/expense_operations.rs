@@ -211,37 +211,28 @@ mod tests {
             expense_id: TEST_ID,
         };
 
-        let expense_with_transaction_fixture =
-            vec![(mock_expense.clone(), mock_transaction.clone())];
+        let mut mock_transaction_2 = mock_transaction.clone();
+        mock_transaction_2.id = TEST_ID + 1;
 
-        let expected_result = vec![
-            ExpenseWithTransactions {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                description: TEST_STR.to_string(),
-                value: test_decimal(),
-                start_date: NaiveDate::MIN.to_string(),
-                user_id: TEST_ID,
-                currency_type_id: TEST_ID,
-                recurrence_type_id: TEST_ID,
-                predefined_expense_id: Some(TEST_ID),
-                transactions: vec![mock_transaction.clone()],
-            },
-            ExpenseWithTransactions {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                description: TEST_STR.to_string(),
-                value: test_decimal(),
-                start_date: NaiveDate::MIN.to_string(),
-                user_id: TEST_ID,
-                currency_type_id: TEST_ID,
-                recurrence_type_id: TEST_ID,
-                predefined_expense_id: Some(TEST_ID),
-                transactions: vec![],
-            },
+        let expense_with_transaction_fixture = vec![
+            (mock_expense.clone(), mock_transaction.clone()),
+            (mock_expense.clone(), mock_transaction_2.clone()),
         ];
+
+        let expected_result = vec![ExpenseWithTransactions {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN.to_string(),
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: Some(TEST_ID),
+            transactions: vec![mock_transaction, mock_transaction_2],
+        }];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![expense_with_transaction_fixture.clone(), vec![]])
+            .append_query_results(vec![expense_with_transaction_fixture, vec![]])
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
@@ -262,9 +253,9 @@ mod tests {
         );
         check!(
             db_error
-                == Err(FindExpensesWithTransactionsByUserIdError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
-                )))
+                == Err(FindExpensesWithTransactionsByUserIdError::DatabaseError(
+                    DbErr::Custom(TEST_STR.to_string())
+                ))
         );
     }
 

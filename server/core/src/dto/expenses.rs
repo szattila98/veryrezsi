@@ -50,7 +50,7 @@ pub struct NewPredefinedExpenseRequest {
 
 pub type ExpenseResponse = Vec<ExpenseWithTransactions>;
 
-#[derive(Clone, Serialize, PartialEq, Eq)]
+#[derive(Clone, Serialize, PartialEq, Eq, Debug)]
 pub struct ExpenseWithTransactions {
     pub id: Id,
     pub name: String,
