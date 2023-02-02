@@ -13,7 +13,7 @@ use crate::logic::recurrence_operations::find_recurrence_type_by_id;
 
 use entity::expense::{self, Entity as Expense};
 use entity::predefined_expense::{self, Entity as PredefinedExpense};
-use entity::transaction::{self, Entity as Transaction};
+use entity::transaction::Entity as Transaction;
 use entity::Id;
 
 use chrono::NaiveDate;
@@ -175,7 +175,7 @@ mod tests {
 
     use super::*;
     use assert2::check;
-    use entity::{currency_type, recurrence_type};
+    use entity::{currency_type, recurrence_type, transaction};
     use migration::DbErr;
     use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
 
