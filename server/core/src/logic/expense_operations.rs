@@ -1,5 +1,5 @@
 use self::errors::{
-    CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
+    CreateExpenseError, CreatePredefinedExpenseError, FindExpensesWithTransactionsByUserIdError,
     ValidateRecurrenceAndCurrencyTypesError,
 };
 
@@ -25,7 +25,7 @@ pub async fn find_expenses_with_transactions_by_user_id(
     conn: &DatabaseConnection,
     authenticated_user_id: Id,
     user_id: Id,
-) -> Result<Vec<ExpenseWithTransactions>, FindExpensesByUserIdError> {
+) -> Result<Vec<ExpenseWithTransactions>, FindExpensesWithTransactionsByUserIdError> {
     authorize_user_by_id(authenticated_user_id, user_id)?;
     let mut result: Vec<ExpenseWithTransactions> = vec![];
     let expenses_with_transactions = Expense::find()
@@ -131,7 +131,7 @@ pub mod errors {
     use crate::logic::user_operations::errors::AuthorizeUserError;
 
     #[derive(Error, Debug, PartialEq, Eq)]
-    pub enum FindExpensesByUserIdError {
+    pub enum FindExpensesWithTransactionsByUserIdError {
         #[error("{0}")]
         UnauthorizedUser(#[from] AuthorizeUserError),
         #[error("database error: '{0}'")]
@@ -211,10 +211,8 @@ mod tests {
             expense_id: TEST_ID,
         };
 
-        let database_fixture = vec![
-            (mock_expense.clone(), vec![mock_transaction.clone()]),
-            (mock_expense.clone(), vec![]),
-        ];
+        let expense_with_transaction_fixture =
+            vec![(mock_expense.clone(), mock_transaction.clone())];
 
         let expected_result = vec![
             ExpenseWithTransactions {
@@ -243,7 +241,7 @@ mod tests {
             },
         ];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![database_fixture.clone(), vec![]])
+            .append_query_results(vec![expense_with_transaction_fixture.clone(), vec![]])
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
@@ -258,13 +256,13 @@ mod tests {
         check!(empty_expenses == Ok(vec![]));
         check!(
             unauthorized_error
-                == Err(FindExpensesByUserIdError::UnauthorizedUser(
+                == Err(FindExpensesWithTransactionsByUserIdError::UnauthorizedUser(
                     AuthorizeUserError
                 ))
         );
         check!(
             db_error
-                == Err(FindExpensesByUserIdError::DatabaseError(DbErr::Custom(
+                == Err(FindExpensesWithTransactionsByUserIdError::DatabaseError(DbErr::Custom(
                     TEST_STR.to_string()
                 )))
         );

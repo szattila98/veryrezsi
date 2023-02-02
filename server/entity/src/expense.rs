@@ -1,5 +1,5 @@
 use crate::{Id, MoneyAmount};
-use sea_orm::entity::prelude::*;
+use sea_orm::{entity::prelude::*, IntoMockRow};
 use serde::{self, Deserialize, Serialize};
 
 #[derive(
@@ -60,5 +60,13 @@ pub enum Relation {
 impl Related<super::transaction::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Transaction.def()
+    }
+}
+
+pub struct ModelWithTransactions(Model, Vec<super::transaction::Model>);
+
+impl IntoMockRow for ModelWithTransactions {
+    fn into_mock_row(self) -> sea_orm::MockRow {
+        todo!()
     }
 }

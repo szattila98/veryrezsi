@@ -1,8 +1,8 @@
 use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::expenses::{
-    ExpenseResponse, ExpenseWithTransactions, NewExpenseRequest, NewPredefinedExpenseRequest,
+    ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest,
 };
-use veryrezsi_core::logic::{expense_operations, transaction_operations};
+use veryrezsi_core::logic::expense_operations;
 
 use super::common::ValidatedJson;
 use super::error::ErrorMsg;
