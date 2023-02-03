@@ -141,7 +141,6 @@ pub async fn activate_account(
     }
 }
 
-
 /// Utility method to authorize if a user should be able to access a resource.
 /// Checks the equality of two user_ids.
 ///

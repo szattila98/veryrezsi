@@ -11,7 +11,8 @@ use veryrezsi_core::logic::{
     expense_operations::errors::{
         CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
     },
-    transaction_operations::errors::{CreateTransactionError, DeleteTransactionByIdError}, user_operations::errors::{SaveUserError, ActivateAccountError},
+    transaction_operations::errors::{CreateTransactionError, DeleteTransactionByIdError},
+    user_operations::errors::{ActivateAccountError, SaveUserError},
 };
 
 /// A struct that can be returned from route handlers on error.
@@ -88,7 +89,9 @@ impl<D: Serialize> From<SaveUserError> for ErrorMsg<D> {
     fn from(e: SaveUserError) -> Self {
         match e {
             SaveUserError::UserAlreadyExists => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
-            SaveUserError::PasswordCannotBeHashed(msg) => Self::new(StatusCode::INTERNAL_SERVER_ERROR, msg),
+            SaveUserError::PasswordCannotBeHashed(msg) => {
+                Self::new(StatusCode::INTERNAL_SERVER_ERROR, msg)
+            }
             SaveUserError::DatabaseError(db_error) => db_error.into(),
         }
     }
