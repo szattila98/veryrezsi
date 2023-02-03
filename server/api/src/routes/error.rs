@@ -8,11 +8,10 @@ use migration::DbErr;
 use serde::Serialize;
 use validator::ValidationErrors;
 use veryrezsi_core::logic::{
-    error::UserError,
     expense_operations::errors::{
         CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
     },
-    transaction_operations::errors::{CreateTransactionError, DeleteTransactionByIdError},
+    transaction_operations::errors::{CreateTransactionError, DeleteTransactionByIdError}, user_operations::errors::{SaveUserError, ActivateAccountError},
 };
 
 /// A struct that can be returned from route handlers on error.
@@ -85,20 +84,21 @@ impl<D: Serialize> From<DbErr> for ErrorMsg<D> {
     }
 }
 
-impl<D: Serialize> From<UserError> for ErrorMsg<D> {
-    fn from(e: UserError) -> Self {
+impl<D: Serialize> From<SaveUserError> for ErrorMsg<D> {
+    fn from(e: SaveUserError) -> Self {
         match e {
-            UserError::UserNotFound(_) => Self::new(StatusCode::NOT_FOUND, e.to_string()),
-            UserError::EmailAlreadyExists(_) => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
-            UserError::PasswordCannotBeHashed(_) => {
-                Self::new(StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            }
-            UserError::ActivationTokenNotFound(_) => {
-                Self::new(StatusCode::BAD_REQUEST, e.to_string())
-            }
-            UserError::ActivationTokenExpired => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
-            UserError::UserHasNoRightForAction => Self::new(StatusCode::FORBIDDEN, e.to_string()),
-            UserError::DatabaseError(db_error) => db_error.into(),
+            SaveUserError::UserAlreadyExists => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
+            SaveUserError::PasswordCannotBeHashed(msg) => Self::new(StatusCode::INTERNAL_SERVER_ERROR, msg),
+            SaveUserError::DatabaseError(db_error) => db_error.into(),
+        }
+    }
+}
+
+impl<D: Serialize> From<ActivateAccountError> for ErrorMsg<D> {
+    fn from(e: ActivateAccountError) -> Self {
+        match e {
+            ActivateAccountError::InvalidToken => Self::new(StatusCode::BAD_REQUEST, e.to_string()),
+            ActivateAccountError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }

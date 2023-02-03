@@ -1,6 +1,5 @@
-use self::errors::AuthorizeUserError;
+use self::errors::{ActivateAccountError, AuthorizeUserError, SaveUserError};
 
-use super::error::UserError;
 use crate::config;
 use crate::dto::users::NewUserRequest;
 use crate::email::{render_template, send_mail, ACTIVATION_EMAIL_TEMPLATE};
@@ -9,6 +8,7 @@ use entity::account_activation::{self, Entity as AccountActivation};
 use entity::user::{self, Entity as User};
 use entity::Id;
 use lettre::AsyncTransport;
+use migration::DbErr;
 use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
@@ -23,22 +23,20 @@ use tracing::debug;
 pub async fn find_user_by_email(
     conn: &DatabaseConnection,
     email: String,
-) -> Result<user::Model, UserError> {
-    let opt = User::find()
+) -> Result<Option<user::Model>, DbErr> {
+    let user = User::find()
         .filter(user::Column::Email.eq(email.clone()))
         .one(conn)
         .await?;
-    match opt {
-        Some(user) => Ok(user),
-        None => Err(UserError::UserNotFound(email)),
-    }
+    Ok(user)
 }
 
-pub async fn find_user_by_id(conn: &DatabaseConnection, id: Id) -> Result<user::Model, UserError> {
-    match User::find_by_id(id).one(conn).await? {
-        Some(user) => Ok(user),
-        None => Err(UserError::UserNotFound(id.to_string())),
-    }
+pub async fn find_user_by_id(
+    conn: &DatabaseConnection,
+    id: Id,
+) -> Result<Option<user::Model>, DbErr> {
+    let user = User::find_by_id(id).one(conn).await?;
+    Ok(user)
 }
 
 pub async fn save_user<M>(
@@ -46,22 +44,22 @@ pub async fn save_user<M>(
     conn: &DatabaseConnection,
     mail_transport: Arc<M>,
     req: NewUserRequest,
-) -> Result<user::Model, UserError>
+) -> Result<user::Model, SaveUserError>
 where
     M: AsyncTransport + Send + Sync + 'static,
     <M as AsyncTransport>::Error: std::fmt::Debug,
 {
-    match User::find()
-        .filter(user::Column::Email.eq(req.email.clone()))
-        .one(conn)
-        .await?
-    {
-        Some(_) => Err(UserError::EmailAlreadyExists(req.email)),
+    match find_user_by_email(conn, req.email.clone()).await? {
+        Some(_) => Err(SaveUserError::UserAlreadyExists),
         None => {
-            let pw_hash = bcrypt::hash(req.password)?;
-
+            let pw_hash = match bcrypt::hash(req.password) {
+                Ok(hashed) => hashed,
+                Err(error) => {
+                    return Err(SaveUserError::PasswordCannotBeHashed(format!("{error}")))
+                }
+            };
             let (user, activation) = conn
-                .transaction::<_, (user::Model, account_activation::Model), UserError>(|txn| {
+                .transaction::<_, (user::Model, account_activation::Model), SaveUserError>(|txn| {
                     Box::pin(async move {
                         let user = user::ActiveModel {
                             id: NotSet,
@@ -106,7 +104,10 @@ where
     }
 }
 
-pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Result<(), UserError> {
+pub async fn activate_account(
+    conn: &DatabaseConnection,
+    token: String,
+) -> Result<(), ActivateAccountError> {
     let account_activation = AccountActivation::find()
         .filter(account_activation::Column::Token.eq(token.clone()))
         .one(conn)
@@ -117,7 +118,7 @@ pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Resul
                 let user = User::find_by_id(activation.user_id).one(conn).await?;
                 match user {
                     Some(user) => {
-                        conn.transaction::<_, (), UserError>(|txn| {
+                        conn.transaction::<_, (), ActivateAccountError>(|txn| {
                             Box::pin(async move {
                                 let mut user = user.into_active_model();
                                 user.activated = Set(true);
@@ -130,18 +131,23 @@ pub async fn activate_account(conn: &DatabaseConnection, token: String) -> Resul
                         .await?;
                         Ok(())
                     }
-                    None => Err(UserError::UserNotFound(activation.user_id.to_string())),
+                    None => Err(ActivateAccountError::InvalidToken),
                 }
             } else {
-                Err(UserError::ActivationTokenExpired)
+                Err(ActivateAccountError::InvalidToken)
             }
         }
-        None => Err(UserError::ActivationTokenNotFound(token)),
+        None => Err(ActivateAccountError::InvalidToken),
     }
 }
 
+
 /// Utility method to authorize if a user should be able to access a resource.
 /// Checks the equality of two user_ids.
+///
+/// # Errors
+///
+/// This function will return an error if the two ids are not equal.
 pub fn authorize_user_by_id(
     user_id: Id,
     user_id_in_resource: Id,
@@ -153,7 +159,45 @@ pub fn authorize_user_by_id(
 }
 
 pub mod errors {
+    use migration::DbErr;
+    use sea_orm::TransactionError;
     use thiserror::Error;
+
+    #[derive(Error, Debug, PartialEq, Eq)]
+    pub enum SaveUserError {
+        #[error("user already exists")]
+        UserAlreadyExists,
+        #[error("{0}")]
+        PasswordCannotBeHashed(String),
+        #[error("database error: '{0}'")]
+        DatabaseError(#[from] DbErr),
+    }
+
+    impl From<TransactionError<SaveUserError>> for SaveUserError {
+        fn from(e: TransactionError<SaveUserError>) -> Self {
+            match e {
+                TransactionError::Connection(e) => e.into(),
+                TransactionError::Transaction(e) => e,
+            }
+        }
+    }
+
+    #[derive(Error, Debug, PartialEq, Eq)]
+    pub enum ActivateAccountError {
+        #[error("invalid token")]
+        InvalidToken,
+        #[error("database error: '{0}'")]
+        DatabaseError(#[from] DbErr),
+    }
+
+    impl From<TransactionError<ActivateAccountError>> for ActivateAccountError {
+        fn from(e: TransactionError<ActivateAccountError>) -> Self {
+            match e {
+                TransactionError::Connection(e) => e.into(),
+                TransactionError::Transaction(e) => e,
+            }
+        }
+    }
 
     #[derive(Error, Debug, PartialEq, Eq)]
     #[error("user is not authorized")]
@@ -164,50 +208,17 @@ pub mod errors {
 mod tests {
 
     #[test]
-    fn find_by_email_on_correct_email_found() {}
+    fn find_by_email_all_cases() {}
 
     #[test]
-    fn find_by_email_on_incorrect_email_not_found() {}
+    fn find_by_id_all_cases() {}
 
     #[test]
-    fn find_by_email_on_db_err_correct_error() {}
+    fn save_user_all_cases() {}
 
     #[test]
-    fn find_by_id_on_correct_id_found() {}
+    fn activate_account_all_cases() {}
 
     #[test]
-    fn find_by_id_on_incorrect_id_not_found() {}
-
-    #[test]
-    fn find_by_id_on_db_err_correct_error() {}
-
-    #[test]
-    fn save_user_happy_path() {}
-
-    #[test]
-    fn save_user_on_already_existing_email_correct_error() {}
-
-    #[test]
-    fn save_user_on_bcrypt_error_correct_error() {}
-
-    #[test]
-    fn save_user_on_db_err_correct_error() {}
-
-    #[test]
-    fn activate_account_happy_path() {}
-
-    #[test]
-    fn activate_account_on_incorrect_token_not_found() {}
-
-    #[test]
-    fn activate_account_on_token_expired_correct_error() {}
-
-    #[test]
-    fn activate_account_on_db_err_correct_error() {}
-
-    #[test]
-    fn authorize_user_by_id_happy_path() {}
-
-    #[test]
-    fn authorize_user_by_id_on_no_right_unauthorized() {}
+    fn authorize_user_by_id_all_cases() {}
 }
