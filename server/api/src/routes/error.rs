@@ -92,6 +92,9 @@ impl<D: Serialize> From<SaveUserError> for ErrorMsg<D> {
             SaveUserError::PasswordCannotBeHashed(msg) => {
                 Self::new(StatusCode::INTERNAL_SERVER_ERROR, msg)
             }
+            SaveUserError::EmailCannotBeSent(reason) => {
+                Self::new(StatusCode::INTERNAL_SERVER_ERROR, reason)
+            }
             SaveUserError::DatabaseError(db_error) => db_error.into(),
         }
     }

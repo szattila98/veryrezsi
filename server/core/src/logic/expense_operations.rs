@@ -4,7 +4,7 @@ use self::errors::{
 };
 
 use super::common;
-use super::user_operations::authorize_user_by_id;
+use super::user_operations::authorize_user;
 use crate::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
 use crate::logic::currency_operations::find_currency_type_by_id;
 use crate::logic::recurrence_operations::find_recurrence_type_by_id;
@@ -23,7 +23,7 @@ pub async fn find_expenses_by_user_id(
     authenticated_user_id: Id,
     user_id: Id,
 ) -> Result<Vec<expense::Model>, FindExpensesByUserIdError> {
-    authorize_user_by_id(authenticated_user_id, user_id)?;
+    authorize_user(authenticated_user_id, user_id)?;
     let expenses = Expense::find()
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)

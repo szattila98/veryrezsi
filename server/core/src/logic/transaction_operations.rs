@@ -1,7 +1,7 @@
 use self::errors::{CreateTransactionError, DeleteTransactionByIdError};
 
 use super::common;
-use super::user_operations::authorize_user_by_id;
+use super::user_operations::authorize_user;
 use crate::dto::transactions::NewTransactionRequest;
 use crate::logic::currency_operations::find_currency_type_by_id;
 use crate::logic::expense_operations::find_expense_by_id;
@@ -29,7 +29,7 @@ pub async fn create_transaction(
     let Some(_) = currency_result? else {
         return Err(CreateTransactionError::InvalidCurrencyType);
     };
-    authorize_user_by_id(user_id, expense.user_id)?;
+    authorize_user(user_id, expense.user_id)?;
 
     let parsed_date = NaiveDate::parse_from_str(&req.date, common::DATE_FORMAT)?;
     let transaction = transaction::ActiveModel {
@@ -55,7 +55,7 @@ pub async fn delete_transaction_by_id(
     let Some(expense) = find_expense_by_id(conn, transaction.expense_id).await? else {
         return Err(DeleteTransactionByIdError::InvalidExpenseId);
     };
-    authorize_user_by_id(user_id, expense.user_id)?;
+    authorize_user(user_id, expense.user_id)?;
 
     Transaction::delete_by_id(transaction_id).exec(conn).await?;
     Ok(())
