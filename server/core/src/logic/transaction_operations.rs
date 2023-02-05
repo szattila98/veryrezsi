@@ -53,7 +53,7 @@ pub async fn delete_transaction_by_id(
         return Err(DeleteTransactionByIdError::InvalidTransaction);
     };
     let Some(expense) = find_expense_by_id(conn, transaction.expense_id).await? else {
-        return Err(DeleteTransactionByIdError::InvalidExpenseId);
+        return Err(DeleteTransactionByIdError::InvalidTransaction);
     };
     authorize_user(user_id, expense.user_id)?;
 
@@ -93,8 +93,6 @@ pub mod errors {
     pub enum DeleteTransactionByIdError {
         #[error("transaction id is invalid")]
         InvalidTransaction,
-        #[error("expense id is invalid")]
-        InvalidExpenseId,
         #[error("{0}")]
         UserUnauthorized(#[from] AuthorizeUserError),
         #[error("database error: '{0}'")]
@@ -282,13 +280,84 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn delete_transaction_happy_path() {}
+    async fn delete_transaction_all_cases() {
+        let mock_transaction = transaction::Model {
+            id: TEST_ID,
+            value: test_decimal(),
+            currency_type_id: TEST_ID,
+            expense_id: TEST_ID,
+            date: NaiveDate::MIN,
+            donor_name: TEST_STR.to_string(),
+        };
+        let mock_expense = expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN,
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: None,
+        };
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            // happy case
+            .append_query_results(vec![vec![mock_transaction.clone()]])
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            .append_exec_results(vec![MockExecResult::default()])
+            // transaction not found
+            .append_query_results::<transaction::Model>(vec![vec![]])
+            // expense not found
+            .append_query_results(vec![vec![mock_transaction.clone()]])
+            .append_query_results::<expense::Model>(vec![vec![]])
+            // user unauthorized
+            .append_query_results(vec![vec![mock_transaction.clone()]])
+            .append_query_results(vec![vec![mock_expense.clone()]])
+            // transaction query db error
+            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            // expense query db error
+            .append_query_results(vec![vec![mock_transaction.clone()]])
+            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            // transaction delete db error
+            .append_query_results(vec![vec![mock_transaction.clone()]])
+            .append_query_results(vec![vec![mock_expense]])
+            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .into_connection();
 
-    #[tokio::test]
-    async fn delete_transaction_error_cases() {}
+        let (
+            happy_case,
+            transaction_not_found,
+            expense_not_found,
+            user_unauthorized,
+            transaction_query_db_error,
+            expense_query_db_error,
+            transaction_delete_db_error,
+        ) = tokio::join!(
+            delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
+            delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
+            delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
+            delete_transaction_by_id(&conn, TEST_ID + 1, TEST_ID),
+            delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
+            delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
+            delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
+        );
 
-    #[tokio::test]
-    async fn delete_transaction_db_error_cases() {}
+        let db_error = Err(DeleteTransactionByIdError::DatabaseError(DbErr::Custom(
+            TEST_STR.to_string(),
+        )));
+        check!(happy_case == Ok(()));
+        check!(transaction_not_found == Err(DeleteTransactionByIdError::InvalidTransaction));
+        check!(expense_not_found == Err(DeleteTransactionByIdError::InvalidTransaction));
+        check!(
+            user_unauthorized
+                == Err(DeleteTransactionByIdError::UserUnauthorized(
+                    AuthorizeUserError
+                ))
+        );
+        check!(transaction_query_db_error == db_error);
+        check!(expense_query_db_error == db_error);
+        check!(transaction_delete_db_error == db_error);
+    }
 
     #[tokio::test]
     async fn get_transaction_by_id_if_exists_all_cases() {

@@ -174,9 +174,6 @@ impl<D: Serialize> From<DeleteTransactionByIdError> for ErrorMsg<D> {
             DeleteTransactionByIdError::InvalidTransaction => {
                 Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
-            DeleteTransactionByIdError::InvalidExpenseId => {
-                Self::new(StatusCode::NOT_FOUND, e.to_string())
-            }
             DeleteTransactionByIdError::UserUnauthorized(_) => {
                 Self::new(StatusCode::UNAUTHORIZED, e.to_string())
             }

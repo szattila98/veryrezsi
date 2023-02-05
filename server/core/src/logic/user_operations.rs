@@ -461,8 +461,8 @@ mod tests {
         check!(user_update_db_error == db_error);
     }
 
-    #[tokio::test]
-    async fn authorize_user_by_id_all_cases() {
+    #[test]
+    fn authorize_user_by_id_all_cases() {
         let ok = authorize_user(TEST_ID, TEST_ID);
         let error = authorize_user(TEST_ID, TEST_ID - 1);
 
