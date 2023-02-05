@@ -26,7 +26,7 @@ pub struct LoginRequest {
     pub password: String,
 }
 
-#[derive(Deserialize, Validate)]
+#[derive(Deserialize, Validate, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct NewUserRequest {
     #[validate(email(message = "email must be valid"))]

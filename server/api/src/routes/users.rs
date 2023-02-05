@@ -16,37 +16,40 @@ pub async fn login(
     State(ref conn): State<DatabaseConnection>,
     ValidatedJson(login_data): ValidatedJson<LoginRequest>,
 ) -> Result<PrivateCookieJar, ErrorMsg<()>> {
-    match user_operations::find_user_by_email(conn, login_data.email.to_string()).await {
-        Ok(user) => {
-            return if user.activated {
-                return if bcrypt::verify(login_data.password, &user.pw_hash) {
-                    let mut cookie = Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string());
-                    cookie.set_path("/api");
-                    Ok(cookies.add(cookie))
-                } else {
-                    Err(ErrorMsg::new(
-                        StatusCode::UNAUTHORIZED,
-                        "incorrect credentials",
-                    ))
-                };
-            } else {
-                Err(ErrorMsg::new(
-                    StatusCode::BAD_REQUEST,
-                    "account not activated",
-                ))
-            }
+    let opt = user_operations::find_user_by_email(conn, login_data.email).await?;
+    let user = match opt {
+        Some(user) => user,
+        None => {
+            return Err(ErrorMsg::new(
+                StatusCode::UNAUTHORIZED,
+                "invalid credentials",
+            ))
         }
-        Err(e) => Err(e.into()),
-    }
+    };
+    if !user.activated {
+        return Err(ErrorMsg::new(
+            StatusCode::BAD_REQUEST,
+            "account not activated",
+        ));
+    };
+    if !bcrypt::verify(login_data.password, &user.pw_hash) {
+        return Err(ErrorMsg::new(
+            StatusCode::UNAUTHORIZED,
+            "incorrect credentials",
+        ));
+    };
+    let mut cookie = Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string());
+    cookie.set_path("/api");
+    Ok(cookies.add(cookie))
 }
 
 pub async fn me(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
-    match user_operations::find_user_by_id(conn, user.id).await {
-        Ok(user) => Ok(Json(user)),
-        Err(e) => Err(e.into()),
+    match user_operations::find_user_by_id(conn, user.id).await? {
+        Some(user) => Ok(Json(user)),
+        None => Err(ErrorMsg::new(StatusCode::NOT_FOUND, "user not found")),
     }
 }
 

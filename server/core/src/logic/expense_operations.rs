@@ -4,7 +4,7 @@ use self::errors::{
 };
 
 use super::common;
-use super::user_operations::authorize_user_by_id;
+use super::user_operations::authorize_user;
 use crate::dto::expenses::{
     ExpenseWithTransactions, NewExpenseRequest, NewPredefinedExpenseRequest,
 };
@@ -26,7 +26,7 @@ pub async fn find_expenses_with_transactions_by_user_id(
     authenticated_user_id: Id,
     user_id: Id,
 ) -> Result<Vec<ExpenseWithTransactions>, FindExpensesWithTransactionsByUserIdError> {
-    authorize_user_by_id(authenticated_user_id, user_id)?;
+    authorize_user(authenticated_user_id, user_id)?;
     let expenses_with_transactions = Expense::find()
         .find_with_related(Transaction)
         .filter(expense::Column::UserId.eq(user_id))
@@ -314,10 +314,7 @@ mod tests {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_recurrence_type]])
             .append_query_results(vec![vec![mock_currency_type]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: 1,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_expense]])
             .into_connection();
 
@@ -374,10 +371,7 @@ mod tests {
             .append_query_results(vec![vec![mock_predefined_expense]])
             .append_query_results(vec![vec![mock_recurrence_type]])
             .append_query_results(vec![vec![mock_currency_type]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: 1,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_expense]])
             .into_connection();
 
@@ -583,10 +577,7 @@ mod tests {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_recurrence_type]])
             .append_query_results(vec![vec![mock_currency_type]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: 1,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_predefined_expense]])
             .into_connection();
 

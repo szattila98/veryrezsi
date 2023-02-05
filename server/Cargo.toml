@@ -25,15 +25,15 @@ description = "Expense and subscription calculator web-server."
 
 [workspace.dependencies]
 chrono = "0.4.23"
-sea-orm = "0.10.6"
+sea-orm = "0.10.7"
 serde = "1.0.152" 
 serde_json = "1.0.91"
-tokio = "1.23.0" 
+tokio = "1.24.2" 
 tracing = "0.1.37"
 tracing-subscriber = "0.3.16"
 pwhash = "1.0.0"
 validator = "0.16.0" 
-assert2 = "0.3.7"
+assert2 = "0.3.8"
 
 [dependencies]
 veryrezsi-api = { path = "./api" }
