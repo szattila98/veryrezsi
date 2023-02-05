@@ -53,6 +53,7 @@ pub fn init(
     let recurrence_api = Router::new().route("/", get(recurrence_types::get_recurrence_types));
 
     let api = Router::new()
+        .route("/", get(|| async {}))
         .nest("/user", user_api)
         .nest("/expense", expense_api)
         .nest("/transaction/", transaction_api)
