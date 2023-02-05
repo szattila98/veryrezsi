@@ -103,37 +103,35 @@ pub async fn activate_account(
     conn: &DatabaseConnection,
     token: String,
 ) -> Result<(), ActivateAccountError> {
-    let account_activation = AccountActivation::find()
+    let Some(account_activation) = AccountActivation::find()
         .filter(account_activation::Column::Token.eq(token.clone()))
         .one(conn)
-        .await?;
-    match account_activation {
-        Some(activation) => {
-            if activation.expiration >= chrono::Local::now() {
-                let user = User::find_by_id(activation.user_id).one(conn).await?;
-                match user {
-                    Some(user) => {
-                        conn.transaction::<_, (), ActivateAccountError>(|txn| {
-                            Box::pin(async move {
-                                let mut user = user.into_active_model();
-                                user.activated = Set(true);
-                                user.update(txn).await?;
-                                let activation = activation.into_active_model();
-                                activation.delete(txn).await?;
-                                Ok(())
-                            })
-                        })
-                        .await?;
-                        Ok(())
-                    }
-                    None => Err(ActivateAccountError::InvalidToken),
-                }
-            } else {
-                Err(ActivateAccountError::InvalidToken)
-            }
-        }
-        None => Err(ActivateAccountError::InvalidToken),
+        .await? else {
+        return Err(ActivateAccountError::InvalidToken);
+    };
+
+    if account_activation.expiration < chrono::Local::now() {
+        return Err(ActivateAccountError::InvalidToken);
     }
+
+    let Some(user) = User::find_by_id(account_activation.user_id)
+        .one(conn)
+        .await? else {
+        return Err(ActivateAccountError::InvalidToken);
+    };
+
+    conn.transaction::<_, (), ActivateAccountError>(|txn| {
+        Box::pin(async move {
+            let mut user = user.into_active_model();
+            user.activated = Set(true);
+            user.update(txn).await?;
+            let activation = account_activation.into_active_model();
+            activation.delete(txn).await?;
+            Ok(())
+        })
+    })
+    .await?;
+    Ok(())
 }
 
 /// Utility method to authorize if a user should be able to access a resource.
@@ -385,6 +383,14 @@ mod tests {
                 .unwrap(),
             token: TEST_STR.to_string(),
         };
+        let expired_activation = account_activation::Model {
+            id: TEST_ID,
+            user_id: TEST_ID,
+            expiration: chrono::Local::now()
+                .checked_sub_signed(Duration::days(15))
+                .unwrap(),
+            token: TEST_STR.to_string(),
+        };
         let mock_user = user::Model {
             id: TEST_ID,
             email: TEST_EMAIL.to_string(),
@@ -411,6 +417,8 @@ mod tests {
             // user not found
             .append_query_results(vec![vec![mock_account_activation.clone()]])
             .append_query_results::<user::Model>(vec![vec![]])
+            // expired activation
+            .append_query_results(vec![vec![expired_activation]])
             // db error - account activation query failed
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             // db error - user query failed
@@ -426,6 +434,7 @@ mod tests {
             happy_path,
             account_activation_not_found,
             user_not_found,
+            expired_activation,
             activation_query_db_error,
             user_query_db_error,
             user_update_db_error,
@@ -435,7 +444,8 @@ mod tests {
             activate_account(&conn, TEST_STR.to_string()),
             activate_account(&conn, TEST_STR.to_string()),
             activate_account(&conn, TEST_STR.to_string()),
-            activate_account(&conn, TEST_STR.to_string())
+            activate_account(&conn, TEST_STR.to_string()),
+            activate_account(&conn, TEST_STR.to_string()),
         );
 
         let invalid_token_err = Err(ActivateAccountError::InvalidToken);
@@ -445,6 +455,7 @@ mod tests {
         check!(happy_path == Ok(()));
         check!(account_activation_not_found == invalid_token_err);
         check!(user_not_found == invalid_token_err);
+        check!(expired_activation == invalid_token_err);
         check!(activation_query_db_error == db_error);
         check!(user_query_db_error == db_error);
         check!(user_update_db_error == db_error);
