@@ -9,7 +9,7 @@ use serde::Serialize;
 use validator::ValidationErrors;
 use veryrezsi_core::logic::{
     expense_operations::errors::{
-        CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
+        CreateExpenseError, CreatePredefinedExpenseError, FindExpensesWithTransactionsByUserIdError,
     },
     transaction_operations::errors::{CreateTransactionError, DeleteTransactionByIdError},
     user_operations::errors::{ActivateAccountError, SaveUserError},
@@ -109,13 +109,13 @@ impl<D: Serialize> From<ActivateAccountError> for ErrorMsg<D> {
     }
 }
 
-impl<D: Serialize> From<FindExpensesByUserIdError> for ErrorMsg<D> {
-    fn from(e: FindExpensesByUserIdError) -> Self {
+impl<D: Serialize> From<FindExpensesWithTransactionsByUserIdError> for ErrorMsg<D> {
+    fn from(e: FindExpensesWithTransactionsByUserIdError) -> Self {
         match e {
-            FindExpensesByUserIdError::UnauthorizedUser(_) => {
+            FindExpensesWithTransactionsByUserIdError::UnauthorizedUser(_) => {
                 Self::new(StatusCode::FORBIDDEN, e.to_string())
             }
-            FindExpensesByUserIdError::DatabaseError(db_error) => db_error.into(),
+            FindExpensesWithTransactionsByUserIdError::DatabaseError(db_error) => db_error.into(),
         }
     }
 }

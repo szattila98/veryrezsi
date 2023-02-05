@@ -1,5 +1,5 @@
-use entity::{Id, MoneyAmount};
-use serde::Deserialize;
+use entity::{expense, transaction, Id, MoneyAmount};
+use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 #[derive(Clone, Deserialize, Validate)]
@@ -46,4 +46,37 @@ pub struct NewPredefinedExpenseRequest {
     pub value: MoneyAmount,
     pub currency_type_id: Id,
     pub recurrence_type_id: Id,
+}
+
+pub type ExpenseResponse = Vec<ExpenseWithTransactions>;
+
+#[derive(Clone, Serialize, PartialEq, Eq, Debug)]
+pub struct ExpenseWithTransactions {
+    pub id: Id,
+    pub name: String,
+    pub description: String,
+    pub value: MoneyAmount,
+    pub start_date: String,
+    pub user_id: Id,
+    pub currency_type_id: Id,
+    pub recurrence_type_id: Id,
+    pub predefined_expense_id: Option<Id>,
+    pub transactions: Vec<transaction::Model>,
+}
+
+impl ExpenseWithTransactions {
+    pub fn new(expense: expense::Model, transactions: Vec<transaction::Model>) -> Self {
+        ExpenseWithTransactions {
+            id: expense.id,
+            name: expense.name,
+            description: expense.description,
+            value: expense.value,
+            start_date: expense.start_date.to_string(),
+            user_id: expense.user_id,
+            currency_type_id: expense.currency_type_id,
+            recurrence_type_id: expense.recurrence_type_id,
+            predefined_expense_id: expense.predefined_expense_id,
+            transactions,
+        }
+    }
 }

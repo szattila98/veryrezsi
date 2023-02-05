@@ -1,16 +1,19 @@
 use self::errors::{
-    CreateExpenseError, CreatePredefinedExpenseError, FindExpensesByUserIdError,
+    CreateExpenseError, CreatePredefinedExpenseError, FindExpensesWithTransactionsByUserIdError,
     ValidateRecurrenceAndCurrencyTypesError,
 };
 
 use super::common;
 use super::user_operations::authorize_user;
-use crate::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
+use crate::dto::expenses::{
+    ExpenseWithTransactions, NewExpenseRequest, NewPredefinedExpenseRequest,
+};
 use crate::logic::currency_operations::find_currency_type_by_id;
 use crate::logic::recurrence_operations::find_recurrence_type_by_id;
 
 use entity::expense::{self, Entity as Expense};
 use entity::predefined_expense::{self, Entity as PredefinedExpense};
+use entity::transaction::Entity as Transaction;
 use entity::Id;
 
 use chrono::NaiveDate;
@@ -18,17 +21,24 @@ use migration::DbErr;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
-pub async fn find_expenses_by_user_id(
+pub async fn find_expenses_with_transactions_by_user_id(
     conn: &DatabaseConnection,
     authenticated_user_id: Id,
     user_id: Id,
-) -> Result<Vec<expense::Model>, FindExpensesByUserIdError> {
+) -> Result<Vec<ExpenseWithTransactions>, FindExpensesWithTransactionsByUserIdError> {
     authorize_user(authenticated_user_id, user_id)?;
-    let expenses = Expense::find()
+    let expenses_with_transactions = Expense::find()
+        .find_with_related(Transaction)
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)
         .await?;
-    Ok(expenses)
+
+    let result: Vec<ExpenseWithTransactions> = expenses_with_transactions
+        .into_iter()
+        .map(|(expense, transactions)| ExpenseWithTransactions::new(expense, transactions))
+        .collect();
+
+    Ok(result)
 }
 
 pub async fn find_expense_by_id(
@@ -121,7 +131,7 @@ pub mod errors {
     use crate::logic::user_operations::errors::AuthorizeUserError;
 
     #[derive(Error, Debug, PartialEq, Eq)]
-    pub enum FindExpensesByUserIdError {
+    pub enum FindExpensesWithTransactionsByUserIdError {
         #[error("{0}")]
         UnauthorizedUser(#[from] AuthorizeUserError),
         #[error("database error: '{0}'")]
@@ -165,7 +175,7 @@ mod tests {
 
     use super::*;
     use assert2::check;
-    use entity::{currency_type, recurrence_type};
+    use entity::{currency_type, recurrence_type, transaction};
     use migration::DbErr;
     use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
 
@@ -179,56 +189,73 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn find_expenses_by_user_id_all_cases() {
-        let mock_expenses = vec![
-            expense::Model {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                description: TEST_STR.to_string(),
-                value: test_decimal(),
-                start_date: NaiveDate::MIN,
-                user_id: TEST_ID,
-                currency_type_id: TEST_ID,
-                recurrence_type_id: TEST_ID,
-                predefined_expense_id: None,
-            },
-            expense::Model {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                description: TEST_STR.to_string(),
-                value: test_decimal(),
-                start_date: NaiveDate::MIN,
-                user_id: TEST_ID,
-                currency_type_id: TEST_ID,
-                recurrence_type_id: TEST_ID,
-                predefined_expense_id: Some(TEST_ID),
-            },
+    async fn find_expenses_with_transactions_by_user_id_all_cases() {
+        let mock_expense = expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN,
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: Some(TEST_ID),
+        };
+
+        let mock_transaction = transaction::Model {
+            id: TEST_ID,
+            donor_name: TEST_STR.to_string(),
+            value: test_decimal(),
+            date: NaiveDate::MIN,
+            currency_type_id: TEST_ID,
+            expense_id: TEST_ID,
+        };
+
+        let mut mock_transaction_2 = mock_transaction.clone();
+        mock_transaction_2.id = TEST_ID + 1;
+
+        let expense_with_transaction_fixture = vec![
+            (mock_expense.clone(), mock_transaction.clone()),
+            (mock_expense.clone(), mock_transaction_2.clone()),
         ];
+
+        let expected_result = vec![ExpenseWithTransactions {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: test_decimal(),
+            start_date: NaiveDate::MIN.to_string(),
+            user_id: TEST_ID,
+            currency_type_id: TEST_ID,
+            recurrence_type_id: TEST_ID,
+            predefined_expense_id: Some(TEST_ID),
+            transactions: vec![mock_transaction, mock_transaction_2],
+        }];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![mock_expenses.clone(), vec![]])
+            .append_query_results(vec![expense_with_transaction_fixture, vec![]])
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 
         let (expenses, empty_expenses, unauthorized_error, db_error) = tokio::join!(
-            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
-            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
-            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID + 1),
-            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
+            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID),
+            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID),
+            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID + 1),
+            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID)
         );
 
-        check!(expenses == Ok(mock_expenses));
+        check!(expenses == Ok(expected_result));
         check!(empty_expenses == Ok(vec![]));
         check!(
             unauthorized_error
-                == Err(FindExpensesByUserIdError::UnauthorizedUser(
+                == Err(FindExpensesWithTransactionsByUserIdError::UnauthorizedUser(
                     AuthorizeUserError
                 ))
         );
         check!(
             db_error
-                == Err(FindExpensesByUserIdError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
-                )))
+                == Err(FindExpensesWithTransactionsByUserIdError::DatabaseError(
+                    DbErr::Custom(TEST_STR.to_string())
+                ))
         );
     }
 

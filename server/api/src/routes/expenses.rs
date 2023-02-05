@@ -1,5 +1,7 @@
 use sea_orm::DatabaseConnection;
-use veryrezsi_core::dto::expenses::{NewExpenseRequest, NewPredefinedExpenseRequest};
+use veryrezsi_core::dto::expenses::{
+    ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest,
+};
 use veryrezsi_core::logic::expense_operations;
 
 use super::common::ValidatedJson;
@@ -8,16 +10,17 @@ use crate::auth;
 
 use axum::extract::{Path, State};
 use axum::Json;
-use entity::{expense, predefined_expense, Id};
+use entity::{predefined_expense, Id};
 
-// FIXME: Not a good idea to return with domain model
 pub async fn get_expenses(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
     Path(user_id): Path<Id>,
-) -> Result<Json<Vec<expense::Model>>, ErrorMsg<()>> {
-    match expense_operations::find_expenses_by_user_id(conn, user.id, user_id).await {
-        Ok(expenses) => Ok(Json(expenses)),
+) -> Result<Json<ExpenseResponse>, ErrorMsg<()>> {
+    match expense_operations::find_expenses_with_transactions_by_user_id(conn, user.id, user_id)
+        .await
+    {
+        Ok(expenses_with_transactions) => Ok(Json(expenses_with_transactions)),
         Err(e) => Err(e.into()),
     }
 }
