@@ -287,10 +287,7 @@ mod tests {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_recurrence_type]])
             .append_query_results(vec![vec![mock_currency_type]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: 1,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_expense]])
             .into_connection();
 
@@ -347,10 +344,7 @@ mod tests {
             .append_query_results(vec![vec![mock_predefined_expense]])
             .append_query_results(vec![vec![mock_recurrence_type]])
             .append_query_results(vec![vec![mock_currency_type]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: 1,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_expense]])
             .into_connection();
 
@@ -556,10 +550,7 @@ mod tests {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_recurrence_type]])
             .append_query_results(vec![vec![mock_currency_type]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: 1,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_predefined_expense]])
             .into_connection();
 

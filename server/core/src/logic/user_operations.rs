@@ -301,28 +301,16 @@ mod tests {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // happy case
             .append_query_results(vec![vec![], vec![mock_user.clone()]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: TEST_ID,
-            }])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: TEST_ID,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_account_activation.clone()]])
             // user already exists error
             .append_query_results(vec![vec![mock_user.clone()]])
             // password error cannot be tested as it only happens if system random number generator cannot be opened
             // email_error
             .append_query_results(vec![vec![], vec![mock_user.clone()]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: TEST_ID,
-            }])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: TEST_ID,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_account_activation]])
             // db_error - on user by email query
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
@@ -331,10 +319,7 @@ mod tests {
             .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             // db_error - on account activation insert
             .append_query_results(vec![vec![], vec![mock_user.clone()]])
-            .append_exec_results(vec![MockExecResult {
-                last_insert_id: TEST_ID,
-                rows_affected: TEST_ID,
-            }])
+            .append_exec_results(vec![MockExecResult::default()])
             .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
         let ok_mail_transport = Arc::new(AsyncStubTransport::new_ok());
@@ -405,12 +390,9 @@ mod tests {
             .append_exec_results(vec![
                 MockExecResult {
                     last_insert_id: TEST_ID,
-                    rows_affected: TEST_ID,
+                    rows_affected: 1,
                 },
-                MockExecResult {
-                    last_insert_id: TEST_ID,
-                    rows_affected: TEST_ID,
-                },
+                MockExecResult::default(),
             ])
             // account_activation not found
             .append_query_results::<account_activation::Model>(vec![vec![]])
