@@ -27,16 +27,16 @@ pub async fn find_expenses_with_transactions_by_user_id(
     user_id: Id,
 ) -> Result<Vec<ExpenseWithTransactions>, FindExpensesWithTransactionsByUserIdError> {
     authorize_user_by_id(authenticated_user_id, user_id)?;
-    let mut result: Vec<ExpenseWithTransactions> = vec![];
     let expenses_with_transactions = Expense::find()
         .find_with_related(Transaction)
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)
         .await?;
 
-    for expense in expenses_with_transactions {
-        result.push(ExpenseWithTransactions::new(expense.0, expense.1))
-    }
+    let result: Vec<ExpenseWithTransactions> = expenses_with_transactions
+        .into_iter()
+        .map(|(expense, transactions)| ExpenseWithTransactions::new(expense, transactions))
+        .collect();
 
     Ok(result)
 }
