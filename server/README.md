@@ -11,7 +11,7 @@ A backend for the expense calculator. It is a Rust project, which uses the Axum 
 - optional _cargo plugins_ for easier development (install with `cargo install cargo-watch cargo-llvm-cov cargo-audit cargo-cache cargo-update cargo-edit`)
   - _cargo-watch_ - hot-reload for development, use with `cargo watch -x run`
   - _cargo-audit_ - vulnerability scanner, use with `cargo audit`
-  - _cargo-llvm-cov_ - test coverage tool, use with `cargo llvm-cov`
+  - _cargo-llvm-cov_ - test coverage tool, use with `cargo llvm-cov --html`
   - _cargo-cache_ - dependency and build cache manager
   - _cargo-update_ - updates installed binaries with `cargo install-update -a` (this is different from the `cargo update` command, which updates project dependencies)
   - _cargo-edit_ - `cargo upgrade --workspace --to-lockfile` automatically updates dependencies in Cargo.toml

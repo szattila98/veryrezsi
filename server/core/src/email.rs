@@ -48,7 +48,12 @@ where
 /// Sends an email.
 /// Panics if an error is encountered, but it should be running as a separate async task,
 /// which if panics won't kill the function it is used in or the whole server.
-pub async fn send_mail<T>(transport: Arc<T>, to: String, subject: &str, body: String)
+pub async fn send_mail<T>(
+    transport: Arc<T>,
+    to: String,
+    subject: &str,
+    body: String,
+) -> Result<(), String>
 where
     T: AsyncTransport + Send + Sync,
     <T as AsyncTransport>::Error: std::fmt::Debug,
@@ -67,15 +72,16 @@ where
                 .body(body),
         )
         .expect("error while building a message");
-    transport
-        .send(email)
-        .await
-        .expect("error while sending an email");
+    match transport.send(email).await {
+        Ok(_) => Ok(()),
+        Err(e) => Err(format!("{e:?}")),
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert2::check;
     use lettre::transport::stub::AsyncStubTransport;
 
     #[test]
@@ -86,7 +92,7 @@ mod tests {
             .map(|c| (c.to_string(), c.to_string()))
             .collect::<HashMap<_, _>>();
         let rendered = render_template(template, data);
-        assert_eq!(rendered, "a-b-c");
+        check!(rendered == "a-b-c");
     }
 
     #[test]
@@ -117,7 +123,7 @@ mod tests {
             .collect::<HashMap<_, _>>();
         data.insert("d".to_string(), "d".to_string());
         let rendered = render_template(template, data);
-        assert_eq!(rendered, "a-b-c");
+        check!(rendered == "a-b-c");
     }
 
     #[tokio::test]
@@ -126,8 +132,9 @@ mod tests {
         let to = "aru@pizvo.jo".to_string();
         let subject = "UAmgResRKr";
         let body = "JghUysMeIASWJCCQMThIxqSanWRbIN".to_string();
-        send_mail(mail_transport.clone(), to, subject, body).await;
-        assert_eq!(mail_transport.messages().await.len(), 1);
+        let result = send_mail(mail_transport.clone(), to, subject, body).await;
+        check!(result == Ok(()));
+        check!(mail_transport.messages().await.len() == 1);
     }
 
     #[tokio::test]
@@ -137,7 +144,7 @@ mod tests {
         let to = "".to_string();
         let subject = "BNqEeDcTSC";
         let body = "GTwZHvlJKsVrVmXzXHKOrePFxqZyHw".to_string();
-        send_mail(mail_transport, to, subject, body).await;
+        let _ = send_mail(mail_transport, to, subject, body).await;
     }
 
     #[tokio::test]
@@ -146,17 +153,18 @@ mod tests {
         let to = "colet@ku.aw".to_string();
         let subject = "";
         let body = "".to_string();
-        send_mail(mail_transport.clone(), to, subject, body).await;
-        assert_eq!(mail_transport.messages().await.len(), 1);
+        let result = send_mail(mail_transport.clone(), to, subject, body).await;
+        check!(result == Ok(()));
+        check!(mail_transport.messages().await.len() == 1);
     }
 
     #[tokio::test]
-    #[should_panic]
     async fn send_mail_panics_when_transport_fails() {
         let mail_transport = Arc::new(AsyncStubTransport::new_error());
         let to = "bojwe@ahamef.bm".to_string();
         let subject = "ElcSmycmNq";
         let body = "CQkjGVIsVDuYwokwjOKRLdxlzCyXwM".to_string();
-        send_mail(mail_transport, to, subject, body).await;
+        let result = send_mail(mail_transport, to, subject, body).await;
+        check!(result == Err("Error".to_string()));
     }
 }
