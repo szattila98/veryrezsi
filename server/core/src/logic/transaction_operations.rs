@@ -153,7 +153,10 @@ mod tests {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_expense.clone()]])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
-            .append_exec_results(vec![MockExecResult::default()])
+            .append_exec_results(vec![MockExecResult {
+                last_insert_id: TEST_ID,
+                rows_affected: 1,
+            }])
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .into_connection();
 
@@ -303,7 +306,10 @@ mod tests {
             // happy case
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .append_query_results(vec![vec![mock_expense.clone()]])
-            .append_exec_results(vec![MockExecResult::default()])
+            .append_exec_results(vec![MockExecResult {
+                last_insert_id: TEST_ID,
+                rows_affected: 1,
+            }])
             // transaction not found
             .append_query_results(vec![Vec::<transaction::Model>::new()])
             // expense not found
