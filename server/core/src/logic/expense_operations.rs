@@ -32,13 +32,11 @@ pub async fn find_expenses_with_transactions_by_user_id(
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)
         .await?;
-
-    let result: Vec<ExpenseWithTransactions> = expenses_with_transactions
+    let expenses_with_transactions: Vec<ExpenseWithTransactions> = expenses_with_transactions
         .into_iter()
-        .map(|(expense, transactions)| ExpenseWithTransactions::new(expense, transactions))
+        .map(|items| items.into())
         .collect();
-
-    Ok(result)
+    Ok(expenses_with_transactions)
 }
 
 pub async fn find_expense_by_id(

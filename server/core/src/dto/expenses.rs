@@ -64,9 +64,8 @@ pub struct ExpenseWithTransactions {
     pub transactions: Vec<transaction::Model>,
 }
 
-impl ExpenseWithTransactions {
-    #[must_use]
-    pub fn new(expense: expense::Model, transactions: Vec<transaction::Model>) -> Self {
+impl From<(expense::Model, Vec<transaction::Model>)> for ExpenseWithTransactions {
+    fn from((expense, transactions): (expense::Model, Vec<transaction::Model>)) -> Self {
         ExpenseWithTransactions {
             id: expense.id,
             name: expense.name,
