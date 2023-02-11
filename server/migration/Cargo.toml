@@ -14,5 +14,5 @@ entity = { path = "../entity" }
 
 chrono = { workspace = true }
 
-sea-orm-migration = { version = "0.10.7", features = [ "sqlx-mysql", "runtime-tokio-rustls" ] }
+sea-orm-migration = { version = "0.11.0", features = [ "sqlx-mysql", "runtime-tokio-rustls" ] }
 async-std = { version = "1.12.0", features = ["attributes", "tokio1"] }

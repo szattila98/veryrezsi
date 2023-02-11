@@ -189,11 +189,11 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // invalid expense id
-            .append_query_results::<expense::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<expense::Model>::new()])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
             // invalid currency type id
             .append_query_results(vec![vec![mock_expense.clone()]])
-            .append_query_results::<currency_type::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<currency_type::Model>::new()])
             // unauthorized
             .append_query_results(vec![vec![mock_expense.clone()]])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
@@ -303,10 +303,10 @@ mod tests {
             .append_query_results(vec![vec![mock_expense.clone()]])
             .append_exec_results(vec![MockExecResult::default()])
             // transaction not found
-            .append_query_results::<transaction::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<transaction::Model>::new()])
             // expense not found
             .append_query_results(vec![vec![mock_transaction.clone()]])
-            .append_query_results::<expense::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<expense::Model>::new()])
             // user unauthorized
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .append_query_results(vec![vec![mock_expense.clone()]])
@@ -368,7 +368,7 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_transaction.clone()]])
-            .append_query_results::<transaction::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<transaction::Model>::new()])
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             .into_connection();
 

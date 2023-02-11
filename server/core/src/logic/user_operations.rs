@@ -315,7 +315,7 @@ mod tests {
             // db_error - on user by email query
             .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             // db_error - on user insert
-            .append_query_results::<user::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<user::Model>::new()])
             .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
             // db_error - on account activation insert
             .append_query_results(vec![vec![], vec![mock_user.clone()]])
@@ -395,10 +395,10 @@ mod tests {
                 MockExecResult::default(),
             ])
             // account_activation not found
-            .append_query_results::<account_activation::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<account_activation::Model>::new()])
             // user not found
             .append_query_results(vec![vec![mock_account_activation.clone()]])
-            .append_query_results::<user::Model>(vec![vec![]])
+            .append_query_results(vec![Vec::<user::Model>::new()])
             // expired activation
             .append_query_results(vec![vec![expired_activation]])
             // db error - account activation query failed
