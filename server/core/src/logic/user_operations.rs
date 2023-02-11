@@ -351,9 +351,7 @@ mod tests {
             save_user(&config, &conn, ok_mail_transport, request),
         );
 
-        let db_error = Err(SaveUserError::DatabaseError(DbErr::Custom(
-            TEST_STR.to_string(),
-        )));
+        let db_error = Err(SaveUserError::DatabaseError(test_db_error()));
         check!(user_saved == Ok(mock_user));
         check!(user_already_exists_error == Err(SaveUserError::UserAlreadyExists));
         check!(email_error == Err(SaveUserError::EmailCannotBeSent("Error".to_string())));
@@ -435,9 +433,7 @@ mod tests {
         );
 
         let invalid_token_err = Err(ActivateAccountError::InvalidToken);
-        let db_error = Err(ActivateAccountError::DatabaseError(DbErr::Custom(
-            TEST_STR.to_string(),
-        )));
+        let db_error = Err(ActivateAccountError::DatabaseError(test_db_error()));
         check!(happy_path == Ok(()));
         check!(account_activation_not_found == invalid_token_err);
         check!(user_not_found == invalid_token_err);

@@ -272,9 +272,7 @@ mod tests {
             create_transaction(&conn, TEST_ID, req),
         );
 
-        let db_error = Err(CreateTransactionError::DatabaseError(DbErr::Custom(
-            TEST_STR.to_string(),
-        )));
+        let db_error = Err(CreateTransactionError::DatabaseError(test_db_error()));
         check!(expense_db_error == db_error);
         check!(currency_type_db_error == db_error);
         check!(transaction_insert_db_error == db_error);
@@ -343,9 +341,7 @@ mod tests {
             delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
         );
 
-        let db_error = Err(DeleteTransactionByIdError::DatabaseError(DbErr::Custom(
-            TEST_STR.to_string(),
-        )));
+        let db_error = Err(DeleteTransactionByIdError::DatabaseError(test_db_error()));
         check!(happy_case == Ok(()));
         check!(transaction_not_found == Err(DeleteTransactionByIdError::InvalidTransaction));
         check!(expense_not_found == Err(DeleteTransactionByIdError::InvalidTransaction));

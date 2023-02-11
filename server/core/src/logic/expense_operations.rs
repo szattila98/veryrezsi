@@ -493,33 +493,21 @@ mod tests {
         );
         check!(let Err(CreateExpenseError::InvalidStartDate(_)) = parse_date_error);
         check!(
-            predefined_expense_db_error
-                == Err(CreateExpenseError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
-                )))
+            predefined_expense_db_error == Err(CreateExpenseError::DatabaseError(test_db_error()))
         );
         check!(
             currency_type_db_error
                 == Err(CreateExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                        TEST_STR.to_string()
-                    ))
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(test_db_error())
                 ))
         );
         check!(
             recurrence_type_db_error
                 == Err(CreateExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                        TEST_STR.to_string()
-                    ))
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(test_db_error())
                 ))
         );
-        check!(
-            expense_insert_db_error
-                == Err(CreateExpenseError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
-                )))
-        );
+        check!(expense_insert_db_error == Err(CreateExpenseError::DatabaseError(test_db_error())));
     }
 
     #[tokio::test]
@@ -667,24 +655,17 @@ mod tests {
         check!(
             recurrence_type_db_error
                 == Err(CreatePredefinedExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                        TEST_STR.to_string()
-                    ))
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(test_db_error())
                 ))
         );
         check!(
             currency_type_db_error
                 == Err(CreatePredefinedExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(DbErr::Custom(
-                        TEST_STR.to_string()
-                    ))
+                    ValidateRecurrenceAndCurrencyTypesError::DatabaseError(test_db_error())
                 ))
         );
         check!(
-            insertion_db_error
-                == Err(CreatePredefinedExpenseError::DatabaseError(DbErr::Custom(
-                    TEST_STR.to_string()
-                )))
+            insertion_db_error == Err(CreatePredefinedExpenseError::DatabaseError(test_db_error()))
         );
     }
 
