@@ -120,6 +120,10 @@ mod tests {
         Decimal::new(1, 2)
     }
 
+    fn test_db_error() -> DbErr {
+        DbErr::Custom(TEST_STR.to_string())
+    }
+
     #[tokio::test]
     async fn create_transaction_happy_path() {
         let mock_expense = expense::Model {
@@ -244,15 +248,15 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // expense query db error
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
             // currency type query db error
             .append_query_results(vec![vec![mock_expense.clone()]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // transaction insert db error
             .append_query_results(vec![vec![mock_expense.clone()]])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
-            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_exec_errors(vec![test_db_error()])
             .into_connection();
 
         let req = NewTransactionRequest {
@@ -311,14 +315,14 @@ mod tests {
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .append_query_results(vec![vec![mock_expense.clone()]])
             // transaction query db error
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // expense query db error
             .append_query_results(vec![vec![mock_transaction.clone()]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // transaction delete db error
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .append_query_results(vec![vec![mock_expense]])
-            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_exec_errors(vec![test_db_error()])
             .into_connection();
 
         let (
@@ -369,7 +373,7 @@ mod tests {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .append_query_results(vec![Vec::<transaction::Model>::new()])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (found, not_found, db_error) = tokio::join!(
@@ -380,6 +384,6 @@ mod tests {
 
         check!(found == Ok(Some(mock_transaction)));
         check!(not_found == Ok(None));
-        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+        check!(db_error == Err(test_db_error()));
     }
 }

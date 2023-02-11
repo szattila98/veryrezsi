@@ -29,6 +29,10 @@ mod tests {
     const TEST_ID: Id = 1;
     const TEST_STR: &str = "test";
 
+    fn test_db_error() -> DbErr {
+        DbErr::Custom(TEST_STR.to_string())
+    }
+
     #[tokio::test]
     async fn find_currency_types_all_cases() {
         let mock_currency_types = vec![
@@ -50,7 +54,7 @@ mod tests {
         ];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![mock_currency_types.clone(), vec![]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (currency_types, empty_vec, db_error) = tokio::join!(
@@ -61,7 +65,7 @@ mod tests {
 
         check!(currency_types == Ok(mock_currency_types));
         check!(empty_vec == Ok(vec![]));
-        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+        check!(db_error == Err(test_db_error()));
     }
 
     #[tokio::test]
@@ -73,7 +77,7 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_currency_type.clone()], vec![]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (currency_type, none, db_error) = tokio::join!(
@@ -84,6 +88,6 @@ mod tests {
 
         check!(currency_type == Ok(Some(mock_currency_type)));
         check!(none == Ok(None));
-        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+        check!(db_error == Err(test_db_error()));
     }
 }

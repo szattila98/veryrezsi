@@ -188,6 +188,10 @@ mod tests {
         Decimal::new(1, 2)
     }
 
+    fn test_db_error() -> DbErr {
+        DbErr::Custom(TEST_STR.to_string())
+    }
+
     #[tokio::test]
     async fn find_expenses_with_transactions_by_user_id_all_cases() {
         let mock_expense = expense::Model {
@@ -233,7 +237,7 @@ mod tests {
         }];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![expense_with_transaction_fixture, vec![]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (expenses, empty_expenses, unauthorized_error, db_error) = tokio::join!(
@@ -254,7 +258,7 @@ mod tests {
         check!(
             db_error
                 == Err(FindExpensesWithTransactionsByUserIdError::DatabaseError(
-                    DbErr::Custom(TEST_STR.to_string())
+                    test_db_error()
                 ))
         );
     }
@@ -274,7 +278,7 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_expense.clone()], vec![]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (expense, none, db_error) = tokio::join!(
@@ -285,7 +289,7 @@ mod tests {
 
         check!(expense == Ok(Some(mock_expense)));
         check!(none == Ok(None));
-        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+        check!(db_error == Err(test_db_error()));
     }
 
     #[tokio::test]
@@ -425,20 +429,20 @@ mod tests {
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
             .append_query_results(vec![Vec::<currency_type::Model>::new()])
             // db error on predefined expense query
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // db error on recurrence type query
             .append_query_results(vec![vec![mock_predefined_expense.clone()]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
             // db error on currency type query
             .append_query_results(vec![vec![mock_predefined_expense.clone()]])
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // db error on expense insertion
             .append_query_results(vec![vec![mock_predefined_expense.clone()]])
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
-            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_exec_errors(vec![test_db_error()])
             // date cannot be parsed
             .append_query_results(vec![vec![mock_predefined_expense]])
             .append_query_results(vec![vec![mock_recurrence_type]])
@@ -471,7 +475,7 @@ mod tests {
             create_expense(&conn, TEST_ID, req.clone()),
             create_expense(&conn, TEST_ID, req.clone()),
         );
-        req.start_date = "wrond_date".to_string();
+        req.start_date = "wrong_date".to_string();
         let parse_date_error = create_expense(&conn, TEST_ID, req).await;
 
         check!(predefined_expense_not_found == Err(CreateExpenseError::InvalidPredefinedExpense));
@@ -540,7 +544,7 @@ mod tests {
         ];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![mock_predefined_expenses.clone(), vec![]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (predefined_expenses, empty_predefined_expenses, db_error) = tokio::join!(
@@ -551,7 +555,7 @@ mod tests {
 
         check!(predefined_expenses == Ok(mock_predefined_expenses));
         check!(empty_predefined_expenses == Ok(vec![]));
-        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+        check!(db_error == Err(test_db_error()));
     }
 
     #[tokio::test]
@@ -616,15 +620,15 @@ mod tests {
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
             .append_query_results(vec![Vec::<currency_type::Model>::new()])
             // recurrence type db error
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
             // currency type db error
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // insertion db error
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
-            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_exec_errors(vec![test_db_error()])
             .into_connection();
         let req = NewPredefinedExpenseRequest {
             name: TEST_STR.to_string(),
@@ -707,11 +711,11 @@ mod tests {
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
             .append_query_results(vec![Vec::<currency_type::Model>::new()])
             // recurrence type db error
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .append_query_results(vec![vec![mock_currency_type.clone()]])
             // currency type db error
             .append_query_results(vec![vec![mock_recurrence_type.clone()]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (
@@ -740,13 +744,13 @@ mod tests {
         check!(
             recurrence_type_db_error
                 == Err(ValidateRecurrenceAndCurrencyTypesError::DatabaseError(
-                    DbErr::Custom(TEST_STR.to_string())
+                    test_db_error()
                 ))
         );
         check!(
             currency_type_db_error
                 == Err(ValidateRecurrenceAndCurrencyTypesError::DatabaseError(
-                    DbErr::Custom(TEST_STR.to_string())
+                    test_db_error()
                 ))
         );
     }

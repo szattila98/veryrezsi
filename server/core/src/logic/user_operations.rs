@@ -221,6 +221,10 @@ mod tests {
     const TEST_EMAIL: &str = "test@test.com";
     const TEST_ID: u64 = 1;
 
+    fn test_db_error() -> DbErr {
+        DbErr::Custom(TEST_STR.to_string())
+    }
+
     #[tokio::test]
     async fn find_by_email_all_cases() {
         let mock_user = user::Model {
@@ -232,7 +236,7 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_user.clone()], vec![]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (user, not_found, db_error) = tokio::join!(
@@ -243,7 +247,7 @@ mod tests {
 
         check!(user == Ok(Some(mock_user)));
         check!(not_found == Ok(None));
-        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+        check!(db_error == Err(test_db_error()));
     }
 
     #[tokio::test]
@@ -257,7 +261,7 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_user.clone()], vec![]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (user, not_found, db_error) = tokio::join!(
@@ -268,7 +272,7 @@ mod tests {
 
         check!(user == Ok(Some(mock_user)));
         check!(not_found == Ok(None));
-        check!(db_error == Err(DbErr::Custom(TEST_STR.to_string())));
+        check!(db_error == Err(test_db_error()));
     }
 
     #[tokio::test]
@@ -313,14 +317,14 @@ mod tests {
             .append_exec_results(vec![MockExecResult::default()])
             .append_query_results(vec![vec![mock_account_activation]])
             // db_error - on user by email query
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // db_error - on user insert
             .append_query_results(vec![Vec::<user::Model>::new()])
-            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_exec_errors(vec![test_db_error()])
             // db_error - on account activation insert
             .append_query_results(vec![vec![], vec![mock_user.clone()]])
             .append_exec_results(vec![MockExecResult::default()])
-            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_exec_errors(vec![test_db_error()])
             .into_connection();
         let ok_mail_transport = Arc::new(AsyncStubTransport::new_ok());
         let error_mail_transport = Arc::new(AsyncStubTransport::new_error());
@@ -333,7 +337,7 @@ mod tests {
 
         let (
             user_saved,
-            user_alredy_exists_error,
+            user_already_exists_error,
             email_error,
             user_email_db_error,
             user_insert_db_error,
@@ -351,7 +355,7 @@ mod tests {
             TEST_STR.to_string(),
         )));
         check!(user_saved == Ok(mock_user));
-        check!(user_alredy_exists_error == Err(SaveUserError::UserAlreadyExists));
+        check!(user_already_exists_error == Err(SaveUserError::UserAlreadyExists));
         check!(email_error == Err(SaveUserError::EmailCannotBeSent("Error".to_string())));
         check!(user_email_db_error == db_error);
         check!(user_insert_db_error == db_error);
@@ -402,14 +406,14 @@ mod tests {
             // expired activation
             .append_query_results(vec![vec![expired_activation]])
             // db error - account activation query failed
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // db error - user query failed
             .append_query_results(vec![vec![mock_account_activation.clone()]])
-            .append_query_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_query_errors(vec![test_db_error()])
             // db error - user update failed
             .append_query_results(vec![vec![mock_account_activation.clone()]])
             .append_query_results(vec![vec![mock_user.clone()], vec![mock_user.clone()]])
-            .append_exec_errors(vec![DbErr::Custom(TEST_STR.to_string())])
+            .append_exec_errors(vec![test_db_error()])
             .into_connection();
 
         let (
