@@ -58,8 +58,8 @@ jobs:
         uses: Swatinem/rust-cache@v2.2.0
         with:
           workspaces: |
-            "server/api -> ../target"
-            "server/core -> ../target"
+            server/api -> ../target
+            server/core -> ../target
 
       - name: Run api tests
         uses: actions-rs/cargo@v1
