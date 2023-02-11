@@ -32,11 +32,13 @@ jobs:
         uses: Swatinem/rust-cache@v2.2.0
         with:
           shared-key: "whoosh"
+          args: --manifest-path server/Cargo.toml
 
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --manifest-path server/Cargo.toml
 
   test:
     name: Server Test Suite
@@ -56,6 +58,7 @@ jobs:
         uses: Swatinem/rust-cache@v2.2.0
         with:
           shared-key: "whoosh"
+          args: --manifest-path server/Cargo.toml
 
       - name: Run api tests
         uses: actions-rs/cargo@v1
@@ -88,6 +91,7 @@ jobs:
         uses: Swatinem/rust-cache@v2.2.0
         with:
           shared-key: "whoosh"
+          args: --manifest-path server/Cargo.toml
 
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
