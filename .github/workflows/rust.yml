@@ -57,9 +57,7 @@ jobs:
       - name: Setup rust cache
         uses: Swatinem/rust-cache@v2.2.0
         with:
-          workspaces: |
-            server/api
-            server/core
+          workspaces: server
 
       - name: Run api tests
         uses: actions-rs/cargo@v1
