@@ -20,6 +20,7 @@ pub const ACTIVATION_EMAIL_TEMPLATE: &str =
 pub type MailTransport = AsyncSmtpTransport<Tokio1Executor>;
 
 /// Creates a mail transport object. Used when the server initializes.
+#[must_use]
 pub fn get_mail_transport(config: &MailConfig) -> MailTransport {
     let credentials = Credentials::new(config.smtp_username.clone(), config.smtp_password.clone());
     MailTransport::builder_dangerous(&config.smtp_address)
@@ -33,7 +34,8 @@ pub fn get_mail_transport(config: &MailConfig) -> MailTransport {
 /// The `data` will be substituted into the `template` string.
 /// Accepts data in the form of a hashmap of any type of string key/value pairs.
 /// Rendering is strict, so it fails if the template is supplied with the wrong data. Additional data is ignored.
-pub fn render_template<K, V>(template: &str, data: HashMap<K, V>) -> String
+#[must_use]
+pub fn render_template<K, V>(template: &str, data: &HashMap<K, V>) -> String
 where
     K: AsRef<str> + Serialize + Hash + Eq,
     V: AsRef<str> + Serialize + Hash + Eq,
@@ -41,7 +43,7 @@ where
     let mut handlebars = Handlebars::new();
     handlebars.set_strict_mode(true);
     handlebars
-        .render_template(template, &data)
+        .render_template(template, data)
         .expect("Failed to render template")
 }
 
@@ -91,7 +93,7 @@ mod tests {
             .chars()
             .map(|c| (c.to_string(), c.to_string()))
             .collect::<HashMap<_, _>>();
-        let rendered = render_template(template, data);
+        let rendered = render_template(template, &data);
         check!(rendered == "a-b-c");
     }
 
@@ -100,7 +102,7 @@ mod tests {
     fn render_template_panics_on_empty_data() {
         let template = "{{ a }}-{{ b }}-{{ c }}";
         let data: HashMap<String, String> = HashMap::new();
-        render_template(template, data);
+        let _ = render_template(template, &data);
     }
 
     #[test]
@@ -111,7 +113,7 @@ mod tests {
             .chars()
             .map(|c| (c.to_string(), c.to_string()))
             .collect::<HashMap<_, _>>();
-        render_template(template, data);
+        let _ = render_template(template, &data);
     }
 
     #[test]
@@ -122,7 +124,7 @@ mod tests {
             .map(|c| (c.to_string(), c.to_string()))
             .collect::<HashMap<_, _>>();
         data.insert("d".to_string(), "d".to_string());
-        let rendered = render_template(template, data);
+        let rendered = render_template(template, &data);
         check!(rendered == "a-b-c");
     }
 

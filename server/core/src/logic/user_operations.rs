@@ -87,7 +87,7 @@ where
                 let mut data = HashMap::new();
                 data.insert("username", &user.username);
                 data.insert("activation_link", &activation_link);
-                let body = render_template(ACTIVATION_EMAIL_TEMPLATE, data);
+                let body = render_template(ACTIVATION_EMAIL_TEMPLATE, &data);
                 let email = user.email.clone();
                 match send_mail(mail_transport, email, "Veryrezsi account activation", body).await {
                     Ok(_) => Ok(user),
@@ -135,7 +135,7 @@ pub async fn activate_account(
 }
 
 /// Utility method to authorize if a user should be able to access a resource.
-/// Checks the equality of two user_ids.
+/// Checks the equality of two `user_id`s.
 ///
 /// # Errors
 ///

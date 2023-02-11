@@ -65,6 +65,7 @@ pub struct ExpenseWithTransactions {
 }
 
 impl ExpenseWithTransactions {
+    #[must_use]
     pub fn new(expense: expense::Model, transactions: Vec<transaction::Model>) -> Self {
         ExpenseWithTransactions {
             id: expense.id,

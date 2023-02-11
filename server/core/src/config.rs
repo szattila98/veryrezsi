@@ -33,6 +33,7 @@ pub struct MailConfig {
 
 impl AppConfig {
     /// Initializes the config, prioritizing reading from environment variables and then app-config.toml.
+    #[must_use]
     pub fn init() -> Self {
         AppConfig::builder()
             .env()

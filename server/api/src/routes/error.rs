@@ -44,7 +44,7 @@ pub struct ErrorMsg<D: Serialize> {
 }
 
 impl<D: Serialize> ErrorMsg<D> {
-    /// Creates a new ErrorMsg with the given status code and reason, without details.
+    /// Creates a new `ErrorMsg` with the given status code and reason, without details.
     /// Reason is generic over any string-like type.
     pub fn new<S: AsRef<str>>(status: StatusCode, reason: S) -> Self {
         Self {
@@ -55,6 +55,7 @@ impl<D: Serialize> ErrorMsg<D> {
     }
 
     /// Builder function, so details field in constructor is optional.
+    #[must_use]
     pub fn details(mut self, details: D) -> Self {
         self.details = Some(details);
         self
@@ -123,14 +124,12 @@ impl<D: Serialize> From<FindExpensesWithTransactionsByUserIdError> for ErrorMsg<
 impl<D: Serialize> From<CreateExpenseError> for ErrorMsg<D> {
     fn from(e: CreateExpenseError) -> Self {
         match e {
-            CreateExpenseError::InvalidPredefinedExpense => {
+            CreateExpenseError::InvalidPredefinedExpense
+            | CreateExpenseError::InvalidRelatedType(_) => {
                 Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
             CreateExpenseError::InvalidStartDate(_) => {
                 Self::new(StatusCode::BAD_REQUEST, e.to_string())
-            }
-            CreateExpenseError::InvalidRelatedType(_) => {
-                Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
             CreateExpenseError::DatabaseError(db_error) => db_error.into(),
         }
@@ -151,10 +150,8 @@ impl<D: Serialize> From<CreatePredefinedExpenseError> for ErrorMsg<D> {
 impl<D: Serialize> From<CreateTransactionError> for ErrorMsg<D> {
     fn from(e: CreateTransactionError) -> Self {
         match e {
-            CreateTransactionError::InvalidExpenseId => {
-                Self::new(StatusCode::NOT_FOUND, e.to_string())
-            }
-            CreateTransactionError::InvalidCurrencyType => {
+            CreateTransactionError::InvalidExpenseId
+            | CreateTransactionError::InvalidCurrencyType => {
                 Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
             CreateTransactionError::UserUnauthorized(_) => {

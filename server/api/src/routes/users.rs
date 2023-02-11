@@ -16,15 +16,11 @@ pub async fn login(
     State(ref conn): State<DatabaseConnection>,
     ValidatedJson(login_data): ValidatedJson<LoginRequest>,
 ) -> Result<PrivateCookieJar, ErrorMsg<()>> {
-    let opt = user_operations::find_user_by_email(conn, login_data.email).await?;
-    let user = match opt {
-        Some(user) => user,
-        None => {
-            return Err(ErrorMsg::new(
-                StatusCode::UNAUTHORIZED,
-                "invalid credentials",
-            ))
-        }
+    let Some(user) = user_operations::find_user_by_email(conn, login_data.email).await? else {
+        return Err(ErrorMsg::new(
+            StatusCode::UNAUTHORIZED,
+            "invalid credentials",
+        ));
     };
     if !user.activated {
         return Err(ErrorMsg::new(
