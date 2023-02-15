@@ -43,4 +43,4 @@ The environment variable names are:
 
 Use aforementioned cargo plugin for coverage.
 Tests are mainly in the **core** workspace member so cd into it and use `cargo test` to run all tests and doctests.
-There can be errors shown in the **api** by rust-analyzer, this is a false positive, it is because the extension thinks that the mock default feature is enabled by the **core**, but it is not. If it is the project does not compile because Axum does not like the sea_orm mock feature.
+There can be errors shown in the **api** by rust-analyzer, this is a false positive, it is because the extension thinks that the mock default feature is enabled by the **core**, but it is not. If it is, the project does not compile because Axum does not like the sea_orm mock feature.
