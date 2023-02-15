@@ -3,7 +3,6 @@ use serde::Deserialize;
 use std::net::SocketAddr;
 use tracing::metadata::LevelFilter;
 
-/// Contains basic configuration entries.
 #[derive(Debug, Clone, Config)]
 pub struct AppConfig {
     #[config(env = "SERVER_ADDRESS")]
@@ -18,7 +17,6 @@ pub struct AppConfig {
     pub mail_config: MailConfig,
 }
 
-/// Contains configuration tied to email sending.
 #[derive(Debug, Clone, Config)]
 pub struct MailConfig {
     #[config(env = "SMTP_ADDRESS")]
@@ -32,7 +30,6 @@ pub struct MailConfig {
 }
 
 impl AppConfig {
-    /// Initializes the config, prioritizing reading from environment variables and then app-config.toml.
     #[must_use]
     pub fn init() -> Self {
         AppConfig::builder()
@@ -43,7 +40,6 @@ impl AppConfig {
     }
 }
 
-/// Intermediate config enum for log levels as actual struct cannot be deserialized directly.
 #[derive(Debug, Clone, Deserialize)]
 pub enum LogLevel {
     #[serde(alias = "trace", alias = "TRACE")]

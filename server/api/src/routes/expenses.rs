@@ -25,7 +25,6 @@ pub async fn get_expenses(
     }
 }
 
-/// Handles new expense creation route
 pub async fn create_expense(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
@@ -37,7 +36,6 @@ pub async fn create_expense(
     }
 }
 
-/// Handles predefined expense listing
 pub async fn get_predefined_expenses(
     _: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
@@ -48,7 +46,6 @@ pub async fn get_predefined_expenses(
     }
 }
 
-/// Handles new predefined expense creation route
 pub async fn create_predefined_expense(
     _: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
