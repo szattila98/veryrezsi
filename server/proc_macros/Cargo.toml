@@ -1,6 +1,6 @@
 [package]
-name = "entity"
-version = "0.3.0"
+name = "proc_macros"
+version = "0.1.0"
 authors = { workspace = true }
 edition = { workspace = true }
 license = { workspace = true }
@@ -9,9 +9,11 @@ repository = { workspace = true }
 documentation = { workspace = true }
 description = { workspace = true }
 
-[dependencies]
-sea-orm = { workspace = true }
+[lib]
+proc-macro = true
 
-# TODO Remove when there are dtos
-serde = { workspace = true }
-serde_json = { workspace = true }
+[dependencies]
+syn = { version = "1.0.107", features = ["full"] }
+quote = "1.0.23"
+css-inline = "0.8.5"
+minify-html-onepass = "0.10.7"

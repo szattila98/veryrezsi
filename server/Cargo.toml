@@ -1,45 +1,44 @@
+[package]
+name = "veryrezsi"
+version = "0.3.0"
+
 [workspace]
 members = [
+    "api",
+    "core",
     "migration",
-    "entity"
+    "entity",
+    "proc_macros"
 ]
 
-[package]
-authors = ["Attila Szőke <szokeattila9801@gmail.com>"]
-name = "veryrezsi"
-version = "0.2.0"
+[workspace.package]
+authors = [
+    "Attila Szőke <szokeattila9801@gmail.com>",
+    # TODO dönisz was here
+]
 edition = "2021"
 license = "MIT"
-
 homepage = "https://github.com/szattila98/veryrezsi"
 repository = "https://github.com/szattila98/veryrezsi"
 documentation = "https://github.com/szattila98/veryrezsi"
+description = "Expense and subscription calculator web-server."
 
-description = """
-Expense and subscription calculator web-server.
-"""
-readme = "README.md"
-keywords = ["api", "calculator", "web-app", "expenses-manager", "rocket"]
-categories = ["web-programming"]
+[workspace.dependencies]
+chrono = "0.4.23"
+sea-orm = "0.11.0"
+serde = "1.0.152" 
+serde_json = "1.0.91"
+tokio = "1.24.2" 
+tracing = "0.1.37"
+tracing-subscriber = "0.3.16"
+pwhash = "1.0.0"
+validator = "0.16.0" 
+assert2 = "0.3.8"
 
 [dependencies]
-tokio = { version = "1.21.2", features = ["full"] }
-axum = "0.5.16"
-axum-extra = { version = "0.3.7", features = ["cookie-private"] }
-tower = "0.4.13"
-dotenvy = "0.15.5"
-serde = "1.0.145"
-serde_json = "1.0.85"
-sea-orm = { version = "0.9.3", features = [ "sqlx-mysql", "runtime-tokio-rustls", "macros" ] }
-entity = { path = "entity" }
-migration = { path = "migration" }
-tracing = "0.1.36"
-tracing-subscriber = { version = "0.3.15", features = ["env-filter"] }
-thiserror = "1.0.37"
-pwhash = "1.0.0"
-validator = { version = "0.16.0", features = ["derive"] }
-chrono = "0.4.22"
-lettre = { version = "0.10.1", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
-fancy-regex = "0.10.0"
-lazy_static = "1.4.0"
-handlebars = "4.3.4"
+veryrezsi-api = { path = "./api" }
+
+# [profile.release]
+# strip = true
+# lto = true
+# codegen-units = 1

@@ -38,3 +38,9 @@ pub enum Relation {
     )]
     Expense,
 }
+
+impl Related<super::expense::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Expense.def()
+    }
+}

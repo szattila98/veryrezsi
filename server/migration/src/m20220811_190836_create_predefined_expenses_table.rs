@@ -17,7 +17,7 @@ impl MigrationTrait for Migration {
                     .table(predefined_expense::Entity)
                     .col(
                         ColumnDef::new(predefined_expense::Column::Id)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),
@@ -39,12 +39,12 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(predefined_expense::Column::CurrencyTypeId)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(predefined_expense::Column::RecurrenceTypeId)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null(),
                     )
                     .foreign_key(

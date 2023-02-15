@@ -28,6 +28,12 @@ jobs:
           toolchain: stable
           override: true
 
+      - name: Setup rust cache
+        uses: Swatinem/rust-cache@v2.2.0
+        with:
+          shared-key: whooosh
+          workspaces: server
+
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         with:
@@ -48,11 +54,25 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Run cargo test
+      - name: Setup rust cache
+        uses: Swatinem/rust-cache@v2.2.0
+        with:
+          shared-key: whooosh
+          workspaces: |
+            server/api -> ../target
+            server/core -> ../target
+
+      - name: Run api tests
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --manifest-path server/Cargo.toml
+          args: --manifest-path server/api/Cargo.toml
+
+      - name: Run core tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --manifest-path server/core/Cargo.toml
 
   lints:
     name: Server Lints
@@ -68,6 +88,12 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt, clippy
+
+      - name: Setup rust cache
+        uses: Swatinem/rust-cache@v2.2.0
+        with:
+          shared-key: whooosh
+          workspaces: server
 
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1

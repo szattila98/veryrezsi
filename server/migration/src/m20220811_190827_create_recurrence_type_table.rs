@@ -16,7 +16,7 @@ impl MigrationTrait for Migration {
                     .table(recurrence_type::Entity)
                     .col(
                         ColumnDef::new(recurrence_type::Column::Id)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),

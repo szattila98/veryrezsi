@@ -18,7 +18,7 @@ impl MigrationTrait for Migration {
                     .table(expense::Entity)
                     .col(
                         ColumnDef::new(expense::Column::Id)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),
@@ -41,22 +41,22 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(expense::Column::StartDate).date().not_null())
                     .col(
                         ColumnDef::new(expense::Column::UserId)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(expense::Column::CurrencyTypeId)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(expense::Column::RecurrenceTypeId)
-                            .big_integer()
+                            .big_unsigned()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(expense::Column::PredefinedExpenseId)
-                            .big_integer()
+                            .big_unsigned()
                             .null(),
                     )
                     .foreign_key(
@@ -101,7 +101,7 @@ impl MigrationTrait for Migration {
             name: Set("Netflix for my little family".to_string()),
             description: Set("Cheapest monthly plan of Netflix - Maybe upgrade later".to_string()),
             value: Set(Decimal::new(2490, 2)),
-            start_date: Set(NaiveDate::from_ymd(2022, 9, 24)),
+            start_date: Set(NaiveDate::from_ymd_opt(2022, 9, 24).unwrap()),
             user_id: Set(1),
             currency_type_id: Set(1),
             recurrence_type_id: Set(1),
@@ -114,7 +114,7 @@ impl MigrationTrait for Migration {
             name: Set("Synology C2 backup".to_string()),
             description: Set("Its not much but it keeps our photos safe".to_string()),
             value: Set(Decimal::new(3499, 2)),
-            start_date: Set(NaiveDate::from_ymd(2022, 3, 15)),
+            start_date: Set(NaiveDate::from_ymd_opt(2022, 3, 15).unwrap()),
             user_id: Set(1),
             currency_type_id: Set(2),
             recurrence_type_id: Set(2),

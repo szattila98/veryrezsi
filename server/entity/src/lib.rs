@@ -8,5 +8,5 @@ pub mod recurrence_type;
 pub mod transaction;
 pub mod user;
 
-pub type Id = i64;
+pub type Id = u64;
 pub type MoneyAmount = Decimal;

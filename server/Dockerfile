@@ -6,13 +6,15 @@ WORKDIR /veryrezsi
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./entity ./entity
 COPY ./migration ./migration
+COPY ./core ./core
+COPY ./api ./api
+COPY ./proc_macros ./proc_macros
 COPY ./src ./src
-COPY ./resources ./resources
+COPY ./resources/email ./resources/email
 
 RUN cargo build --release
 
-
-FROM debian:buster-slim
+FROM debian:bullseye
 ARG APP=/usr/src/app
 
 RUN apt-get update \
@@ -29,11 +31,12 @@ RUN groupadd $APP_USER \
     && mkdir -p ${APP}
 
 COPY --from=builder /veryrezsi/target/release/veryrezsi ${APP}/veryrezsi
-COPY ./docker/config/.env ${APP}/.env
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
 USER $APP_USER
 WORKDIR ${APP}
+
+COPY ./docker/config/app-config.toml ${APP}/resources/app-config.toml
 
 CMD ["./veryrezsi"]

@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - _rustup_ 1.25.1 or higher
-- _rustc_ 1.63.0 or higher
+- _rustc_ 1.65.0 or higher
 - _mysql_ 8 or higher
 - _docker_ 20.10.17 or higher
 - _docker-compose_ 1.29.2 or higher
@@ -20,6 +20,11 @@ IDE
     - Run the `server/init.sql` file, which creates the necessary database structure
   - mysql database in a docker container with docker-compose
     - Run `docker-compose up -d database` and a database will be available at the 3306 port, already initialized
+
+## Starting mailhog
+
+- Mailhog may be needed for some functionalities, altough if not present it only causes error messages in the log.
+- Run it locally or with `docker-compose up -d mailhog`.
 
 ## Running server
 
