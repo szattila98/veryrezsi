@@ -10,6 +10,7 @@ const config = {
 			$api: resolve('./src/routes/api'),
 			$routes: resolve('./src/routes'),
 			$services: resolve('./src/services'),
+			$shared: resolve('src/shared'),
 		},
 	},
 };

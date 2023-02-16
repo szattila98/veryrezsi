@@ -12,7 +12,10 @@ export async function handle({
 	event: RequestEvent;
 	resolve(event: RequestEvent): Awaited<Promise<Response>>;
 }) {
+	console.log("Called handle, cookie")
 	const cookies = parse(event.request.headers.get('cookie') || '');
+
+	console.log("Called handle, cookie", cookies.JSESSIONID)
 
 	if (!cookies.JSESSIONID) {
 		event.locals.user = null;

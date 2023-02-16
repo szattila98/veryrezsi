@@ -1,4 +1,4 @@
-import type { AxiosResponse } from '$mock/api/_common/axios_response';
+import type { AxiosResponse } from '$shared/axios';
 import type { Expense } from '$shared/domain';
 
 // TODO not needed with actual backend

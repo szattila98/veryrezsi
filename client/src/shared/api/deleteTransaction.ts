@@ -1,4 +1,4 @@
-import type { AxiosResponse } from '$mock/api/_common/axios_response';
+import type { AxiosResponse } from '$shared/axios';
 
 export type DeleteTransactionRequestData = {
 	transactionId: number;

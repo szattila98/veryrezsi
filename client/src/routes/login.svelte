@@ -19,6 +19,8 @@
 		if ($loginForm.valid && $user.value && $password.value) {
 			handleLogin({ email: $user.value, password: $password.value })
 				.then((res) => {
+					console.log('It arrived');
+					console.log(res);
 					if (!res.ok) {
 						openFailedLoginAlert();
 						return;

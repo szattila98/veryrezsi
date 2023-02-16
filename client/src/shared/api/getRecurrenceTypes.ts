@@ -1,4 +1,4 @@
-import type { AxiosResponse } from '$mock/api/_common/axios_response';
+import type { AxiosResponse } from '$shared/axios';
 import type { RecurrenceType } from '$shared/domain';
 
 type GetRecurrenceTypesResponseData = RecurrenceType[];

@@ -2,12 +2,13 @@ import axios from 'axios';
 
 const axiosAPI = axios.create({
 	baseURL: 'http://localhost:8000/api',
+	withCredentials: true,
 });
 
 // implement a method to execute all the request from here.
 const apiRequest = (method, url, request) => {
 	const headers = {
-		authorization: '',
+		JSESSIONID: getCookie('JSESSIONID'),
 	};
 	//using the axios instance to perform the request that received from each http method
 	return axiosAPI({
@@ -17,36 +18,32 @@ const apiRequest = (method, url, request) => {
 		headers,
 	})
 		.then((res) => {
-			console.log('API Success');
-			return Promise.resolve(res.data);
+			console.log('Backend request succeeded');
+			//console.debug('Data {}', res.status);
+			return Promise.resolve(res);
 		})
 		.catch((err) => {
-			console.warn('API Fail');
-			return Promise.reject(err);
+			console.warn('Backend request failed');
+			return Promise.reject({ error: err });
 		});
 };
 
-// function to execute the http get request
-const get = (url, request) => apiRequest('GET', url, request);
+const get = (url, request = {}) => apiRequest('GET', url, request);
+const deleteRequest = (url, request = {}) => apiRequest('DELETE', url, request);
+const post = (url, request = {}) => apiRequest('post', url, request);
+const put = (url, request = {}) => apiRequest('PUT', url, request);
+const patch = (url, request = {}) => apiRequest('PATCH', url, request);
 
-// function to execute the http delete request
-const deleteRequest = (url, request) => apiRequest('DELETE', url, request);
-
-// function to execute the http post request
-const post = (url, request) => apiRequest('post', url, request);
-
-// function to execute the http put request
-const put = (url, request) => apiRequest('PUT', url, request);
-
-// function to execute the http path request
-const patch = (url, request) => apiRequest('PATCH', url, request);
-
-// expose your method to other services or actions
-const API = {
+export default {
 	get,
 	delete: deleteRequest,
 	post,
 	put,
 	patch,
 };
-export default API;
+
+function getCookie(name) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+}

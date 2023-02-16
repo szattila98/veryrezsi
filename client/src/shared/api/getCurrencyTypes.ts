@@ -1,4 +1,4 @@
-import type { AxiosResponse } from '$mock/api/_common/axios_response';
+import type { AxiosResponse } from '$shared/axios';
 import type { CurrencyType } from '$shared/domain';
 
 type GetCurrencyTypesResponseData = CurrencyType[];

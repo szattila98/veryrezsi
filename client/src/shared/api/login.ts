@@ -1,5 +1,4 @@
-import type { AxiosResponse } from '$shared/axios';
-import type { FailureResponseBody } from '$shared/axios';
+import type { AxiosResponse, FailureResponseBody } from '$shared/axios';
 
 export type LoginRequestData = {
 	email: string;

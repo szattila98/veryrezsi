@@ -1,4 +1,4 @@
-import { mockNewExpense, mockGetPredefinedExpenses } from '$mock/api/expense/expenses';
+import Backend from '$services/BackendApi';
 import type { GetPredefinedExpensesResponse } from '$shared/api/getPredifinedExpenses';
 import type { NewExpenseResponse, NewExpense } from '$shared/api/newExpense';
 import type { RequestEvent } from '@sveltejs/kit';

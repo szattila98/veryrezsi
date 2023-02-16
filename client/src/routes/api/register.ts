@@ -1,4 +1,4 @@
-import { mockRegister } from '$mock/api/user/register';
+import Backend from '$services/BackendApi';
 import type { RegisterResponse, RegisterRequestData } from '$shared/api/register';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */

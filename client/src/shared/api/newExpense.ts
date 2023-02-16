@@ -1,4 +1,4 @@
-import type { AxiosResponse } from '$mock/api/_common/axios_response';
+import type { AxiosResponse } from '$shared/axios';
 
 export type NewExpense = {
 	name: string;
@@ -8,7 +8,7 @@ export type NewExpense = {
 	predefinedExpenseId: number | null;
 	startDate: string;
 	value: number;
-	userId: number; // TODO not needed with actual backend
+	userId: number; // TODO: not needed with actual backend
 };
 
 export type NewExpenseRequestData = {
