@@ -8,7 +8,7 @@ const axiosAPI = axios.create({
 // implement a method to execute all the request from here.
 const apiRequest = (method, url, request) => {
 	const headers = {
-		JSESSIONID: getCookie('JSESSIONID'),
+		JSESSIONID: 'VYKEVrmu9L6B+3WA6SVoOzWeta67pPjlHV4F+OQ=',
 	};
 	//using the axios instance to perform the request that received from each http method
 	return axiosAPI({
@@ -24,7 +24,7 @@ const apiRequest = (method, url, request) => {
 		})
 		.catch((err) => {
 			console.warn('Backend request failed');
-			return Promise.reject({ error: err });
+			return Promise.reject({ error: err.toJSON() });
 		});
 };
 
@@ -41,9 +41,3 @@ export default {
 	put,
 	patch,
 };
-
-function getCookie(name) {
-	const value = `; ${document.cookie}`;
-	const parts = value.split(`; ${name}=`);
-	if (parts.length === 2) return parts.pop().split(';').shift();
-}
