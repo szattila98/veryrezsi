@@ -6,7 +6,5 @@ node_modules
 .env
 .env.*
 !.env.example
-
-smui*.css
-
-.vscode/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

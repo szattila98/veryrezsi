@@ -6,16 +6,15 @@ module.exports = {
 	ignorePatterns: ['*.cjs'],
 	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
 	settings: {
-		'svelte3/typescript': () => require('typescript'),
-		'svelte3/ignore-styles': () => true, // ESLint cannot preprocess SCSS styles, prettier is good enough
+		'svelte3/typescript': () => require('typescript')
 	},
 	parserOptions: {
 		sourceType: 'module',
-		ecmaVersion: 2020,
+		ecmaVersion: 2020
 	},
 	env: {
 		browser: true,
 		es2017: true,
-		node: true,
-	},
+		node: true
+	}
 };

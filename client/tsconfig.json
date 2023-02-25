@@ -1,41 +1,17 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
-		"strict": true,
-		"resolveJsonModule": true,
-		/**
-		To have warnings/errors of the Svelte compiler at the correct position,
-		enable source maps by default.
-		*/
-		"sourceMap": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"importHelpers": true,
-		"baseUrl": ".",
 		"allowJs": true,
 		"checkJs": true,
-		"paths": {
-			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"],
-			"$mock": ["src/mock"],
-			"$mock/*": ["src/mock/*"],
-			"$routes": ["src/routes"],
-			"$routes/*": ["src/routes/*"],
-			"$shared": ["src/shared"],
-			"$shared/*": ["src/shared/*"],
-			"$api": ["src/routes/api"],
-			"$api/*": ["src/routes/api/*"]
-		},
-		"types": ["jest"]
-	},
-	"include": [
-		"src/**/*.d.ts",
-		"src/**/*.js",
-		"src/**/*.ts",
-		"src/**/*.json",
-		"src/**/*.svelte",
-		"mock/**/*.js",
-		"mock/**/*.ts"
-	]
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true
+	}
+	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
+	//
+	// If you want to overwrite includes/excludes, make sure to copy over the relevant includes/excludes
+	// from the referenced tsconfig.json - TypeScript does not merge them in
 }
