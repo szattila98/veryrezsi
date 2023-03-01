@@ -1,5 +1,5 @@
 # Stage BUILD
-FROM node:18-alpine
+FROM node:18-alpine as builder
 
 WORKDIR /app
 COPY . ./
@@ -12,8 +12,8 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY --from=0 /app/package*.json ./
-COPY --from=0 /app/build ./
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/build ./
 
 # clean install dependencies, no devDependencies, no prepare script
 RUN npm ci --omit=dev --ignore-scripts --no-audit
