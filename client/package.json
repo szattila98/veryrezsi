@@ -17,6 +17,7 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
+		"@netlify/classnames-template-literals": "1.0.3",
 		"@playwright/test": "1.31.1",
 		"@sveltejs/adapter-node": "1.2.0",
 		"@sveltejs/kit": "1.8.5",
@@ -43,5 +44,8 @@
 		"node": "18.14.2",
 		"npm": "9.5.1",
 		"yarn": "3.4.1"
+	},
+	"dependencies": {
+		"svelte-icons": "2.1.0"
 	}
 }
