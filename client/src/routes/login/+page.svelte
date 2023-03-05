@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { loginSession } from '../../stores';
 	import type { LoginRequestData } from '$shared/api/login';
-	let message: string;
+
 	const credentials: LoginRequestData = {
 		email: '',
 		password: ''
 	};
+
+	let message: string;
+
 	async function login() {
 		message = '';
 		const form = <HTMLFormElement>document.getElementById('signIn');
@@ -34,14 +36,13 @@
 					'Content-Type': 'application/json'
 				}
 			});
-			const fromAPI = await res.json();
 			if (res.ok) {
-				loginSession.set(fromAPI.user);
 				const referrer = $page.url.searchParams.get('referrer');
 				if (referrer) return goto(referrer);
 				return goto('/');
 			} else {
-				throw new Error(fromAPI.message);
+				const fromApi = await res.json();
+				throw new Error('Failed to login: ' + fromApi.message);
 			}
 		} catch (err) {
 			if (err instanceof Error) {
