@@ -31,7 +31,7 @@
 
 	async function callRegisterApi(userInfo: RegisterRequestData) {
 		try {
-			const res = await fetch('/api/login', {
+			const res = await fetch('/api/register', {
 				method: 'POST',
 				body: JSON.stringify(userInfo),
 				headers: {
@@ -39,19 +39,21 @@
 				}
 			});
 			if (res.ok) {
-				const referrer = $page.url.searchParams.get('referrer');
-				if (referrer) return goto(referrer);
-				return goto('/');
+				return goto('/login');
 			} else {
 				const fromApi = await res.json();
-				throw new Error('Failed to login: ' + fromApi.message);
+				throw new Error('Failed to regist: ' + fromApi.message);
 			}
 		} catch (err) {
 			if (err instanceof Error) {
-				console.error('Login error', err);
+				console.error('Registration error', err);
 				throw new Error(err.message);
 			}
 		}
+	}
+
+	function navigateToLogin() {
+		goto('/login');
 	}
 </script>
 
@@ -62,7 +64,10 @@
 
 <div>
 	<div class="flex h-screen items-center justify-center">
-		<div class="w-full max-w-xs">
+		<div class="w-full max-w-md">
+			<div class="my-8 text-center text-4xl font-light">
+				Register to <span class="text-blue-600">Very</span>Rezsi
+			</div>
 			<form
 				class="mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-md"
 				id="register"
@@ -92,10 +97,10 @@
 						required
 					/>
 				</div>
-				<div class="mb-6">
+				<div class="mb-4">
 					<label class="mb-2 block font-bold text-gray-700" for="password">Password</label>
 					<input
-						class="focus:shadow-outline mb-3 w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+						class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
 						id="password"
 						type="password"
 						bind:value={userInfo.password}
@@ -121,6 +126,10 @@
 					<button
 						class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
 						on:click|preventDefault={register}>Register account</button
+					>
+					<button
+						class="focus:shadow-outline rounded bg-red-400 py-2 px-4 font-bold text-white hover:bg-red-600 focus:outline-none"
+						on:click|preventDefault={navigateToLogin}>Go to login</button
 					>
 				</div>
 			</form>
