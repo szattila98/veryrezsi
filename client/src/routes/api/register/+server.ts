@@ -10,5 +10,13 @@ export async function POST({ request }: { request: Request }) {
 		body: JSON.stringify(data)
 	});
 
-	return response;
+	const options = {
+		status: response.status
+	};
+
+	if (!response.ok) {
+		return new Response('Registration failed', options);
+	}
+
+	return new Response('Registered', options);
 }

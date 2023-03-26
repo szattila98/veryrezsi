@@ -10,16 +10,20 @@ export async function POST({ request }: { request: Request }) {
 		body: JSON.stringify(data)
 	});
 
-	const headers: Headers = new Headers({
+	const options = {
+		status: response.status,
+		headers: new Headers()
+	};
+
+	if (!response.ok) {
+		return new Response('Login failed', options);
+	}
+
+	options.headers = new Headers({
 		'Set-Cookie': generateClientSideSessionCookie(response)
 	});
 
-	const options = {
-		status: 200,
-		headers: headers
-	};
-
-	return new Response('', options);
+	return new Response('Logged in', options);
 }
 
 /**

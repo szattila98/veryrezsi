@@ -1,7 +1,7 @@
-import { BASE_URL } from '$env/static/private';
+import { REZSI_API_BASE_URL } from '$env/static/private';
 
 export default {
-	baseUrl: BASE_URL,
+	baseUrl: REZSI_API_BASE_URL,
 	baseHeaders: {
 		'Content-Type': 'application/json'
 	},

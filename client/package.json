@@ -3,7 +3,8 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev --port 4000",
+		"dev:setup": "sh ./dev-setup.sh",
+		"dev": "npm run dev:setup && vite dev --port 4000",
 		"clean": "rm -rf ./node_modules",
 		"clean:install": "npm run clean && npm i",
 		"clean:all": "npm run clean && rm -f package-lock.json yarn.lock",

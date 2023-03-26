@@ -20,7 +20,6 @@
 				await callRegisterApi(userInfo);
 			} catch (err) {
 				if (err instanceof Error) {
-					console.error('Login error', err.message);
 					message = err.message;
 				}
 			}
@@ -42,12 +41,13 @@
 				return goto('/login');
 			} else {
 				const fromApi = await res.json();
-				throw new Error('Failed to regist: ' + fromApi.message);
+				const reason = fromApi.reason;
+				throw new Error('Failed to register: ' + reason);
 			}
 		} catch (err) {
 			if (err instanceof Error) {
-				console.error('Registration error', err);
-				throw new Error(err.message);
+				console.error('API error while trying to register user', err.message);
+				throw new Error('Sorry, you need to wait until we fix this');
 			}
 		}
 	}
@@ -78,11 +78,12 @@
 					<label class="mb-2 block font-bold text-gray-700" for="email">Username</label>
 					<input
 						class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-						id="email"
-						type="email"
+						id="username"
+						type="text"
 						bind:value={userInfo.username}
 						placeholder="mrbills"
 						required
+						autocomplete="username"
 					/>
 				</div>
 				<div class="mb-4">
@@ -105,6 +106,7 @@
 						type="password"
 						bind:value={userInfo.password}
 						placeholder="**********"
+						autocomplete="new-password"
 						required
 					/>
 				</div>
@@ -116,6 +118,7 @@
 						type="password"
 						bind:value={userInfo.confirmPassword}
 						placeholder="**********"
+						autocomplete="new-password"
 						required
 					/>
 				</div>
