@@ -8,7 +8,6 @@
 
 	// If returning from different website, runs once (as it's an SPA) to restore user session if session cookie is still valid
 	const { user } = data;
-	console.log('Yuhuuser: ', user);
 	$loginSession = user;
 </script>
 
