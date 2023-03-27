@@ -4,4 +4,5 @@
 	export let data: LayoutServerData;
 </script>
 
-<h1 class="text-3xl font-bold underline hover:bg-red-600">Hello world! {data?.user?.username}</h1>
+<h1 class="text-3xl">Hello rezsi!</h1>
+<p>Welcome back <span class="bold">{data?.user?.username}</span></p>
