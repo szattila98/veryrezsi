@@ -1,12 +1,13 @@
-import serverConfig from '$server/backend.config';
+import backendConfig from '$server/backend.config';
+import serverConfig from '$server/server.config';
 import type { LoginRequestData } from '$shared/api/login';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function POST({ request }: { request: Request }) {
 	const data: LoginRequestData = await request.json();
-	const response = await fetch(serverConfig.baseUrl + '/user/auth', {
+	const response = await fetch(backendConfig.baseUrl + '/user/auth', {
 		method: 'POST',
-		headers: serverConfig.baseHeaders,
+		headers: backendConfig.baseHeaders,
 		body: JSON.stringify(data)
 	});
 
@@ -27,12 +28,12 @@ export async function POST({ request }: { request: Request }) {
 }
 
 /**
- *
- * @param backendResponse
- * @returns
+ * Parses session cookie from backend response and maps it to a client side cookie
+ * @param backendResponse that contains session cookie in its headers
+ * @returns A Set-Cookie value string
  */
 function generateClientSideSessionCookie(backendResponse: Response): string {
 	const apiSessionCookie = backendResponse.headers.get('Set-Cookie')?.split('=')[1];
 
-	return serverConfig.sessionCookieName + '=' + apiSessionCookie + ' ; Path=/';
+	return serverConfig.clientSessionCookieName + '=' + apiSessionCookie + ' ; Path=/';
 }

@@ -1,17 +1,15 @@
-import serverConfig from '$server/backend.config';
+import backendConfig from '$server/backend.config';
+import serverConfig from '$server/server.config';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import type { User } from '$shared/domain';
 
-// Invoked for each endpoint called and initially for SSR router
+// Invoked for each endpoint called, and initially for SSR router
 export const handle: Handle = async ({ event, resolve }) => {
 	const { cookies } = event;
-	const sessionId = cookies.get(serverConfig.sessionCookieName);
+	const sessionId = cookies.get(serverConfig.clientSessionCookieName);
 
-	if (sessionId) {
-		await attachUserToRequestEvent(sessionId, event);
-	}
-
-	if (!event.locals.user) cookies.delete(serverConfig.sessionCookieName);
+	if (sessionId) await attachUserToRequestEvent(sessionId, event);
+	if (!event.locals.user) cookies.delete(serverConfig.clientSessionCookieName);
 
 	return await resolve(event);
 };
@@ -29,11 +27,11 @@ async function attachUserToRequestEvent(sessionId: string, event: RequestEvent) 
 }
 
 async function callWhoAmIApi(sessionId: string): Promise<User | null> {
-	const response = await fetch(serverConfig.baseUrl + '/user/me', {
+	const response = await fetch(backendConfig.baseUrl + '/user/me', {
 		method: 'GET',
 		headers: {
-			Cookie: serverConfig.sessionCookieName + '=' + sessionId,
-			...serverConfig.baseHeaders
+			Cookie: backendConfig.sessionCookieName + '=' + sessionId,
+			...backendConfig.baseHeaders
 		}
 	});
 
