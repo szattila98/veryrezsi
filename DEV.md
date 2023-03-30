@@ -60,3 +60,10 @@ IDE
 - `cd ./client`
 - `npm i`
 - `npm run dev`
+
+### Environment variables for client
+- Environment variables can be defined by .env file in the root folder of client. A .env.example file is commited to the repository. Also, npm dev script will check if you have .env file created, if not then it will copy the example file for you, to make development quicker.
+  - Feel free to modify your .env file to your liking, it is .gitignore for a reason.
+  - If you need a new environmental configuration, do not forget to add it to the example file and commit it.
+- You can set variables in any other know way.
+

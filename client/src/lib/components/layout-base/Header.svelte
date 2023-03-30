@@ -1,10 +1,29 @@
 <script>
+	import { goto } from '$app/navigation';
 	import FaHome from 'svelte-icons/fa/FaHome.svelte';
 	import FaClipboardList from 'svelte-icons/fa/FaClipboardList.svelte';
 	import FaRegUserCircle from 'svelte-icons/fa/FaRegUserCircle.svelte';
 	import IoIosLogOut from 'svelte-icons/io/IoIosLogOut.svelte';
 	import NavEntry from './NavEntry.svelte';
 	import { GRADIENT } from '$lib/shared/constants';
+
+	async function logout() {
+		try {
+			const res = await fetch('/api/logout', {
+				method: 'POST',
+			});
+			if (res.ok) {
+				return goto('/');
+			} else {
+				console.error('Failed to logout, welcome to Hotel California');
+			}
+		} catch (err) {
+			if (err instanceof Error) {
+				console.error('API error while trying to log you out', err.message);
+				throw new Error('Sorry, you need to wait until we fix this');
+			}
+		}
+	}
 </script>
 
 <header class={`mb-4 py-4 px-6 text-gray-100 ${GRADIENT}`}>
@@ -25,7 +44,7 @@
 					</NavEntry>
 				</li>
 				<li>
-					<NavEntry text="Logout" href="/logout" class="hover:text-white">
+					<NavEntry text="Logout" callOnClick={logout} class="hover:text-white">
 						<IoIosLogOut />
 					</NavEntry>
 				</li>

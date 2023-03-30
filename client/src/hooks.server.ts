@@ -30,7 +30,7 @@ async function callWhoAmIApi(sessionId: string): Promise<User | null> {
 	const response = await fetch(backendConfig.baseUrl + '/user/me', {
 		method: 'GET',
 		headers: {
-			Cookie: backendConfig.sessionCookieName + '=' + sessionId,
+			Cookie: backendConfig.serverSessionCookieName + '=' + sessionId,
 			...backendConfig.baseHeaders
 		}
 	});

@@ -32,9 +32,6 @@
 			const res = await fetch('/api/login', {
 				method: 'POST',
 				body: JSON.stringify(credentials),
-				headers: {
-					'Content-Type': 'application/json'
-				}
 			});
 			if (res.ok) {
 				const referrer = $page.url.searchParams.get('referrer');

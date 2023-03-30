@@ -33,9 +33,6 @@
 			const res = await fetch('/api/register', {
 				method: 'POST',
 				body: JSON.stringify(userInfo),
-				headers: {
-					'Content-Type': 'application/json'
-				}
 			});
 			if (res.ok) {
 				return goto('/login');

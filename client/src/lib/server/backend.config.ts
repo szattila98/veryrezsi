@@ -5,5 +5,5 @@ export default {
 	baseHeaders: {
 		'Content-Type': 'application/json'
 	},
-	sessionCookieName: 'JSESSIONID'
+	serverSessionCookieName: 'JSESSIONID'
 };
