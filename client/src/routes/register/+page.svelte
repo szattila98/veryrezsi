@@ -32,7 +32,7 @@
 		try {
 			const res = await fetch('/api/register', {
 				method: 'POST',
-				body: JSON.stringify(userInfo),
+				body: JSON.stringify(userInfo)
 			});
 			if (res.ok) {
 				return goto('/login');

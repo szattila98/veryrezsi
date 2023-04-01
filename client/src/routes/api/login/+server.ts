@@ -1,9 +1,9 @@
 import backendConfig from '$server/backend.config';
 import serverConfig from '$server/server.config';
 import type { LoginRequestData } from '$shared/api/login';
+import type { RequestHandler } from './$types';
 
-/** @type {import('@sveltejs/kit').RequestHandler} */
-export async function POST({ request }: { request: Request }) {
+export const POST = (async ({ request }) => {
 	const data: LoginRequestData = await request.json();
 	const response = await fetch(backendConfig.baseUrl + '/user/auth', {
 		method: 'POST',
@@ -25,7 +25,7 @@ export async function POST({ request }: { request: Request }) {
 	});
 
 	return new Response('Logged in', options);
-}
+}) satisfies RequestHandler;
 
 /**
  * Parses session cookie from backend response and maps it to a client side cookie

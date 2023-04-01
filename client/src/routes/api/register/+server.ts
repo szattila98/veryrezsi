@@ -1,8 +1,8 @@
 import serverConfig from '$server/backend.config';
 import type { LoginRequestData } from '$shared/api/login';
+import type { RequestHandler } from './$types';
 
-/** @type {import('@sveltejs/kit').RequestHandler} */
-export async function POST({ request }: { request: Request }) {
+export const POST = (async ({ request }) => {
 	const data: LoginRequestData = await request.json();
 	const response = await fetch(serverConfig.baseUrl + '/user/register', {
 		method: 'POST',
@@ -19,4 +19,4 @@ export async function POST({ request }: { request: Request }) {
 	}
 
 	return new Response('Registered', options);
-}
+}) satisfies RequestHandler;

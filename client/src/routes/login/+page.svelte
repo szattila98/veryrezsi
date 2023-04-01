@@ -31,12 +31,13 @@
 		try {
 			const res = await fetch('/api/login', {
 				method: 'POST',
-				body: JSON.stringify(credentials),
+				body: JSON.stringify(credentials)
 			});
 			if (res.ok) {
 				const referrer = $page.url.searchParams.get('referrer');
-				if (referrer) return goto(referrer);
-				return goto('/');
+				if (referrer) return (window.location.href = referrer);
+				window.location.href = '/';
+				return;
 			} else {
 				const apiResponse = await res.json();
 				throw new Error('Failed to login: ' + apiResponse.message);

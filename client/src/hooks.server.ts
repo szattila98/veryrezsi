@@ -20,6 +20,7 @@ async function attachUserToRequestEvent(sessionId: string, event: RequestEvent) 
 
 	if (user) {
 		event.locals.user = {
+			id: user.id,
 			email: user.email,
 			username: user.username
 		};

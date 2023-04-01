@@ -1,13 +1,14 @@
 import backendConfig from '$server/backend.config';
 import serverConfig from '$server/server.config';
-import type { Cookies } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-/** @type {import('@sveltejs/kit').RequestHandler} */
-export async function POST({ cookies }: { cookies: Cookies }) {
+export const POST = (async ({ cookies }) => {
 	const sessionId = cookies.get(serverConfig.clientSessionCookieName);
 
 	if (!sessionId) {
-		return;
+		return new Response('Not logged in', {
+			status: 500
+		});
 	}
 
 	const response = await fetch(backendConfig.baseUrl + '/user/logout', {
@@ -32,7 +33,7 @@ export async function POST({ cookies }: { cookies: Cookies }) {
 	});
 
 	return new Response('Logged out', options);
-}
+}) satisfies RequestHandler;
 
 /**
  * Generates a Set-Cookie string with the correct path

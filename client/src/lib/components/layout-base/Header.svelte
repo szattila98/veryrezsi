@@ -10,10 +10,11 @@
 	async function logout() {
 		try {
 			const res = await fetch('/api/logout', {
-				method: 'POST',
+				method: 'POST'
 			});
 			if (res.ok) {
-				return goto('/');
+				window.location.href = '/login';
+				return;
 			} else {
 				console.error('Failed to logout, welcome to Hotel California');
 			}

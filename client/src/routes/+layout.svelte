@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { LayoutServerData } from './$types';
-	import { get } from 'svelte/store'
+	import { get } from 'svelte/store';
 
 	import Footer from '$lib/components/layout-base/Footer.svelte';
 	import Header from '$lib/components/layout-base/Header.svelte';
@@ -18,7 +18,7 @@
 
 <div class="flex min-h-screen flex-col">
 	{#if session}
-	<Header />
+		<Header />
 	{/if}
 
 	<main class="flex-grow">
@@ -26,6 +26,6 @@
 	</main>
 
 	{#if session}
-	<Footer />
+		<Footer />
 	{/if}
 </div>
