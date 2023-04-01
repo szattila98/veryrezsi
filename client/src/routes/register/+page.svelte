@@ -127,7 +127,7 @@
 						on:click|preventDefault={register}>Register account</button
 					>
 					<button
-						class="focus:shadow-outline rounded bg-red-400 py-2 px-4 font-bold text-white hover:bg-red-600 focus:outline-none"
+						class="focus:shadow-outline rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-600 focus:outline-none"
 						on:click|preventDefault={navigateToLogin}>Go to login</button
 					>
 				</div>

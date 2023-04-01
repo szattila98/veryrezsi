@@ -2,28 +2,25 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { LoginRequestData } from '$shared/api/login';
+	import { VALIDATION_MSG } from '$shared/constants';
+	import { useForm, Hint, validators, required, email, HintGroup } from "svelte-use-form";
+
+  	const form = useForm();
 
 	const credentials: LoginRequestData = {
 		email: '',
 		password: ''
 	};
 
-	let message: string;
-
 	async function login() {
-		message = '';
-		const form = <HTMLFormElement>document.getElementById('signIn');
-		if (form.checkValidity()) {
+		if ($form.valid) {
 			try {
 				await callLoginApi(credentials);
 			} catch (err) {
 				if (err instanceof Error) {
 					console.error('Login error', err.message);
-					message = err.message;
 				}
 			}
-		} else {
-			form.classList.add('was-validated');
 		}
 	}
 
@@ -71,42 +68,49 @@
 				id="signIn"
 				autocomplete="on"
 				novalidate
+				use:form
+				on:submit|preventDefault={login}
 			>
 				<div class="mb-4">
 					<label class="mb-2 block font-bold tracking-wide text-gray-700" for="email">Email</label>
 					<input
-						class="focus:shadow-outline w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+						class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
 						id="email"
+						name="email"
 						type="email"
 						bind:value={credentials.email}
 						placeholder="payingbills@email.com"
 						autocomplete="email"
-						required
+						use:validators={[required, email]}
 					/>
+					<HintGroup for="email">
+						<Hint on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
+						<Hint on="email" hideWhenRequired class={VALIDATION_MSG}>Email is not valid</Hint>
+					</HintGroup>
 				</div>
 				<div class="mb-6">
 					<label class="mb-2 block font-bold tracking-wide text-gray-700" for="password"
 						>Password</label
 					>
 					<input
-						class="focus:shadow-outline mb-3 w-full appearance-none rounded border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
+						class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
 						id="password"
+						name="password"
 						type="password"
 						bind:value={credentials.password}
 						placeholder="**********"
-						required
+						use:validators={[required]}
 					/>
+					<Hint for="password" on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
 				</div>
 				<div class="flex items-center justify-between">
-					{#if message}
-						<p class="text-danger">{message}</p>
-					{/if}
 					<button
-						class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none"
-						on:click|preventDefault={login}>Sign In</button
-					>
+						type="submit"
+						class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-700 focus:outline-none disabled:bg-gray-500"
+						>Sign In
+					</button>
 					<button
-						class="focus:shadow-outline rounded bg-red-400 py-2 px-4 text-white hover:bg-red-600 focus:outline-none"
+						class="focus:shadow-outline rounded bg-green-500 py-2 px-4 text-white hover:bg-green-600 focus:outline-none"
 						on:click|preventDefault={navigateToRegister}>Go to registration</button
 					>
 				</div>

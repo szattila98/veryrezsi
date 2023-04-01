@@ -19,7 +19,7 @@ export interface CurrencyType {
 export type Transaction = {
 	id: number;
 	donorName: string;
-	currencyType: CurrencyType;
+	currencyTypeId: number;
 	value: number;
 	date: string;
 	expenseId: number;
@@ -29,20 +29,20 @@ export interface PredefinedExpense {
 	id: number;
 	name: string;
 	description: string;
-	recurrenceType: RecurrenceType;
-	currencyType: CurrencyType;
 	value: number;
+	recurrenceTypeId: number;
+	currencyTypeId: number;
 }
 
 export interface Expense {
 	id: number;
 	name: string;
 	description: string;
-	recurrenceType: RecurrenceType;
-	currencyType: CurrencyType;
-	predefinedExpenseId: number | null;
-	startDate: string;
 	value: string;
+	startDate: string;
 	userId: number;
+	recurrenceTypeId: number;
+	currencyTypeId: number;
+	predefinedExpenseId: number | null;
 	transactions: Transaction[];
 }

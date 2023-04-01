@@ -4,3 +4,10 @@ export const GRADIENT = ctl(`
     from-blue-400 
     to-blue-700
 `);
+export const VALIDATION_MSG = ctl(`
+    bg-red-500 
+    py-1 
+    px-2 
+    text-white 
+    rounded-b
+`);
