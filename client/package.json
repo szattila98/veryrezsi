@@ -9,6 +9,7 @@
 		"clean:install": "npm run clean && npm i",
 		"clean:all": "npm run clean && rm -f package-lock.json yarn.lock",
 		"build": "vite build",
+		"build:ci": "npm run dev:setup && npm run build",
 		"preview": "vite preview --port 4000",
 		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
