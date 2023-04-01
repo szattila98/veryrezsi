@@ -1,5 +1,4 @@
 <script>
-	import { goto } from '$app/navigation';
 	import FaHome from 'svelte-icons/fa/FaHome.svelte';
 	import FaClipboardList from 'svelte-icons/fa/FaClipboardList.svelte';
 	import FaRegUserCircle from 'svelte-icons/fa/FaRegUserCircle.svelte';

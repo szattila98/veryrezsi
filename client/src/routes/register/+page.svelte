@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import type { RegisterRequestData } from '$shared/api/register';
 
 	const userInfo: RegisterRequestData = {
