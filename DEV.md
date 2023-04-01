@@ -23,8 +23,8 @@ IDE
 
 ## Starting mailhog
 
-- Mailhog may be needed for some functionalities, altough if not present it only causes error messages in the log.
-- Run it locally or with `docker-compose up -d mailhog`.
+- Mailhog may be needed for some functionalities (registration), although if not present it only causes error messages in the log.
+- Run it locally or by adding `mailhog` to the end of your `docker-compose up -d` command.
 
 ## Running server
 
@@ -51,7 +51,7 @@ IDE
 
 ## Starting backend for client
 
-- To run the complete backend (database & server), use `docker-compose up -d database server`, the database will be available at port 3306 and the server on 8000
+- To run the complete backend (database & server), use `docker-compose up -d database server mailhog`, the database will be available at port 3306 and the server on 8000
 - The build will take some time at first and on changes, consequent runs will be much faster thanks to docker caching
 - It can be used as a backend for frontend development, the server is built in release mode, so it is smaller and highly optimized
 
@@ -60,3 +60,10 @@ IDE
 - `cd ./client`
 - `npm i`
 - `npm run dev`
+
+### Environment variables for client
+- Environment variables can be defined by .env file in the root folder of client. A .env.example file is commited to the repository. Also, npm dev script will check if you have .env file created, if not then it will copy the example file for you, to make development quicker.
+  - Feel free to modify your .env file to your liking, it is .gitignore for a reason.
+  - If you need a new environmental configuration, do not forget to add it to the example file and commit it.
+- You can set variables in any other know way.
+
