@@ -3,9 +3,9 @@
 	import type { RegisterRequestData } from '$shared/api/register';
 	import type { ValidationErrors } from "svelte-use-form";
 	import { useForm, Hint, validators, required, maxLength, email, HintGroup, pattern } from "svelte-use-form";
-	import { VALIDATION_MSG } from '$shared/constants';
+	import { MAX_LENGTH_VIOLATION_MSG, REQUIRED_VIOLATION_MSG, EMAIL_VIOLATION_MSG, VALIDATION_MSG, BLACK_TEXT_COLOR, PRIMARY_COLOR, PRIMARY_COLOR_DARK, SECONDARY_COLOR, SECONDARY_COLOR_DARK } from '$shared/constants';
 
-	const dispatch = createEventDispatcher<{switch: void}>();
+	const dispatch = createEventDispatcher<{switchView: void}>();
 	const STRONG_PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,120}$/;
 
 	const form = useForm();
@@ -18,6 +18,10 @@
 	};
 
 	const passwordMatch = (value: string, form: any): null | ValidationErrors => {
+		if (!form.password) {
+			return { passwordMatch: "Password field not found in the form" }
+		}
+
         return value === form.password.value
             ? null
             : { passwordMatch: "Passwords are not matching" };
@@ -60,101 +64,100 @@
 	}
 
 	function navigateToLogin() {
-		dispatch('switch');
+		dispatch('switchView');
 	}
 </script>
 
-<div class="flex h-screen items-center justify-center">
-	<div class="w-full max-w-md">
-		<div class="my-8 text-center text-4xl font-light">
-			Register to <span class="text-blue-600">Very</span>Rezsi
-		</div>
-		<form
-			class="mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-md"
-			id="register"
-			autocomplete="on"
-			use:form
-			on:submit|preventDefault={register}
-		>
-			<div class="mb-4">
-				<label class="mb-2 block font-bold text-gray-700" for="email">Username</label>
-				<input
-					class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-					id="username"
-					name="username"
-					type="text"
-					bind:value={userInfo.username}
-					placeholder="mrbills"
-					autocomplete="username"
-                    use:validators={[required, maxLength(255)]}
-				/>
-                <HintGroup for="username">
-                    <Hint on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
-                    <Hint on="maxLength" hideWhenRequired class={VALIDATION_MSG}>Username is too long</Hint>
-                </HintGroup>
-			</div>
-			<div class="mb-4">
-				<label class="mb-2 block font-bold text-gray-700" for="email">Email</label>
-				<input
-					class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-					id="email"
-					name="email"
-					type="email"
-					bind:value={userInfo.email}
-					placeholder="payingbills@email.com"
-					autocomplete="email"
-					use:validators={[required, email]}
-				/>
-                <HintGroup for="email">
-                    <Hint on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
-                    <Hint on="email" hideWhenRequired class={VALIDATION_MSG}>Email is not valid</Hint>
-                </HintGroup>
-			</div>
-			<div class="mb-4">
-				<label class="mb-2 block font-bold text-gray-700" for="password">Password</label>
-				<input
-					class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-					id="password"
-					name="password"
-					type="password"
-					bind:value={userInfo.password}
-					placeholder="**********"
-					autocomplete="new-password"
-					use:validators={[required, pattern(STRONG_PASSWORD_PATTERN)]}
-				/>
-                <HintGroup for="password">
-                    <Hint on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
-                    <Hint on="pattern" hideWhenRequired class={VALIDATION_MSG}>Password is weak</Hint>
-                </HintGroup>
-			</div>
-			<div class="mb-6">
-				<label class="mb-2 block font-bold text-gray-700" for="password">Confirm password</label>
-				<input
-					class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-gray-700 shadow focus:outline-none"
-					id="passwordConfirm"
-					name="passwordConfirm"
-					type="password"
-					bind:value={userInfo.confirmPassword}
-					placeholder="**********"
-					autocomplete="new-password"
-					use:validators={[required, passwordMatch]}
-				/>
-                <HintGroup for="passwordConfirm">
-                    <Hint on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
-                    <Hint on="passwordMatch" hideWhenRequired class={VALIDATION_MSG}>Passwords do not match</Hint>
-                </HintGroup>
-			</div>
-			<div class="flex items-center justify-between">
-				<button
-                    type="submit"
-					class="focus:shadow-outline rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700 focus:outline-none"
-                >Register account</button
-				>
-				<button
-					class="focus:shadow-outline rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-600 focus:outline-none"
-					on:click|preventDefault={navigateToLogin}>Go to login</button
-				>
-			</div>
-		</form>
+<svelte:head>
+	<title>Register to VeryRezsi</title>
+	<meta name="robots" content="noindex, nofollow" />
+</svelte:head>
+
+<form
+	class="rounded bg-white px-8 pt-6 pb-8 shadow-md"
+	id="register"
+	autocomplete="on"
+	novalidate
+	use:form
+	on:submit|preventDefault={register}
+>
+	<div class="mb-4">
+		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="email">Username</label>
+		<input
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			id="username"
+			name="username"
+			type="text"
+			bind:value={userInfo.username}
+			placeholder="mrbills"
+			autocomplete="username"
+			use:validators={[required, maxLength(255)]}
+		/>
+		<HintGroup for="username">
+			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
+			<Hint on="maxLength" hideWhenRequired class={VALIDATION_MSG}>{{MAX_LENGTH_VIOLATION_MSG}}</Hint>
+		</HintGroup>
 	</div>
-</div>
+	<div class="mb-4">
+		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="email">Email</label>
+		<input
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			id="email"
+			name="email"
+			type="email"
+			bind:value={userInfo.email}
+			placeholder="payingbills@email.com"
+			autocomplete="email"
+			use:validators={[required, email]}
+		/>
+		<HintGroup for="email">
+			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
+			<Hint on="email" hideWhenRequired class={VALIDATION_MSG}>{EMAIL_VIOLATION_MSG}</Hint>
+		</HintGroup>
+	</div>
+	<div class="mb-4">
+		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="password">Password</label>
+		<input
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			id="password"
+			name="password"
+			type="password"
+			bind:value={userInfo.password}
+			placeholder="**********"
+			autocomplete="new-password"
+			use:validators={[required, pattern(STRONG_PASSWORD_PATTERN)]}
+		/>
+		<HintGroup for="password">
+			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
+			<Hint on="pattern" hideWhenRequired class={VALIDATION_MSG}>It is too easy to find out.</Hint>
+		</HintGroup>
+	</div>
+	<div class="mb-6">
+		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="password">Confirm password</label>
+		<input
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			id="passwordConfirm"
+			name="passwordConfirm"
+			type="password"
+			bind:value={userInfo.confirmPassword}
+			placeholder="**********"
+			autocomplete="new-password"
+			use:validators={[required, passwordMatch]}
+		/>
+		<HintGroup for="passwordConfirm">
+			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
+			<Hint on="passwordMatch" hideWhenRequired class={VALIDATION_MSG}>It does not match the one above.</Hint>
+		</HintGroup>
+	</div>
+	<div class="flex items-center justify-between">
+		<button
+			type="submit"
+			class="focus:shadow-outline rounded bg-{PRIMARY_COLOR} py-2 px-4 font-bold text-white hover:bg-{PRIMARY_COLOR_DARK} focus:outline-none"
+		>Register account</button
+		>
+		<button
+			class="focus:shadow-outline rounded bg-{SECONDARY_COLOR} py-2 px-4 font-bold text-white hover:bg-{SECONDARY_COLOR_DARK} focus:outline-none"
+			on:click|preventDefault={navigateToLogin}>Go to login</button
+		>
+	</div>
+</form>

@@ -25,7 +25,5 @@
 		<slot />
 	</main>
 
-	{#if session}
-		<Footer />
-	{/if}
+	<Footer />
 </div>

@@ -3,7 +3,11 @@ import type { LayoutServerLoad, LayoutRouteId } from './$types';
 
 export const load: LayoutServerLoad = ({ locals, route }) => {
 	if (!locals.user && !isPublicRoute(route.id)) {
-		throw redirect(307, '/getting-started?referrer=' + route.id); // id refers to route files, this will not support [slug] pages
+		let loginRoute = '/getting-started';
+		if (route.id) {
+			loginRoute += '?referrer=' + route.id; // id refers to route files, this will not support [slug] pages
+		}
+		throw redirect(307, loginRoute);
 	}
 
 	const { user } = locals; // locals.user set by hooks.server.ts/handle()
