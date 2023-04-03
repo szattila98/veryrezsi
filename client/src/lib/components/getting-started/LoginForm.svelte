@@ -1,13 +1,22 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { LoginRequestData } from '$shared/api/login';
-	import { EMAIL_VIOLATION_MSG, REQUIRED_VIOLATION_MSG, PRIMARY_COLOR, PRIMARY_COLOR_DARK, BLACK_TEXT_COLOR, SECONDARY_COLOR, SECONDARY_COLOR_DARK, VALIDATION_MSG } from '$shared/constants';
+	import {
+		EMAIL_VIOLATION_MSG,
+		REQUIRED_VIOLATION_MSG,
+		PRIMARY_COLOR,
+		PRIMARY_COLOR_DARK,
+		BLACK_TEXT_COLOR,
+		SECONDARY_COLOR,
+		SECONDARY_COLOR_DARK,
+		VALIDATION_MSG
+	} from '$shared/constants';
 	import { createEventDispatcher } from 'svelte';
-	import { useForm, Hint, validators, required, email, HintGroup } from "svelte-use-form";
+	import { useForm, Hint, validators, required, email, HintGroup } from 'svelte-use-form';
 
-	const dispatch = createEventDispatcher<{switchView: void}>();
+	const dispatch = createEventDispatcher<{ switchView: void }>();
 
-  	const form = useForm();
+	const form = useForm();
 
 	const credentials: LoginRequestData = {
 		email: '',
@@ -60,55 +69,55 @@
 </svelte:head>
 
 <form
-    class="rounded bg-white px-8 pt-6 pb-8 shadow-md"
-    id="signIn"
-    autocomplete="on"
-    novalidate
-    use:form
-    on:submit|preventDefault={login}
+	class="rounded bg-white px-8 pt-6 pb-8 shadow-md"
+	id="signIn"
+	autocomplete="on"
+	novalidate
+	use:form
+	on:submit|preventDefault={login}
 >
-    <div class="mb-4">
-        <label class="mb-2 block font-bold tracking-wide {BLACK_TEXT_COLOR}" for="email">Email</label>
-        <input
-            class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
-            id="email"
-            name="email"
-            type="email"
-            bind:value={credentials.email}
-            placeholder="payingbills@email.com"
-            autocomplete="email"
-            use:validators={[required, email]}
-        />
-        <HintGroup for="email">
-            <Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
-            <Hint on="email" hideWhenRequired class={VALIDATION_MSG}>{EMAIL_VIOLATION_MSG}</Hint>
-        </HintGroup>
-    </div>
-    <div class="mb-6">
-        <label class="mb-2 block font-bold tracking-wide {BLACK_TEXT_COLOR}" for="password"
-            >Password</label
-        >
-        <input
-            class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
-            id="password"
-            name="password"
-            type="password"
-            autocomplete="current-password"
-            bind:value={credentials.password}
-            placeholder="**********"
-            use:validators={[required]}
-        />
-        <Hint for="password" on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
-    </div>
-    <div class="flex items-center justify-between">
-        <button
-            type="submit"
-            class="focus:shadow-outline rounded bg-{PRIMARY_COLOR} py-2 px-4 text-white hover:bg-{PRIMARY_COLOR_DARK} focus:outline-none disabled:bg-gray-500"
-            >Sign In
-        </button>
-        <button
-            class="focus:shadow-outline rounded bg-{SECONDARY_COLOR} py-2 px-4 text-white hover:bg-{SECONDARY_COLOR_DARK} focus:outline-none"
-            on:click|preventDefault={navigateToRegister}>Go to registration</button
-        >
-    </div>
+	<div class="mb-4">
+		<label class="mb-2 block font-bold tracking-wide {BLACK_TEXT_COLOR}" for="email">Email</label>
+		<input
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			id="email"
+			name="email"
+			type="email"
+			bind:value={credentials.email}
+			placeholder="payingbills@email.com"
+			autocomplete="email"
+			use:validators={[required, email]}
+		/>
+		<HintGroup for="email">
+			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
+			<Hint on="email" hideWhenRequired class={VALIDATION_MSG}>{EMAIL_VIOLATION_MSG}</Hint>
+		</HintGroup>
+	</div>
+	<div class="mb-6">
+		<label class="mb-2 block font-bold tracking-wide {BLACK_TEXT_COLOR}" for="password"
+			>Password</label
+		>
+		<input
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			id="password"
+			name="password"
+			type="password"
+			autocomplete="current-password"
+			bind:value={credentials.password}
+			placeholder="**********"
+			use:validators={[required]}
+		/>
+		<Hint for="password" on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
+	</div>
+	<div class="flex items-center justify-between">
+		<button
+			type="submit"
+			class="focus:shadow-outline rounded bg-{PRIMARY_COLOR} py-2 px-4 text-white hover:bg-{PRIMARY_COLOR_DARK} focus:outline-none disabled:bg-gray-500"
+			>Sign In
+		</button>
+		<button
+			class="focus:shadow-outline rounded bg-{SECONDARY_COLOR} py-2 px-4 text-white hover:bg-{SECONDARY_COLOR_DARK} focus:outline-none"
+			on:click|preventDefault={navigateToRegister}>Go to registration</button
+		>
+	</div>
 </form>

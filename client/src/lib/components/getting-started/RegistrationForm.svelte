@@ -1,12 +1,32 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import type { RegisterRequestData } from '$shared/api/register';
-	import type { ValidationErrors } from "svelte-use-form";
-	import { useForm, Hint, validators, required, maxLength, email, HintGroup, pattern } from "svelte-use-form";
-	import { MAX_LENGTH_VIOLATION_MSG, REQUIRED_VIOLATION_MSG, EMAIL_VIOLATION_MSG, VALIDATION_MSG, BLACK_TEXT_COLOR, PRIMARY_COLOR, PRIMARY_COLOR_DARK, SECONDARY_COLOR, SECONDARY_COLOR_DARK } from '$shared/constants';
+	import type { Validator } from 'svelte-use-form';
+	import {
+		useForm,
+		Hint,
+		validators,
+		required,
+		maxLength,
+		email,
+		HintGroup,
+		pattern
+	} from 'svelte-use-form';
+	import {
+		MAX_LENGTH_VIOLATION_MSG,
+		REQUIRED_VIOLATION_MSG,
+		EMAIL_VIOLATION_MSG,
+		VALIDATION_MSG,
+		BLACK_TEXT_COLOR,
+		PRIMARY_COLOR,
+		PRIMARY_COLOR_DARK,
+		SECONDARY_COLOR,
+		SECONDARY_COLOR_DARK
+	} from '$shared/constants';
 
-	const dispatch = createEventDispatcher<{switchView: void}>();
-	const STRONG_PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,120}$/;
+	const dispatch = createEventDispatcher<{ switchView: void }>();
+	const STRONG_PASSWORD_PATTERN =
+		/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,120}$/;
 
 	const form = useForm();
 
@@ -17,15 +37,13 @@
 		confirmPassword: ''
 	};
 
-	const passwordMatch = (value: string, form: any): null | ValidationErrors => {
+	const passwordMatch: Validator = (value, form) => {
 		if (!form.password) {
-			return { passwordMatch: "Password field not found in the form" }
+			return { passwordMatch: 'Password field not found in the form' };
 		}
 
-        return value === form.password.value
-            ? null
-            : { passwordMatch: "Passwords are not matching" };
-	}
+		return value === form.password.value ? null : { passwordMatch: 'Passwords are not matching' };
+	};
 
 	async function register() {
 		const form = <HTMLFormElement>document.getElementById('register');
@@ -34,7 +52,7 @@
 				await callRegisterApi(userInfo);
 			} catch (err) {
 				if (err instanceof Error) {
-					console.log(err.message)
+					console.log(err.message);
 				}
 			}
 		} else {
@@ -95,7 +113,9 @@
 		/>
 		<HintGroup for="username">
 			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
-			<Hint on="maxLength" hideWhenRequired class={VALIDATION_MSG}>{{MAX_LENGTH_VIOLATION_MSG}}</Hint>
+			<Hint on="maxLength" hideWhenRequired class={VALIDATION_MSG}
+				>{{ MAX_LENGTH_VIOLATION_MSG }}</Hint
+			>
 		</HintGroup>
 	</div>
 	<div class="mb-4">
@@ -146,14 +166,16 @@
 		/>
 		<HintGroup for="passwordConfirm">
 			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
-			<Hint on="passwordMatch" hideWhenRequired class={VALIDATION_MSG}>It does not match the one above.</Hint>
+			<Hint on="passwordMatch" hideWhenRequired class={VALIDATION_MSG}
+				>It does not match the one above.</Hint
+			>
 		</HintGroup>
 	</div>
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
 			class="focus:shadow-outline rounded bg-{PRIMARY_COLOR} py-2 px-4 font-bold text-white hover:bg-{PRIMARY_COLOR_DARK} focus:outline-none"
-		>Register account</button
+			>Register account</button
 		>
 		<button
 			class="focus:shadow-outline rounded bg-{SECONDARY_COLOR} py-2 px-4 font-bold text-white hover:bg-{SECONDARY_COLOR_DARK} focus:outline-none"
