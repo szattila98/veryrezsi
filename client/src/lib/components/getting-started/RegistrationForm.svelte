@@ -17,11 +17,6 @@
 		REQUIRED_VIOLATION_MSG,
 		EMAIL_VIOLATION_MSG,
 		VALIDATION_MSG,
-		BLACK_TEXT_COLOR,
-		PRIMARY_COLOR,
-		PRIMARY_COLOR_DARK,
-		SECONDARY_COLOR,
-		SECONDARY_COLOR_DARK
 	} from '$shared/constants';
 
 	const dispatch = createEventDispatcher<{ switchView: void }>();
@@ -100,9 +95,9 @@
 	on:submit|preventDefault={register}
 >
 	<div class="mb-4">
-		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="email">Username</label>
+		<label class="mb-2 block font-bold text-fontblack" for="email">Username</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
 			id="username"
 			name="username"
 			type="text"
@@ -119,9 +114,9 @@
 		</HintGroup>
 	</div>
 	<div class="mb-4">
-		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="email">Email</label>
+		<label class="mb-2 block font-bold text-fontblack" for="email">Email</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
 			id="email"
 			name="email"
 			type="email"
@@ -136,9 +131,9 @@
 		</HintGroup>
 	</div>
 	<div class="mb-4">
-		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="password">Password</label>
+		<label class={`mb-2 block font-bold {BLACK_TEXT_COLOR}`} for="password">Password</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontbalck shadow focus:outline-none"
 			id="password"
 			name="password"
 			type="password"
@@ -153,9 +148,9 @@
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="mb-2 block font-bold {BLACK_TEXT_COLOR}" for="password">Confirm password</label>
+		<label class="mb-2 block font-bold text-fontblack" for="password">Confirm password</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
 			id="passwordConfirm"
 			name="passwordConfirm"
 			type="password"
@@ -174,11 +169,11 @@
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline rounded bg-{PRIMARY_COLOR} py-2 px-4 font-bold text-white hover:bg-{PRIMARY_COLOR_DARK} focus:outline-none"
+			class="focus:shadow-outline rounded bg-primary py-2 px-4 font-bold text-white hover:bg-primarydark focus:outline-none"
 			>Register account</button
 		>
 		<button
-			class="focus:shadow-outline rounded bg-{SECONDARY_COLOR} py-2 px-4 font-bold text-white hover:bg-{SECONDARY_COLOR_DARK} focus:outline-none"
+			class="focus:shadow-outline rounded bg-secondary py-2 px-4 font-bold text-white hover:bg-secondarydark focus:outline-none"
 			on:click|preventDefault={navigateToLogin}>Go to login</button
 		>
 	</div>

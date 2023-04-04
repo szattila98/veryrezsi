@@ -4,11 +4,6 @@
 	import {
 		EMAIL_VIOLATION_MSG,
 		REQUIRED_VIOLATION_MSG,
-		PRIMARY_COLOR,
-		PRIMARY_COLOR_DARK,
-		BLACK_TEXT_COLOR,
-		SECONDARY_COLOR,
-		SECONDARY_COLOR_DARK,
 		VALIDATION_MSG
 	} from '$shared/constants';
 	import { createEventDispatcher } from 'svelte';
@@ -77,9 +72,9 @@
 	on:submit|preventDefault={login}
 >
 	<div class="mb-4">
-		<label class="mb-2 block font-bold tracking-wide {BLACK_TEXT_COLOR}" for="email">Email</label>
+		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="email">Email</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
 			id="email"
 			name="email"
 			type="email"
@@ -94,11 +89,11 @@
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="mb-2 block font-bold tracking-wide {BLACK_TEXT_COLOR}" for="password"
+		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="password"
 			>Password</label
 		>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight {BLACK_TEXT_COLOR} shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
 			id="password"
 			name="password"
 			type="password"
@@ -112,11 +107,11 @@
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline rounded bg-{PRIMARY_COLOR} py-2 px-4 text-white hover:bg-{PRIMARY_COLOR_DARK} focus:outline-none disabled:bg-gray-500"
+			class="focus:shadow-outline rounded py-2 px-4 text-white bg-primary hover:bg-primarydark focus:outline-none disabled:bg-gray-500"
 			>Sign In
 		</button>
 		<button
-			class="focus:shadow-outline rounded bg-{SECONDARY_COLOR} py-2 px-4 text-white hover:bg-{SECONDARY_COLOR_DARK} focus:outline-none"
+			class="focus:shadow-outline rounded bg-secondary py-2 px-4 text-white hover:bg-secondarydark focus:outline-none"
 			on:click|preventDefault={navigateToRegister}>Go to registration</button
 		>
 	</div>

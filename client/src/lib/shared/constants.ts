@@ -7,13 +7,6 @@ export const GRADIENT = ctl(`
     to-blue-700
 `);
 
-export const PRIMARY_COLOR = 'blue-500';
-export const PRIMARY_COLOR_DARK = 'blue-700';
-export const SECONDARY_COLOR = 'green-500';
-export const SECONDARY_COLOR_DARK = 'green-600';
-
-export const BLACK_TEXT_COLOR = 'text-gray-700';
-
 // Validation
 export const VALIDATION_MSG = ctl(`
     bg-red-500 
