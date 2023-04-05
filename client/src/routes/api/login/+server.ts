@@ -11,20 +11,21 @@ export const POST = (async ({ request }) => {
 		body: JSON.stringify(data)
 	});
 
-	const options = {
-		status: response.status,
-		headers: new Headers()
-	};
-
 	if (!response.ok) {
-		return new Response('Login failed', options);
+		return new Response('Login failed', {
+			status: response.status
+		});
 	}
 
-	options.headers = new Headers({
-		'Set-Cookie': generateClientSideSessionCookie(response)
+	const headers = new Headers({
+		'Set-Cookie': generateClientSideSessionCookie(response),
+		Location: '/getting-started'
 	});
 
-	return new Response('Logged in', options);
+	return new Response(null, {
+		status: 307,
+		headers
+	});
 }) satisfies RequestHandler;
 
 /**

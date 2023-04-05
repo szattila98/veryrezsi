@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { LoginRequestData } from '$shared/api/login';
-	import {
-		EMAIL_VIOLATION_MSG,
-		REQUIRED_VIOLATION_MSG,
-		VALIDATION_MSG
-	} from '$shared/constants';
+	import { EMAIL_VIOLATION_MSG, REQUIRED_VIOLATION_MSG, VALIDATION_MSG } from '$shared/constants';
 	import { createEventDispatcher } from 'svelte';
 	import { useForm, Hint, validators, required, email, HintGroup } from 'svelte-use-form';
 
@@ -89,9 +85,7 @@
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="password"
-			>Password</label
-		>
+		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="password">Password</label>
 		<input
 			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
 			id="password"
@@ -107,7 +101,7 @@
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline rounded py-2 px-4 text-white bg-primary hover:bg-primarydark focus:outline-none disabled:bg-gray-500"
+			class="focus:shadow-outline rounded bg-primary py-2 px-4 text-white hover:bg-primarydark focus:outline-none disabled:bg-gray-500"
 			>Sign In
 		</button>
 		<button

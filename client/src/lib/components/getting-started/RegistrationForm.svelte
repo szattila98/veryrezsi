@@ -16,7 +16,7 @@
 		MAX_LENGTH_VIOLATION_MSG,
 		REQUIRED_VIOLATION_MSG,
 		EMAIL_VIOLATION_MSG,
-		VALIDATION_MSG,
+		VALIDATION_MSG
 	} from '$shared/constants';
 
 	const dispatch = createEventDispatcher<{ switchView: void }>();
@@ -131,9 +131,9 @@
 		</HintGroup>
 	</div>
 	<div class="mb-4">
-		<label class={`mb-2 block font-bold {BLACK_TEXT_COLOR}`} for="password">Password</label>
+		<label class={`{BLACK_TEXT_COLOR} mb-2 block font-bold`} for="password">Password</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontbalck shadow focus:outline-none"
+			class="focus:shadow-outline text-fontbalck w-full appearance-none rounded-t border py-2 px-3 leading-tight shadow focus:outline-none"
 			id="password"
 			name="password"
 			type="password"
