@@ -61,7 +61,7 @@ where
     <T as AsyncTransport>::Error: std::fmt::Debug,
 {
     let to = to.parse().expect("to should be a valid email address");
-    let from = "Veryrezsi <noreply@veryrezsi.com>"
+    let from = "Veryrezsi <noreply@dev.veryrezsi.cloud>"
         .parse()
         .expect("from should be a valid email address");
     let email = Message::builder()
