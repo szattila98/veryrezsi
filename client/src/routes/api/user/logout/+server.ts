@@ -13,7 +13,7 @@ export const POST = (async ({ fetch, cookies }) => {
 	const response = await fetch(backendConfig.baseUrl + '/user/logout', {
 		method: 'POST',
 		headers: {
-			'Cookie': `${backendConfig.serverSessionCookieName}=${sessionId}`,
+			Cookie: `${backendConfig.serverSessionCookieName}=${sessionId}`,
 			...backendConfig.baseHeaders
 		}
 	});
@@ -24,7 +24,9 @@ export const POST = (async ({ fetch, cookies }) => {
 		});
 	}
 
-	const authCookie = response.headers.get('Set-Cookie')?.replace(`${backendConfig.serverSessionCookieName}=`, '');
+	const authCookie = response.headers
+		.get('Set-Cookie')
+		?.replace(`${backendConfig.serverSessionCookieName}=`, '');
 	if (!authCookie) {
 		return new Response('Logout failed, no cookie in server response', {
 			status: 500

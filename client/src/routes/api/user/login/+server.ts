@@ -14,7 +14,9 @@ export const POST = (async ({ fetch, request, cookies }) => {
 		});
 	}
 
-	const authCookie = response.headers.get('Set-Cookie')?.replace(`${backendConfig.serverSessionCookieName}=`, '');
+	const authCookie = response.headers
+		.get('Set-Cookie')
+		?.replace(`${backendConfig.serverSessionCookieName}=`, '');
 	if (!authCookie) {
 		return new Response('Login failed, no cookie in server response', {
 			status: 500
