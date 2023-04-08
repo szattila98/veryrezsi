@@ -1,9 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { LoginRequestData } from '$shared/api/login';
-	import { EMAIL_VIOLATION_MSG, REQUIRED_VIOLATION_MSG, VALIDATION_MSG } from '$shared/constants';
+	import {
+		EMAIL_VIOLATION_MSG,
+		REQUIRED_VIOLATION_MSG,
+		TECHNICAL_ERROR_ALERT_MSG,
+		UNSUCCESFUL_LOGIN_ALERT_MSG,
+		VALIDATION_MSG
+	} from '$shared/constants';
 	import { createEventDispatcher } from 'svelte';
 	import { useForm, Hint, validators, required, email, HintGroup } from 'svelte-use-form';
+	import AlertMsg from '../common/AlertMsg.svelte';
 
 	const dispatch = createEventDispatcher<{ switchView: void }>();
 
@@ -13,6 +20,9 @@
 		email: '',
 		password: ''
 	};
+
+	let loginUnsuccessful = false;
+	let technicalError = false;
 
 	async function login() {
 		$form.touched = true;
@@ -36,12 +46,13 @@
 				if (referrer) return (window.location.href = referrer);
 				window.location.href = '/';
 			} else {
-				const apiResponse = await res.json();
-				throw new Error('Failed to login: ' + apiResponse.message);
+				loginUnsuccessful = true;
 			}
 		} catch (err) {
-			console.error('Login error', err);
-			throw new Error('Sorry, you need to wait until we fix this');
+			technicalError = true;
+			if (err instanceof Error) {
+				throw new Error('Sorry, you need to wait until we fix this', err);
+			}
 		}
 	}
 
@@ -96,6 +107,12 @@
 		/>
 		<Hint for="password" on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
 	</div>
+	{#if loginUnsuccessful}
+		<AlertMsg msg={UNSUCCESFUL_LOGIN_ALERT_MSG} />
+	{/if}
+	{#if technicalError}
+		<AlertMsg msg={TECHNICAL_ERROR_ALERT_MSG} />
+	{/if}
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"

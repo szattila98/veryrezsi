@@ -12,7 +12,13 @@
 		HintGroup,
 		pattern
 	} from 'svelte-use-form';
-	import { REQUIRED_VIOLATION_MSG, EMAIL_VIOLATION_MSG, VALIDATION_MSG } from '$shared/constants';
+	import {
+		REQUIRED_VIOLATION_MSG,
+		EMAIL_VIOLATION_MSG,
+		VALIDATION_MSG,
+		TECHNICAL_ERROR_ALERT_MSG
+	} from '$shared/constants';
+	import AlertMsg from '../common/AlertMsg.svelte';
 
 	const dispatch = createEventDispatcher<{ switchView: void }>();
 	const STRONG_PASSWORD_PATTERN =
@@ -27,6 +33,8 @@
 		confirmPassword: ''
 	};
 
+	let technicalError = false;
+
 	const passwordMatch: Validator = (value, form) => {
 		return value === form.password?.value ? null : { passwordMatch: 'Passwords are not matching' };
 	};
@@ -37,7 +45,7 @@
 			try {
 				await callRegisterApi(userInfo);
 			} catch (err) {
-				console.log('Registration error', err);
+				console.error('Registration error', err);
 			}
 		}
 	}
@@ -51,12 +59,13 @@
 			if (res.ok) {
 				return navigateToLogin();
 			} else {
-				const apiResponse = await res.json();
-				throw new Error('Failed to register: ' + apiResponse.message);
+				throw new Error('Registration unsuccessful');
 			}
 		} catch (err) {
-			console.error('Registration', err);
-			throw new Error('Sorry, you need to wait until we fix this');
+			technicalError = true;
+			if (err instanceof Error) {
+				throw new Error(`Sorry, you need to wait until we fix this ${err.message}`);
+			}
 		}
 	}
 
@@ -97,7 +106,7 @@
 			maxlength="255"
 			use:validators={[required]}
 		/>
-		<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
+		<Hint for="username" on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
 	</div>
 	<div class="mb-4">
 		<label class="text-fontblack mb-2 block font-bold" for="email">Email</label>
@@ -156,6 +165,9 @@
 			>
 		</HintGroup>
 	</div>
+	{#if technicalError}
+		<AlertMsg msg={TECHNICAL_ERROR_ALERT_MSG} />
+	{/if}
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"

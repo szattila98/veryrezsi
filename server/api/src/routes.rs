@@ -36,7 +36,7 @@ pub fn init(
         .route("/me", get(users::me))
         .route("/logout", post(users::logout))
         .route("/register", post(users::register))
-        .route("/activate/:token", get(users::activate_account));
+        .route("/activate/:token", post(users::activate_account));
 
     let expense_api = Router::new()
         .route("/:user_id", get(expenses::get_expenses))

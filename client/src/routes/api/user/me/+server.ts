@@ -1,21 +1,18 @@
 import backendConfig from '$server/backend.config';
-import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const GET = (async ({ fetch }) => {
+export const GET = (async ({ fetch, cookies }) => {
+	const sessionId = cookies.get(backendConfig.serverSessionCookieName)
 	const response = await fetch(backendConfig.baseUrl + '/user/me', {
 		method: 'GET',
 		headers: {
+			'Cookie': `${backendConfig.serverSessionCookieName}=${sessionId}`,
             ...backendConfig.baseHeaders
         }
 	});
 
-	if (!response.ok) {
-		throw redirect(307, '/getting-started');
-	}
-
 	return new Response(await response.text(), {
-		status: 200,
+		status: response.status,
         headers: backendConfig.baseHeaders
 	});
 }) satisfies RequestHandler;
