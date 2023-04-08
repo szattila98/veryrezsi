@@ -2,7 +2,11 @@ use crate::config::MailConfig;
 use handlebars::Handlebars;
 use lettre::{
     message::{header::ContentType, SinglePart},
-    transport::smtp::{authentication::Credentials, PoolConfig},
+    transport::smtp::{
+        authentication::Credentials,
+        client::{Tls, TlsParameters},
+        PoolConfig,
+    },
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
 use serde::Serialize;
@@ -23,7 +27,12 @@ pub type MailTransport = AsyncSmtpTransport<Tokio1Executor>;
 #[must_use]
 pub fn get_mail_transport(config: &MailConfig) -> MailTransport {
     let credentials = Credentials::new(config.smtp_username.clone(), config.smtp_password.clone());
+    let tls = TlsParameters::builder(config.smtp_address.clone())
+        .build()
+        .expect("Unable to build TLS parameters for SMTP config");
+
     MailTransport::builder_dangerous(&config.smtp_address)
+        .tls(Tls::Opportunistic(tls))
         .port(config.smtp_port)
         .credentials(credentials)
         .pool_config(PoolConfig::default())
