@@ -27,7 +27,7 @@
 
 	async function callLoginApi(credentials: LoginRequestData) {
 		try {
-			const res = await fetch('/api/login', {
+			const res = await fetch('/api/user/login', {
 				method: 'POST',
 				body: JSON.stringify(credentials)
 			});

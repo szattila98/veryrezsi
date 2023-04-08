@@ -8,7 +8,7 @@
 
 	async function logout() {
 		try {
-			const res = await fetch('/api/logout', {
+			const res = await fetch('/api/user/logout', {
 				method: 'POST'
 			});
 			if (res.ok) {

@@ -44,7 +44,7 @@
 
 	async function callRegisterApi(userInfo: RegisterRequestData) {
 		try {
-			const res = await fetch('/api/register', {
+			const res = await fetch('/api/user/register', {
 				method: 'POST',
 				body: JSON.stringify(userInfo)
 			});

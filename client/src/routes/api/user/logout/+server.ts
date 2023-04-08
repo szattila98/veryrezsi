@@ -6,7 +6,7 @@ export const POST = (async ({ fetch, cookies }) => {
 	const sessionId = cookies.get(serverConfig.clientSessionCookieName);
 	if (!sessionId) {
 		return new Response('Cookie not set', {
-			status: 500
+			status: 400
 		});
 	}
 
