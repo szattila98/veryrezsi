@@ -3,7 +3,7 @@
 	import FaGithub from 'svelte-icons/fa/FaGithub.svelte';
 </script>
 
-<footer class={`mt-4 py-4 px-6 text-gray-100 ${GRADIENT}`}>
+<footer class={`mt-4 px-6 py-4 text-gray-100 ${GRADIENT}`}>
 	<div class="container mx-auto flex items-center justify-center">
 		<p>hello@veryrezsi.com</p>
 		<div class="mx-4 h-6 border-l border-gray-100" />

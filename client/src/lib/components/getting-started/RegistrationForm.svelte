@@ -77,7 +77,7 @@
 </svelte:head>
 
 <form
-	class="rounded bg-white px-8 pt-6 pb-8 shadow-md"
+	class="rounded bg-white px-8 pb-8 pt-6 shadow-md"
 	id="register"
 	autocomplete="on"
 	novalidate
@@ -87,7 +87,7 @@
 	<div class="mb-4">
 		<label class="mb-2 block font-bold text-fontblack" for="email">Username</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="username"
 			name="username"
 			type="text"
@@ -102,7 +102,7 @@
 	<div class="mb-4">
 		<label class="mb-2 block font-bold text-fontblack" for="email">Email</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="email"
 			name="email"
 			type="email"
@@ -120,7 +120,7 @@
 	<div class="mb-4">
 		<label class={`{BLACK_TEXT_COLOR} mb-2 block font-bold`} for="password">Password</label>
 		<input
-			class="focus:shadow-outline text-fontbalck w-full appearance-none rounded-t border py-2 px-3 leading-tight shadow focus:outline-none"
+			class="focus:shadow-outline text-fontbalck w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
 			id="password"
 			name="password"
 			type="password"
@@ -139,7 +139,7 @@
 	<div class="mb-6">
 		<label class="mb-2 block font-bold text-fontblack" for="password">Confirm password</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="confirmPassword"
 			name="confirmPassword"
 			type="password"
@@ -162,11 +162,11 @@
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline rounded bg-primary py-2 px-4 font-bold text-white hover:bg-primarydark focus:outline-none"
+			class="focus:shadow-outline rounded bg-primary px-4 py-2 font-bold text-white hover:bg-primarydark focus:outline-none"
 			>Register account</button
 		>
 		<button
-			class="focus:shadow-outline rounded bg-secondary py-2 px-4 font-bold text-white hover:bg-secondarydark focus:outline-none"
+			class="focus:shadow-outline rounded bg-secondary px-4 py-2 font-bold text-white hover:bg-secondarydark focus:outline-none"
 			on:click|preventDefault={navigateToLogin}>Go to login</button
 		>
 	</div>

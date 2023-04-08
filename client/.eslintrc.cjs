@@ -1,8 +1,12 @@
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
-	extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
-	plugins: ['svelte3', '@typescript-eslint'],
+	extends: [
+		'plugin:@typescript-eslint/recommended',
+		'plugin:@typescript-eslint/recommended-requiring-type-checking',
+		'prettier'
+	],
+	plugins: ['svelte3', '@typescript-eslint', 'prettier'],
 	ignorePatterns: ['*.cjs'],
 	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
 	settings: {
@@ -10,11 +14,17 @@ module.exports = {
 	},
 	parserOptions: {
 		sourceType: 'module',
-		ecmaVersion: 2020
+		ecmaVersion: 2020,
+		project: true,
+		tsconfigRootDir: __dirname
 	},
 	env: {
 		browser: true,
 		es2017: true,
 		node: true
+	},
+	rules: {
+		'prettier/prettier': 'warn',
+		'@typescript-eslint/semi': 'warn'
 	}
 };

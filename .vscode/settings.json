@@ -3,7 +3,16 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "eslint.validate": ["javascript", "typescript", "svelte"],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "svelte"
+  ],
+  "eslint.workingDirectories": [
+    "./client" // replace {PATH_TO_CLIENT} with you own path
+  ],
   "files.associations": {
     "*.css": "tailwindcss"
   }
