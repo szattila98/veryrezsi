@@ -7,7 +7,7 @@
 
 	const dispatch = createEventDispatcher<{ switchView: void }>();
 
-	const form = useForm();
+	const form = useForm({ email: {}, password: {} });
 
 	const credentials: LoginRequestData = {
 		email: '',
@@ -15,13 +15,12 @@
 	};
 
 	async function login() {
+		$form.touched = true;
 		if ($form.valid) {
 			try {
 				await callLoginApi(credentials);
 			} catch (err) {
-				if (err instanceof Error) {
-					console.error('Login error', err.message);
-				}
+				console.error('Login error', err);
 			}
 		}
 	}
@@ -36,16 +35,13 @@
 				const referrer = $page.url.searchParams.get('referrer');
 				if (referrer) return (window.location.href = referrer);
 				window.location.href = '/';
-				return;
 			} else {
 				const apiResponse = await res.json();
 				throw new Error('Failed to login: ' + apiResponse.message);
 			}
 		} catch (err) {
-			if (err instanceof Error) {
-				console.error('Login error', err);
-				throw new Error(err.message);
-			}
+			console.error('Login error', err);
+			throw new Error('Sorry, you need to wait until we fix this');
 		}
 	}
 
@@ -68,15 +64,16 @@
 	on:submit|preventDefault={login}
 >
 	<div class="mb-4">
-		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="email">Email</label>
+		<label class="text-fontblack mb-2 block font-bold tracking-wide" for="email">Email</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
+			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border py-2 px-3 leading-tight shadow focus:outline-none"
 			id="email"
 			name="email"
 			type="email"
 			bind:value={credentials.email}
 			placeholder="payingbills@email.com"
 			autocomplete="email"
+			maxlength="320"
 			use:validators={[required, email]}
 		/>
 		<HintGroup for="email">
@@ -85,15 +82,16 @@
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="password">Password</label>
+		<label class="text-fontblack mb-2 block font-bold tracking-wide" for="password">Password</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border py-2 px-3 leading-tight text-fontblack shadow focus:outline-none"
+			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border py-2 px-3 leading-tight shadow focus:outline-none"
 			id="password"
 			name="password"
 			type="password"
 			autocomplete="current-password"
 			bind:value={credentials.password}
 			placeholder="**********"
+			maxlength="120"
 			use:validators={[required]}
 		/>
 		<Hint for="password" on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
@@ -101,11 +99,11 @@
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline rounded bg-primary py-2 px-4 text-white hover:bg-primarydark focus:outline-none disabled:bg-gray-500"
+			class="focus:shadow-outline bg-primary hover:bg-primarydark rounded py-2 px-4 text-white focus:outline-none disabled:bg-gray-500"
 			>Sign In
 		</button>
 		<button
-			class="focus:shadow-outline rounded bg-secondary py-2 px-4 text-white hover:bg-secondarydark focus:outline-none"
+			class="focus:shadow-outline bg-secondary hover:bg-secondarydark rounded py-2 px-4 text-white focus:outline-none"
 			on:click|preventDefault={navigateToRegister}>Go to registration</button
 		>
 	</div>

@@ -34,8 +34,7 @@ pub async fn login(
             "incorrect credentials",
         ));
     };
-    let mut cookie = Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string());
-    cookie.set_path("/api");
+    let cookie = Cookie::build(auth::AUTH_COOKIE_NAME, user.id.to_string()).finish();
     Ok(cookies.add(cookie))
 }
 

@@ -1,14 +1,11 @@
 import backendConfig from '$server/backend.config';
-import serverConfig from '$server/server.config';
-import type { LoginRequestData } from '$shared/api/login';
 import type { RequestHandler } from './$types';
 
-export const POST = (async ({ request }) => {
-	const data: LoginRequestData = await request.json();
+export const POST = (async ({ fetch, request, cookies }) => {
 	const response = await fetch(backendConfig.baseUrl + '/user/auth', {
 		method: 'POST',
 		headers: backendConfig.baseHeaders,
-		body: JSON.stringify(data)
+		body: await request.text()
 	});
 
 	if (!response.ok) {
@@ -17,24 +14,15 @@ export const POST = (async ({ request }) => {
 		});
 	}
 
-	const headers = new Headers({
-		'Set-Cookie': generateClientSideSessionCookie(response),
-		Location: '/getting-started'
-	});
+	const authCookie = response.headers.get('Set-Cookie')?.replace(`${backendConfig.serverSessionCookieName}=`, '');
+	if (!authCookie) {
+		return new Response('Login failed, no cookie in server response', {
+			status: 500
+		});
+	}
 
-	return new Response(null, {
-		status: 307,
-		headers
+	cookies.set(backendConfig.serverSessionCookieName, authCookie, { path: '/' });
+	return new Response('Login successful', {
+		status: response.status
 	});
 }) satisfies RequestHandler;
-
-/**
- * Parses session cookie from backend response and maps it to a client side cookie
- * @param backendResponse that contains session cookie in its headers
- * @returns A Set-Cookie value string
- */
-function generateClientSideSessionCookie(backendResponse: Response): string {
-	const apiSessionCookie = backendResponse.headers.get('Set-Cookie')?.split('=')[1];
-
-	return serverConfig.clientSessionCookieName + '=' + apiSessionCookie + ' ; Path=/';
-}

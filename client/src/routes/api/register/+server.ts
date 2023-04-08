@@ -1,13 +1,11 @@
 import serverConfig from '$server/backend.config';
-import type { LoginRequestData } from '$shared/api/login';
 import type { RequestHandler } from './$types';
 
 export const POST = (async ({ request }) => {
-	const data: LoginRequestData = await request.json();
 	const response = await fetch(serverConfig.baseUrl + '/user/register', {
 		method: 'POST',
 		headers: serverConfig.baseHeaders,
-		body: JSON.stringify(data)
+		body: await request.text()
 	});
 
 	const options = {
