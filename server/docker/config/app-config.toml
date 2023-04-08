@@ -6,5 +6,6 @@ log_level = "debug"
 [mail_config]
 smtp_address = "mailhog"
 smtp_port = 1025
-smtp_username = "user"
-smtp_password = "password"
+# Credentials are not in use on dev environment
+smtp_username = ""
+smtp_password = ""
