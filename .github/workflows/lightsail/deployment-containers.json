@@ -2,7 +2,25 @@
   "rezsi-client": {
     "image": "846422419469.dkr.ecr.eu-central-1.amazonaws.com/rezsi-client:latest",
     "command": [],
-    "environment": {},
-    "ports": {"3000": "HTTP"}
+    "environment": {
+      "REZSI_API_BASE_URL": "http://localhost:8000/api"
+    },
+    "ports": {
+      "3000": "HTTP"
+    }
+  },
+  "rezsi-server": {
+    "image": "846422419469.dkr.ecr.eu-central-1.amazonaws.com/rezsi-server:latest",
+    "command": [],
+    "environment": {
+      "DATABASE_URL": "#{DATABASE_URL}#",
+      "SMTP_ADDRESS": "#{SMTP_ADDRESS}#",
+      "SMTP_USERNAME": "#{SMTP_USERNAME}#",
+      "SMTP_PASSWORD": "#{SMTP_PASSWORD}#",
+      "SMTP_PORT": 587
+    },
+    "ports": {
+      "8000": "HTTP"
+    }
   }
 }
