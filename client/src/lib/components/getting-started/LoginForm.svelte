@@ -11,8 +11,11 @@
 	import { createEventDispatcher } from 'svelte';
 	import { useForm, Hint, validators, required, email, HintGroup } from 'svelte-use-form';
 	import AlertMsg from '../common/AlertMsg.svelte';
+	import { createFormState, type BaseFormStates } from '$shared/composables/createFormState';
 
 	const dispatch = createEventDispatcher<{ switchView: void }>();
+	type FormStates = 'INVALID_CREDENTIALS' | BaseFormStates;
+	const { formState, setFormState } = createFormState<FormStates>();
 
 	const form = useForm({ email: {}, password: {} });
 
@@ -20,9 +23,6 @@
 		email: '',
 		password: ''
 	};
-
-	let loginUnsuccessful = false;
-	let technicalError = false;
 
 	async function login() {
 		$form.touched = true;
@@ -45,11 +45,13 @@
 				const referrer = $page.url.searchParams.get('referrer');
 				if (referrer) return (window.location.href = referrer);
 				window.location.href = '/';
+			} else if (res.status === 401) {
+				setFormState('INVALID_CREDENTIALS');
 			} else {
-				loginUnsuccessful = true;
+				throw new Error('Invalid api response');
 			}
 		} catch (err) {
-			technicalError = true;
+			setFormState('TECHNICAL_ERROR');
 			if (err instanceof Error) {
 				throw new Error('Sorry, you need to wait until we fix this', err);
 			}
@@ -75,9 +77,9 @@
 	on:submit|preventDefault={login}
 >
 	<div class="mb-4">
-		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="email">Email</label>
+		<label class="text-fontblack mb-2 block font-bold tracking-wide" for="email">Email</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
+			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
 			id="email"
 			name="email"
 			type="email"
@@ -93,9 +95,9 @@
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="password">Password</label>
+		<label class="text-fontblack mb-2 block font-bold tracking-wide" for="password">Password</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
+			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
 			id="password"
 			name="password"
 			type="password"
@@ -107,20 +109,20 @@
 		/>
 		<Hint for="password" on="required" class={VALIDATION_MSG}>This is a mandatory field</Hint>
 	</div>
-	{#if loginUnsuccessful}
+	{#if $formState === 'INVALID_CREDENTIALS'}
 		<AlertMsg msg={UNSUCCESFUL_LOGIN_ALERT_MSG} />
 	{/if}
-	{#if technicalError}
+	{#if $formState === 'TECHNICAL_ERROR'}
 		<AlertMsg msg={TECHNICAL_ERROR_ALERT_MSG} />
 	{/if}
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline rounded bg-primary px-4 py-2 text-white hover:bg-primarydark focus:outline-none disabled:bg-gray-500"
+			class="focus:shadow-outline bg-primary hover:bg-primarydark rounded px-4 py-2 text-white focus:outline-none disabled:bg-gray-500"
 			>Sign In
 		</button>
 		<button
-			class="focus:shadow-outline rounded bg-secondary px-4 py-2 text-white hover:bg-secondarydark focus:outline-none"
+			class="focus:shadow-outline bg-secondary hover:bg-secondarydark rounded px-4 py-2 text-white focus:outline-none"
 			on:click|preventDefault={navigateToRegister}>Go to registration</button
 		>
 	</div>
