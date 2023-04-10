@@ -1,7 +1,7 @@
 server_address = "0.0.0.0:8000"
 database_url = "mysql://veryrezsi:password@database:3306/veryrezsi"
 cookie_key = "tQ2FiMTuOFcBHyrEyWcqlRmliXXDhX0V9SH4LSFUxkvYPFuRgscJ1g2wDLq4qdeB"
-log_level = "debug"
+log_level = "info"
 
 [mail_config]
 smtp_address = "mailhog"
