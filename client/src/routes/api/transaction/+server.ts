@@ -1,5 +1,3 @@
-import backendConfig from '$server/backend.config';
-import { transferSessionCookie } from '$shared/cookie';
 import { requestAsProxy } from '$shared/proxy';
 import type { RequestHandler } from './$types';
 
