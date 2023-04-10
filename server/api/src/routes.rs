@@ -56,7 +56,7 @@ pub fn init(
         .route("/", get(|| async {}))
         .nest("/user", user_api)
         .nest("/expense", expense_api)
-        .nest("/transaction/", transaction_api)
+        .nest("/transaction", transaction_api)
         .nest("/currency", currency_api)
         .nest("/recurrence", recurrence_api);
 

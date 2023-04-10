@@ -238,10 +238,10 @@
 					]
 				},
 				{
-					"name": "currency_types",
+					"name": "currencies",
 					"item": [
 						{
-							"name": "get_currency_types",
+							"name": "get_currencies",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -261,10 +261,10 @@
 					]
 				},
 				{
-					"name": "recurrence_types",
+					"name": "recurrences",
 					"item": [
 						{
-							"name": "get_recurrence_types",
+							"name": "get_recurrences",
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -477,11 +477,11 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/expense/1",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense/1",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"expense",
 										"1"
@@ -496,11 +496,11 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/expense/predefined",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense/predefined",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"expense",
 										"predefined"
@@ -524,11 +524,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/expense",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"expense"
 									]
@@ -551,11 +551,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/expense/predefined",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense/predefined",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"expense",
 										"predefined"
@@ -567,19 +567,19 @@
 					]
 				},
 				{
-					"name": "currency_types",
+					"name": "currencies",
 					"item": [
 						{
-							"name": "get_currency_types",
+							"name": "get_currencies",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/currency",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/currency",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"currency"
 									]
@@ -590,19 +590,19 @@
 					]
 				},
 				{
-					"name": "recurrence_types",
+					"name": "recurrences",
 					"item": [
 						{
-							"name": "get_recurrence_types",
+							"name": "get_recurrences",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/recurrence",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/recurrence",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"recurrence"
 									]
@@ -630,11 +630,11 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/transaction",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/transaction",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"transaction"
 									]
@@ -648,14 +648,14 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{host}}:{{port}}{{apiBase}}/transaction/1",
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/transaction/5",
 									"host": [
 										"{{host}}"
 									],
-									"port": "{{port}}{{apiBase}}",
+									"port": "{{proxyPort}}{{apiBase}}",
 									"path": [
 										"transaction",
-										"1"
+										"5"
 									]
 								}
 							},

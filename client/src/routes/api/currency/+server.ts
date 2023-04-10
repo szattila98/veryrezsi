@@ -3,16 +3,14 @@ import { transferSessionCookie } from '$shared/cookie';
 import type { RequestHandler } from './$types';
 
 export const GET = (async ({ fetch, cookies }) => {
-	const response = await fetch(backendConfig.baseUrl + '/user/me', {
+	const response = await fetch(`${backendConfig.baseUrl}/currency`, {
 		method: 'GET',
 		headers: {
 			...transferSessionCookie(cookies),
 			...backendConfig.baseHeaders
 		}
 	});
-
-	return new Response(await response.text(), {
-		status: response.status,
-		headers: backendConfig.baseHeaders
-	});
+	const options = { status: response.status, headers: backendConfig.baseHeaders };
+	if (!response.ok) return new Response('Fetching currencies failed', options);
+	return new Response(await response.text(), options);
 }) satisfies RequestHandler;
