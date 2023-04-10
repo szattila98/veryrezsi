@@ -1,16 +1,11 @@
-import backendConfig from '$server/backend.config';
-import { transferSessionCookie } from '$shared/cookie';
+import { requestAsProxy } from '$shared/proxy';
 import type { RequestHandler } from './$types';
 
 export const GET = (async ({ fetch, cookies }) => {
-	const response = await fetch(`${backendConfig.baseUrl}/recurrence`, {
+	return await requestAsProxy({
+		fetch,
+		cookies,
 		method: 'GET',
-		headers: {
-			...transferSessionCookie(cookies),
-			...backendConfig.baseHeaders
-		}
+		path: '/recurrence'
 	});
-	const options = { status: response.status, headers: backendConfig.baseHeaders };
-	if (!response.ok) return new Response('Fetching recurrences failed', options);
-	return new Response(await response.text(), options);
 }) satisfies RequestHandler;

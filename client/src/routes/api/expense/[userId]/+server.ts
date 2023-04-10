@@ -1,12 +1,12 @@
 import { requestAsProxy } from '$shared/proxy';
 import type { RequestHandler } from './$types';
 
-export const POST = (async ({ fetch, cookies, request }) => {
+export const GET = (async ({ fetch, cookies, params }) => {
+	const id = params.userId;
 	return await requestAsProxy({
 		fetch,
 		cookies,
-		method: 'POST',
-		path: `/expense`,
-		request
+		method: 'GET',
+		path: `/expense/${id}`
 	});
 }) satisfies RequestHandler;

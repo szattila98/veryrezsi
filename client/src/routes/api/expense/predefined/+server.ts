@@ -1,30 +1,21 @@
-import backendConfig from '$server/backend.config';
-import { transferSessionCookie } from '$shared/cookie';
+import { requestAsProxy } from '$shared/proxy';
 import type { RequestHandler } from './$types';
 
 export const GET = (async ({ fetch, cookies }) => {
-	const response = await fetch(`${backendConfig.baseUrl}/expense/predefined`, {
+	return await requestAsProxy({
+		fetch,
+		cookies,
 		method: 'GET',
-		headers: {
-			...transferSessionCookie(cookies),
-			...backendConfig.baseHeaders
-		}
+		path: `/expense/predefined`
 	});
-	const options = { status: response.status, headers: backendConfig.baseHeaders };
-	if (!response.ok) return new Response('Fetching predefined expenses failed', options);
-	return new Response(await response.text(), options);
 }) satisfies RequestHandler;
 
 export const POST = (async ({ fetch, cookies, request }) => {
-	const response = await fetch(`${backendConfig.baseUrl}/expense/predefined`, {
+	return await requestAsProxy({
+		fetch,
+		cookies,
 		method: 'POST',
-		headers: {
-			...transferSessionCookie(cookies),
-			...backendConfig.baseHeaders
-		},
-		body: await request.text()
+		path: `/expense/predefined`,
+		request
 	});
-	const options = { status: response.status, headers: backendConfig.baseHeaders };
-	if (!response.ok) return new Response('Creating predefined expense failed', options);
-	return new Response(await response.text(), options);
 }) satisfies RequestHandler;

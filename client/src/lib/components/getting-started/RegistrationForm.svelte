@@ -86,9 +86,9 @@
 	on:submit|preventDefault={register}
 >
 	<div class="mb-4">
-		<label class="text-fontblack mb-2 block font-bold" for="email">Username</label>
+		<label class="mb-2 block font-bold text-fontblack" for="email">Username</label>
 		<input
-			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="username"
 			name="username"
 			type="text"
@@ -101,9 +101,9 @@
 		<Hint for="username" on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
 	</div>
 	<div class="mb-4">
-		<label class="text-fontblack mb-2 block font-bold" for="email">Email</label>
+		<label class="mb-2 block font-bold text-fontblack" for="email">Email</label>
 		<input
-			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="email"
 			name="email"
 			type="email"
@@ -138,9 +138,9 @@
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="text-fontblack mb-2 block font-bold" for="password">Confirm password</label>
+		<label class="mb-2 block font-bold text-fontblack" for="password">Confirm password</label>
 		<input
-			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="confirmPassword"
 			name="confirmPassword"
 			type="password"
@@ -163,11 +163,11 @@
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline bg-primary hover:bg-primarydark rounded px-4 py-2 font-bold text-white focus:outline-none"
+			class="focus:shadow-outline rounded bg-primary px-4 py-2 font-bold text-white hover:bg-primarydark focus:outline-none"
 			>Register account</button
 		>
 		<button
-			class="focus:shadow-outline bg-secondary hover:bg-secondarydark rounded px-4 py-2 font-bold text-white focus:outline-none"
+			class="focus:shadow-outline rounded bg-secondary px-4 py-2 font-bold text-white hover:bg-secondarydark focus:outline-none"
 			on:click|preventDefault={navigateToLogin}>Go to login</button
 		>
 	</div>

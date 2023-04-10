@@ -77,9 +77,9 @@
 	on:submit|preventDefault={login}
 >
 	<div class="mb-4">
-		<label class="text-fontblack mb-2 block font-bold tracking-wide" for="email">Email</label>
+		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="email">Email</label>
 		<input
-			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="email"
 			name="email"
 			type="email"
@@ -95,9 +95,9 @@
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="text-fontblack mb-2 block font-bold tracking-wide" for="password">Password</label>
+		<label class="mb-2 block font-bold tracking-wide text-fontblack" for="password">Password</label>
 		<input
-			class="focus:shadow-outline text-fontblack w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
+			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
 			id="password"
 			name="password"
 			type="password"
@@ -118,11 +118,11 @@
 	<div class="flex items-center justify-between">
 		<button
 			type="submit"
-			class="focus:shadow-outline bg-primary hover:bg-primarydark rounded px-4 py-2 text-white focus:outline-none disabled:bg-gray-500"
+			class="focus:shadow-outline rounded bg-primary px-4 py-2 text-white hover:bg-primarydark focus:outline-none disabled:bg-gray-500"
 			>Sign In
 		</button>
 		<button
-			class="focus:shadow-outline bg-secondary hover:bg-secondarydark rounded px-4 py-2 text-white focus:outline-none"
+			class="focus:shadow-outline rounded bg-secondary px-4 py-2 text-white hover:bg-secondarydark focus:outline-none"
 			on:click|preventDefault={navigateToRegister}>Go to registration</button
 		>
 	</div>

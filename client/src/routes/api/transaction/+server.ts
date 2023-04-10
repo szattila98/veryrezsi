@@ -1,16 +1,14 @@
 import backendConfig from '$server/backend.config';
 import { transferSessionCookie } from '$shared/cookie';
+import { requestAsProxy } from '$shared/proxy';
 import type { RequestHandler } from './$types';
 
 export const POST = (async ({ fetch, cookies, request }) => {
-	const response = await fetch(`${backendConfig.baseUrl}/transaction`, {
+	return await requestAsProxy({
+		fetch,
+		cookies,
 		method: 'POST',
-		headers: {
-			...transferSessionCookie(cookies),
-			...backendConfig.baseHeaders
-		},
-		body: await request.text()
+		path: `/transaction`,
+		request
 	});
-	const options = { status: response.status, headers: backendConfig.baseHeaders };
-	return new Response(await response.text(), options);
 }) satisfies RequestHandler;
