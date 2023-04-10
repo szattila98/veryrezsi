@@ -5,6 +5,8 @@
 - _rustup_ 1.25.1 or higher
 - _rustc_ 1.65.0 or higher
 - _mysql_ 8 or higher
+- _SMTP_ relay, of any kind 
+### OR
 - _docker_ 20.10.17 or higher
 - _docker-compose_ 1.29.2 or higher
 
@@ -17,7 +19,7 @@ IDE
 
 - There are two options:
   - local mysql database
-    - Run the `server/init.sql` file, which creates the necessary database structure
+    - Run the `database/init.sql` file, which creates the necessary database structure
   - mysql database in a docker container with docker-compose
     - Run `docker-compose up -d database` and a database will be available at the 3306 port, already initialized
 
@@ -51,7 +53,7 @@ IDE
 
 ## Starting backend for client
 
-- To run the complete backend (database & server), use `docker-compose up -d database server mailhog`, the database will be available at port 3306 and the server on 8000
+- To run the complete backend (database & server), use `docker-compose up -d server`, the database will be available at port 3306 and the server on 8000
 - The build will take some time at first and on changes, consequent runs will be much faster thanks to docker caching
 - It can be used as a backend for frontend development, the server is built in release mode, so it is smaller and highly optimized
 
@@ -60,10 +62,3 @@ IDE
 - `cd ./client`
 - `npm i`
 - `npm run dev`
-
-### Environment variables for client
-- Environment variables can be defined by .env file in the root folder of client. A .env.example file is commited to the repository. Also, npm dev script will check if you have .env file created, if not then it will copy the example file for you, to make development quicker.
-  - Feel free to modify your .env file to your liking, it is .gitignore for a reason.
-  - If you need a new environmental configuration, do not forget to add it to the example file and commit it.
-- You can set variables in any other know way.
-

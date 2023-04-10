@@ -1,0 +1,25 @@
+on:
+  push:
+    branches: ["main", "chore/fullstack-deploy"]
+  pull_request:
+    branches: ["**"]
+    types: [opened, synchronize]
+    paths:
+      - "database/**"
+  workflow_dispatch:
+
+jobs:
+  sqlcheck:
+    name: Check SQL scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: yokawasa/action-sqlcheck@v1.4.0
+        id: sqlcheck
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          directories: |
+            database/scripts
+      - name: Get output
+        run: echo "Issues found in previous step"
+        if: steps.sqlcheck.outputs.issue-found
