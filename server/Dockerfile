@@ -1,42 +1,19 @@
-FROM rust:latest as builder
+FROM lukemathwalker/cargo-chef:latest-rust-1-alpine AS chef
+WORKDIR /app
 
-RUN USER=root cargo new --bin veryrezsi
-WORKDIR /veryrezsi
+FROM chef AS planner
+COPY . .
+RUN cargo chef prepare --recipe-path recipe.json
 
-COPY ./Cargo.toml ./Cargo.toml
-COPY ./entity ./entity
-COPY ./migration ./migration
-COPY ./core ./core
-COPY ./api ./api
-COPY ./proc_macros ./proc_macros
-COPY ./src ./src
-COPY ./resources/email ./resources/email
+FROM chef AS builder 
+COPY --from=planner /app/recipe.json recipe.json
+RUN cargo chef cook --release --recipe-path recipe.json
+COPY . .
+RUN cargo build --release --bin veryrezsi
 
-RUN cargo build --release
-
-FROM debian:bullseye
-ARG APP=/usr/src/app
-
-RUN apt-get update \
-    && apt-get install -y ca-certificates tzdata \
-    && rm -rf /var/lib/apt/lists/*
-
-EXPOSE 8000
-
-ENV TZ=Etc/UTC \
-    APP_USER=appuser
-
-RUN groupadd $APP_USER \
-    && useradd -g $APP_USER $APP_USER \
-    && mkdir -p ${APP}
-
-COPY --from=builder /veryrezsi/target/release/veryrezsi ${APP}/veryrezsi
-
-RUN chown -R $APP_USER:$APP_USER ${APP}
-
-USER $APP_USER
+FROM debian:bullseye AS runtime
+ARG APP /app
 WORKDIR ${APP}
-
 COPY ./docker/config/app-config.toml ${APP}/resources/app-config.toml
-
-CMD ["./veryrezsi"]
+COPY --from=builder /app/target/release/veryrezsi /usr/local/bin
+ENTRYPOINT ["/usr/local/bin/veryrezsi"]
