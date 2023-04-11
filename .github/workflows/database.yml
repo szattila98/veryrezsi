@@ -1,3 +1,5 @@
+name: Database
+
 on:
   push:
     branches: ["main", "chore/fullstack-deploy"]

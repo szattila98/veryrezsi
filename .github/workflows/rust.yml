@@ -1,3 +1,5 @@
+name: Rust
+
 on:
   push:
     branches: ["main", "chore/fullstack-deploy"]
@@ -7,8 +9,6 @@ on:
     paths:
       - "server/**"
   workflow_dispatch:
-
-name: Rust CI
 
 env:
   CARGO_TERM_COLOR: always

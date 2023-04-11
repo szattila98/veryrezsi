@@ -19,7 +19,7 @@ IDE
 
 - There are two options:
   - local mysql database
-    - Run the `database/init.sql` file, which creates the necessary database structure
+    - Run the `database/scripts/init.sql` file, which creates the necessary database structure
   - mysql database in a docker container with docker-compose
     - Run `docker-compose up -d database` and a database will be available at the 3306 port, already initialized
 
