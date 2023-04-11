@@ -31,7 +31,7 @@ fi
 
 # Check if at least one argument is given
 if [[ $# -lt 1 ]]; then
-  echo -e "${RED}Error: at least one argument is required!${NC}"
+  echo -e "${RED}Error: at least one argument, 'start' or 'stop' is required!${NC}"
   exit 1
 fi
 
