@@ -13,7 +13,7 @@ RUN cargo build --release --bin veryrezsi
 
 FROM debian:bullseye AS runtime
 ARG APP /app
-WORKDIR ${APP}
+WORKDIR $APP
 COPY ./docker/config/app-config.toml ${APP}/resources/app-config.toml
 COPY --from=builder /app/target/release/veryrezsi /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/veryrezsi"]
