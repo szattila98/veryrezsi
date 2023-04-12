@@ -9,9 +9,22 @@
 - _docker-compose_ 1.29.2 or higher
 
 IDE
- - _Visual Studio Code_ is recommended.
-   - with rust-analyzer (rust-lang.rust-analyzer) extension to work with rust
-   - with CodeLLDB (vadimcn.vscode-lldb) extension to debug
+
+- _Visual Studio Code_ is recommended.
+  - with rust-analyzer (rust-lang.rust-analyzer) extension to work with rust
+  - with CodeLLDB (vadimcn.vscode-lldb) extension to debug
+
+## Quick start with `start.sh`
+
+To quickly start using docker compose, use this script.
+This will also rebuild containers on file changes.
+You can supply it with the following arguments:
+
+- `start` - it will start the services and also rebuild and restart them on code changes. It also needs a second argument.
+  - `database` - it will run the database and also mailhog, usable for local backend development
+  - `server` - it will run the server and its dependencies, usable for local frontend development
+  - `client` - it will start everything as client is dependent on the other services
+- `stop` - it will stop every service
 
 ## Starting a dev database
 
@@ -35,8 +48,9 @@ IDE
   - It uses the outer `.env` file for the connection string but it can be supplied with it's own file in the `server/migration` directory if needed
 
 ## Use the API
+
 - There is a Postman collection file, ready to be used for testing during development at `server/postman_collections.json`
-  - Don't just use it, remember to update it when any of the API schema changes. 
+  - Don't just use it, remember to update it when any of the API schema changes.
 
 # Frontend dev setup
 
@@ -62,8 +76,8 @@ IDE
 - `npm run dev`
 
 ### Environment variables for client
+
 - Environment variables can be defined by .env file in the root folder of client. A .env.example file is commited to the repository. Also, npm dev script will check if you have .env file created, if not then it will copy the example file for you, to make development quicker.
   - Feel free to modify your .env file to your liking, it is .gitignore for a reason.
   - If you need a new environmental configuration, do not forget to add it to the example file and commit it.
 - You can set variables in any other know way.
-
