@@ -2,6 +2,8 @@ use entity::{expense, transaction, Id, MoneyAmount};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
+use super::transactions::TransactionResponse;
+
 #[derive(Clone, Deserialize, Validate)]
 #[serde(rename_all = "camelCase")]
 pub struct NewExpenseRequest {
@@ -48,10 +50,8 @@ pub struct NewPredefinedExpenseRequest {
     pub recurrence_type_id: Id,
 }
 
-pub type ExpenseResponse = Vec<ExpenseWithTransactions>;
-
-#[derive(Clone, Serialize, PartialEq, Eq, Debug)]
-pub struct ExpenseWithTransactions {
+#[derive(Clone, Serialize, PartialEq, Eq)]
+pub struct ExpenseResponse {
     pub id: Id,
     pub name: String,
     pub description: String,
@@ -61,12 +61,12 @@ pub struct ExpenseWithTransactions {
     pub currency_type_id: Id,
     pub recurrence_type_id: Id,
     pub predefined_expense_id: Option<Id>,
-    pub transactions: Vec<transaction::Model>,
+    pub transactions: Vec<TransactionResponse>,
 }
 
-impl From<(expense::Model, Vec<transaction::Model>)> for ExpenseWithTransactions {
+impl From<(expense::Model, Vec<transaction::Model>)> for ExpenseResponse {
     fn from((expense, transactions): (expense::Model, Vec<transaction::Model>)) -> Self {
-        ExpenseWithTransactions {
+        Self {
             id: expense.id,
             name: expense.name,
             description: expense.description,
@@ -76,7 +76,10 @@ impl From<(expense::Model, Vec<transaction::Model>)> for ExpenseWithTransactions
             currency_type_id: expense.currency_type_id,
             recurrence_type_id: expense.recurrence_type_id,
             predefined_expense_id: expense.predefined_expense_id,
-            transactions,
+            transactions: transactions
+                .into_iter()
+                .map(|transaction| transaction.into())
+                .collect(),
         }
     }
 }

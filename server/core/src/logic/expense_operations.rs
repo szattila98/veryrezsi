@@ -5,9 +5,7 @@ use self::errors::{
 
 use super::common;
 use super::user_operations::authorize_user;
-use crate::dto::expenses::{
-    ExpenseWithTransactions, NewExpenseRequest, NewPredefinedExpenseRequest,
-};
+use crate::dto::expenses::{ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest};
 use crate::logic::currency_operations::find_currency_type_by_id;
 use crate::logic::recurrence_operations::find_recurrence_type_by_id;
 
@@ -25,14 +23,14 @@ pub async fn find_expenses_with_transactions_by_user_id(
     conn: &DatabaseConnection,
     authenticated_user_id: Id,
     user_id: Id,
-) -> Result<Vec<ExpenseWithTransactions>, FindExpensesWithTransactionsByUserIdError> {
+) -> Result<Vec<ExpenseResponse>, FindExpensesWithTransactionsByUserIdError> {
     authorize_user(authenticated_user_id, user_id)?;
     let expenses_with_transactions = Expense::find()
         .find_with_related(Transaction)
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)
         .await?;
-    let expenses_with_transactions: Vec<ExpenseWithTransactions> = expenses_with_transactions
+    let expenses_with_transactions: Vec<ExpenseResponse> = expenses_with_transactions
         .into_iter()
         .map(|items| items.into())
         .collect();
@@ -221,7 +219,7 @@ mod tests {
             (mock_expense.clone(), mock_transaction_2.clone()),
         ];
 
-        let expected_result = vec![ExpenseWithTransactions {
+        let expected_result = vec![ExpenseResponse {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
@@ -231,7 +229,7 @@ mod tests {
             currency_type_id: TEST_ID,
             recurrence_type_id: TEST_ID,
             predefined_expense_id: Some(TEST_ID),
-            transactions: vec![mock_transaction, mock_transaction_2],
+            transactions: vec![mock_transaction.into(), mock_transaction_2.into()],
         }];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![expense_with_transaction_fixture, vec![]])

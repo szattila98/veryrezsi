@@ -16,7 +16,7 @@ pub async fn get_expenses(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
     Path(user_id): Path<Id>,
-) -> Result<Json<ExpenseResponse>, ErrorMsg<()>> {
+) -> Result<Json<Vec<ExpenseResponse>>, ErrorMsg<()>> {
     match expense_operations::find_expenses_with_transactions_by_user_id(conn, user.id, user_id)
         .await
     {
