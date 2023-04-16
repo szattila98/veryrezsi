@@ -6,13 +6,12 @@ use self::errors::{
 use super::common;
 use super::user_operations::authorize_user;
 use crate::dto::expenses::{ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest};
-use crate::logic::currency_operations::find_currency_type_by_id;
-use crate::logic::recurrence_operations::find_recurrence_type_by_id;
+use crate::logic::common::find_entity_by_id;
 
 use entity::expense::{self, Entity as Expense};
 use entity::predefined_expense::{self, Entity as PredefinedExpense};
 use entity::transaction::Entity as Transaction;
-use entity::Id;
+use entity::{currency_type, recurrence_type, Id};
 
 use chrono::NaiveDate;
 use migration::DbErr;
@@ -35,14 +34,6 @@ pub async fn find_expenses_with_transactions_by_user_id(
         .map(|items| items.into())
         .collect();
     Ok(expenses_with_transactions)
-}
-
-pub async fn find_expense_by_id(
-    conn: &DatabaseConnection,
-    id: Id,
-) -> Result<Option<expense::Model>, DbErr> {
-    let expense = Expense::find_by_id(id).one(conn).await?;
-    Ok(expense)
 }
 
 pub async fn create_expense(
@@ -108,8 +99,8 @@ async fn validate_recurrence_and_currency_types(
     recurrence_type_id: Id,
 ) -> Result<(), ValidateRecurrenceAndCurrencyTypesError> {
     let (referred_recurrence_type, referred_currency_type) = tokio::join!(
-        find_recurrence_type_by_id(conn, recurrence_type_id),
-        find_currency_type_by_id(conn, currency_type_id)
+        find_entity_by_id::<recurrence_type::Entity>(conn, recurrence_type_id),
+        find_entity_by_id::<currency_type::Entity>(conn, currency_type_id)
     );
     let Some(_) = referred_currency_type? else {
         return Err(ValidateRecurrenceAndCurrencyTypesError::InvalidCurrencyType)
@@ -257,35 +248,6 @@ mod tests {
                     test_db_error()
                 ))
         );
-    }
-
-    #[tokio::test]
-    async fn find_expense_by_id_all_cases() {
-        let mock_expense = expense::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            description: TEST_STR.to_string(),
-            value: test_decimal(),
-            start_date: NaiveDate::MIN,
-            user_id: TEST_ID,
-            currency_type_id: TEST_ID,
-            recurrence_type_id: TEST_ID,
-            predefined_expense_id: None,
-        };
-        let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![mock_expense.clone()], vec![]])
-            .append_query_errors(vec![test_db_error()])
-            .into_connection();
-
-        let (expense, none, db_error) = tokio::join!(
-            find_expense_by_id(&conn, TEST_ID),
-            find_expense_by_id(&conn, TEST_ID),
-            find_expense_by_id(&conn, TEST_ID)
-        );
-
-        check!(expense == Ok(Some(mock_expense)));
-        check!(none == Ok(None));
-        check!(db_error == Err(test_db_error()));
     }
 
     #[tokio::test]

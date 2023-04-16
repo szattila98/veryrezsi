@@ -30,14 +30,6 @@ pub async fn find_user_by_email(
     Ok(user)
 }
 
-pub async fn find_user_by_id(
-    conn: &DatabaseConnection,
-    id: Id,
-) -> Result<Option<user::Model>, DbErr> {
-    let user = User::find_by_id(id).one(conn).await?;
-    Ok(user)
-}
-
 pub async fn save_user<M>(
     config: &config::AppConfig,
     conn: &DatabaseConnection,
@@ -213,7 +205,7 @@ mod tests {
         logic::user_operations::{
             activate_account, authorize_user,
             errors::{ActivateAccountError, AuthorizeUserError, SaveUserError},
-            find_user_by_email, find_user_by_id, save_user,
+            find_user_by_email, save_user,
         },
     };
 
@@ -243,31 +235,6 @@ mod tests {
             find_user_by_email(&conn, TEST_EMAIL.to_string()),
             find_user_by_email(&conn, TEST_EMAIL.to_string()),
             find_user_by_email(&conn, TEST_EMAIL.to_string())
-        );
-
-        check!(user == Ok(Some(mock_user)));
-        check!(not_found == Ok(None));
-        check!(db_error == Err(test_db_error()));
-    }
-
-    #[tokio::test]
-    async fn find_by_id_all_cases() {
-        let mock_user = user::Model {
-            id: TEST_ID,
-            email: TEST_EMAIL.to_string(),
-            username: TEST_STR.to_string(),
-            pw_hash: TEST_STR.to_string(),
-            activated: true,
-        };
-        let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![mock_user.clone()], vec![]])
-            .append_query_errors(vec![test_db_error()])
-            .into_connection();
-
-        let (user, not_found, db_error) = tokio::join!(
-            find_user_by_id(&conn, TEST_ID),
-            find_user_by_id(&conn, TEST_ID),
-            find_user_by_id(&conn, TEST_ID)
         );
 
         check!(user == Ok(Some(mock_user)));

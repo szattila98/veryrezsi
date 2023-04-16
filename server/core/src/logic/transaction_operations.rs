@@ -3,14 +3,12 @@ use self::errors::{CreateTransactionError, DeleteTransactionByIdError};
 use super::common;
 use super::user_operations::authorize_user;
 use crate::dto::transactions::NewTransactionRequest;
-use crate::logic::currency_operations::find_currency_type_by_id;
-use crate::logic::expense_operations::find_expense_by_id;
+use crate::logic::common::find_entity_by_id;
 
 use entity::transaction::{self, Entity as Transaction};
-use entity::Id;
+use entity::{currency_type, expense, Id};
 
 use chrono::NaiveDate;
-use migration::DbErr;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, Set};
 
@@ -20,8 +18,8 @@ pub async fn create_transaction(
     req: NewTransactionRequest,
 ) -> Result<Id, CreateTransactionError> {
     let (expense_result, currency_result) = tokio::join!(
-        find_expense_by_id(conn, req.expense_id),
-        find_currency_type_by_id(conn, req.currency_type_id)
+        find_entity_by_id::<expense::Entity>(conn, req.expense_id),
+        find_entity_by_id::<currency_type::Entity>(conn, req.currency_type_id)
     );
     let Some(expense) = expense_result? else {
         return Err(CreateTransactionError::InvalidExpenseId);
@@ -49,24 +47,16 @@ pub async fn delete_transaction_by_id(
     user_id: Id,
     transaction_id: Id,
 ) -> Result<(), DeleteTransactionByIdError> {
-    let Some(transaction) = find_transaction_by_id(conn, transaction_id).await? else {
+    let Some(transaction) = find_entity_by_id::<transaction::Entity>(conn, transaction_id).await? else {
         return Err(DeleteTransactionByIdError::InvalidTransaction);
     };
-    let Some(expense) = find_expense_by_id(conn, transaction.expense_id).await? else {
+    let Some(expense) = find_entity_by_id::<expense::Entity>(conn, transaction.expense_id).await? else {
         return Err(DeleteTransactionByIdError::InvalidTransaction);
     };
     authorize_user(user_id, expense.user_id)?;
 
     Transaction::delete_by_id(transaction_id).exec(conn).await?;
     Ok(())
-}
-
-async fn find_transaction_by_id(
-    conn: &DatabaseConnection,
-    transaction_id: Id,
-) -> Result<Option<transaction::Model>, DbErr> {
-    let transaction = Transaction::find_by_id(transaction_id).one(conn).await?;
-    Ok(transaction)
 }
 
 pub mod errors {
@@ -360,32 +350,5 @@ mod tests {
         check!(transaction_query_db_error == db_error);
         check!(expense_query_db_error == db_error);
         check!(transaction_delete_db_error == db_error);
-    }
-
-    #[tokio::test]
-    async fn get_transaction_by_id_if_exists_all_cases() {
-        let mock_transaction = transaction::Model {
-            id: TEST_ID,
-            donor_name: TEST_STR.to_string(),
-            value: test_decimal(),
-            date: NaiveDate::MIN,
-            currency_type_id: TEST_ID,
-            expense_id: TEST_ID,
-        };
-        let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![mock_transaction.clone()]])
-            .append_query_results(vec![Vec::<transaction::Model>::new()])
-            .append_query_errors(vec![test_db_error()])
-            .into_connection();
-
-        let (found, not_found, db_error) = tokio::join!(
-            find_transaction_by_id(&conn, TEST_ID),
-            find_transaction_by_id(&conn, TEST_ID),
-            find_transaction_by_id(&conn, TEST_ID),
-        );
-
-        check!(found == Ok(Some(mock_transaction)));
-        check!(not_found == Ok(None));
-        check!(db_error == Err(test_db_error()));
     }
 }

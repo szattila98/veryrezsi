@@ -1,4 +1,4 @@
-use super::common::ValidatedJson;
+use super::common::{self, ValidatedJson};
 use super::error::ErrorMsg;
 use super::AppState;
 use crate::auth::{self, AUTH_COOKIE_NAME};
@@ -9,7 +9,7 @@ use entity::user;
 use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::users::{LoginRequest, NewUserRequest};
-use veryrezsi_core::logic::user_operations;
+use veryrezsi_core::logic::{find_entity_by_id, user_operations};
 
 pub async fn login(
     cookies: PrivateCookieJar,
@@ -43,7 +43,7 @@ pub async fn me(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
 ) -> Result<Json<user::Model>, ErrorMsg<()>> {
-    match user_operations::find_user_by_id(conn, user.id).await? {
+    match find_entity_by_id::<user::Entity>(conn, user.id).await? {
         Some(user) => Ok(Json(user)),
         None => Err(ErrorMsg::new(StatusCode::NOT_FOUND, "user not found")),
     }
