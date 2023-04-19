@@ -67,14 +67,22 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Setup Docker image builder (Buildx)
+        uses: docker/setup-buildx-action@v2
+
       - name: Server - Build, tag, and push image to Amazon ECR
+        uses: docker/docker/build-push-action@v4
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: rezsi-server
           IMAGE_TAG: latest
-        run: |
-          docker build --build-arg backend_url=127.0.0.1:8000/api -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./server
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        with:
+          context: ./server
+          tags: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   publish-database:
     name: Publish Database image
     runs-on: ubuntu-latest

@@ -1,4 +1,4 @@
-FROM mysql:8.0.29
+FROM hsheth2/mysql-low-memory:8.0.29
 
 ENV MYSQL_DATABASE veryrezsi
 
