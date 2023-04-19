@@ -72,13 +72,9 @@ jobs:
 
       - name: Server - Build, tag, and push image to Amazon ECR
         uses: docker/build-push-action@v4
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: rezsi-server
-          IMAGE_TAG: latest
         with:
           context: ./server
-          tags: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          tags: ${{ steps.login-ecr.outputs.registry }}/rezsi-server:latest
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
