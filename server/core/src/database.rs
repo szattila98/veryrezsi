@@ -9,9 +9,11 @@ pub async fn init(config: &AppConfig) -> DatabaseConnection {
     opt.max_connections(100)
         .min_connections(5)
         .connect_timeout(Duration::from_secs(60))
+        .acquire_timeout(Duration::from_secs(60))
         .idle_timeout(Duration::from_secs(8))
         .max_lifetime(Duration::from_secs(8))
-        .sqlx_logging(false);
+        .sqlx_logging_level(tracing::log::LevelFilter::Debug)
+        .sqlx_logging(true);
     let conn = Database::connect(opt)
         .await
         .expect("Database connection failed");
