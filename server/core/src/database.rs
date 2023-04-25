@@ -8,12 +8,10 @@ pub async fn init(config: &AppConfig) -> DatabaseConnection {
     let mut opt = ConnectOptions::new(config.database_url.clone());
     opt.max_connections(100)
         .min_connections(5)
-        .connect_timeout(Duration::from_secs(60))
-        .acquire_timeout(Duration::from_secs(60))
+        .connect_timeout(Duration::from_secs(8))
         .idle_timeout(Duration::from_secs(8))
         .max_lifetime(Duration::from_secs(8))
-        .sqlx_logging_level(tracing::log::LevelFilter::Debug)
-        .sqlx_logging(true);
+        .sqlx_logging(false);
     let conn = Database::connect(opt)
         .await
         .expect("Database connection failed");

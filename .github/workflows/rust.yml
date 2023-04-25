@@ -2,7 +2,7 @@ name: Rust
 
 on:
   push:
-    branches: ["main", "chore/fullstack-deploy"]
+    branches: ["main"]
   pull_request:
     branches: ["**"]
     types: [opened, synchronize]
