@@ -1,10 +1,10 @@
 server_address = "0.0.0.0:8000"
-database_url = "mysql://veryrezsi:password@database:3306/veryrezsi"
+database_url = "mysql://veryrezsi:password@veryrezsi_database:3306/veryrezsi"
 cookie_key = "tQ2FiMTuOFcBHyrEyWcqlRmliXXDhX0V9SH4LSFUxkvYPFuRgscJ1g2wDLq4qdeB"
 log_level = "info"
 
 [mail_config]
-smtp_address = "mailhog"
+smtp_address = "veryrezsi_smtp"
 smtp_port = 1025
-smtp_username = "user"
-smtp_password = "password"
+smtp_username = ""
+smtp_password = ""

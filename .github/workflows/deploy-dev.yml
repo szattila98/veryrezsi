@@ -2,7 +2,7 @@ name: Deploy to dev environment
 
 on:
   workflow_run:
-    workflows: ['Build & Publish Docker Images']
+    workflows: ["Build & Publish Docker Images"]
     types:
       - completed
   workflow_dispatch:
@@ -14,14 +14,24 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Authenticate into AWS
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
+
+      - name: Replace infrastructure secrets in deployment description
+        uses: cschleiden/replace-tokens@v1
+        with:
+          files: "deployment-containers.json"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SMTP_ADDRESS: ${{ secrets.SMTP_ADDRESS }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
 
       - name: Create new Lightsail deployment
         run: >
