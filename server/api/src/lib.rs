@@ -35,7 +35,10 @@ async fn init() -> (SocketAddr, Router) {
     let conn = veryrezsi_core::database::init(&config).await;
     info!("Successfully established database connection");
 
-    info!("Initializing mail transport...");
+    info!(
+        "Initializing mail transport with with relay: {}",
+        &config.mail_config.smtp_address
+    );
     let mail_transport = veryrezsi_core::email::get_mail_transport(&config.mail_config);
     info!("Successfully initialized mail transport");
 

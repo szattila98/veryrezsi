@@ -3,10 +3,10 @@ version: '3.9'
 services:
 
   database:
-    container_name: database
-    image: mysql:8.0.29
-    volumes:
-      - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql
+    container_name: veryrezsi_database
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     ports: 
       - "3306:3306"
     environment:
@@ -17,8 +17,8 @@ services:
       timeout: 20s
       retries: 10
 
-  mailhog:
-    container_name: mailhog
+  smtp:
+    container_name: veryrezsi_smtp
     image: mailhog/mailhog
     logging:
       driver: 'none'  # disable saving logs
@@ -34,7 +34,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      mailhog:
+      smtp:
         condition: service_started
       database:
         condition: service_healthy # this will make the server wait for the database to be healthy and ready
