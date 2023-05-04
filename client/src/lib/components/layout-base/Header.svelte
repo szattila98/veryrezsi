@@ -1,7 +1,7 @@
 <script>
-	import FaHome from 'svelte-icons/fa/FaHome.svelte';
 	import FaClipboardList from 'svelte-icons/fa/FaClipboardList.svelte';
 	import FaRegUserCircle from 'svelte-icons/fa/FaRegUserCircle.svelte';
+	import IoMdHome from 'svelte-icons/io/IoMdHome.svelte';
 	import IoIosLogOut from 'svelte-icons/io/IoIosLogOut.svelte';
 	import NavEntry from './NavEntry.svelte';
 	import { GRADIENT } from '$lib/shared/constants';
@@ -26,10 +26,10 @@
 	}
 </script>
 
-<header class={`mb-4 px-6 py-4 text-gray-100 ${GRADIENT}`}>
+<header class={`px-6 py-4 text-gray-100 ${GRADIENT} shadow-xl z-30`}>
 	<div class="flex flex-col items-center justify-between sm:flex-row">
-		<NavEntry text="Veryrezsi" href="/" iconSize={8} class="text-xl font-semibold">
-			<FaHome />
+		<NavEntry text="VeryRezsi" href="/" iconSize={8} class="text-xl font-semibold">
+			<IoMdHome />
 		</NavEntry>
 		<nav>
 			<ul class="flex space-x-4">
