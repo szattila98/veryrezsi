@@ -150,8 +150,7 @@ impl<D: Serialize> From<CreatePredefinedExpenseError> for ErrorMsg<D> {
 impl<D: Serialize> From<CreateTransactionError> for ErrorMsg<D> {
     fn from(e: CreateTransactionError) -> Self {
         match e {
-            CreateTransactionError::InvalidExpenseId
-            | CreateTransactionError::InvalidCurrencyType => {
+            CreateTransactionError::InvalidExpenseId | CreateTransactionError::InvalidCurrency => {
                 Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
             CreateTransactionError::UserUnauthorized(_) => {

@@ -1,5 +1,5 @@
-pub mod currency_types;
+pub mod currencies;
 pub mod expenses;
-pub mod recurrence_types;
+pub mod recurrences;
 pub mod transactions;
 pub mod users;

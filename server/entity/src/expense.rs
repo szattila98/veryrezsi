@@ -21,8 +21,8 @@ pub struct Model {
     pub value: MoneyAmount,
     pub start_date: Date,
     pub user_id: Id,
-    pub currency_type_id: Id,
-    pub recurrence_type_id: Id,
+    pub currency_id: Id,
+    pub recurrence_id: Id,
     #[sea_orm(nullable)]
     pub predefined_expense_id: Option<Id>,
 }
@@ -38,17 +38,17 @@ pub enum Relation {
     #[sea_orm(has_many = "super::transaction::Entity")]
     Transaction,
     #[sea_orm(
-        belongs_to = "super::currency_type::Entity",
-        from = "Column::CurrencyTypeId",
-        to = "super::currency_type::Column::Id"
+        belongs_to = "super::currencies::Entity",
+        from = "Column::CurrencyId",
+        to = "super::currencies::Column::Id"
     )]
-    CurrencyType,
+    Currency,
     #[sea_orm(
-        belongs_to = "super::recurrence_type::Entity",
-        from = "Column::RecurrenceTypeId",
-        to = "super::recurrence_type::Column::Id"
+        belongs_to = "super::recurrences::Entity",
+        from = "Column::RecurrenceId",
+        to = "super::recurrences::Column::Id"
     )]
-    RecurrenceType,
+    Recurrence,
     #[sea_orm(
         belongs_to = "super::predefined_expense::Entity",
         from = "Column::PredefinedExpenseId",

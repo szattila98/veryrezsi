@@ -13,7 +13,7 @@ pub struct NewTransactionRequest {
     ))]
     pub donor_name: String,
 
-    pub currency_type_id: Id,
+    pub currency_id: Id,
 
     pub value: MoneyAmount,
 
@@ -28,7 +28,7 @@ pub struct TransactionResponse {
     pub donor_name: String,
     pub value: MoneyAmount,
     pub date: Date,
-    pub currency_type_id: Id,
+    pub currency_id: Id,
     pub expense_id: Id,
 }
 
@@ -39,7 +39,7 @@ impl From<transaction::Model> for TransactionResponse {
             donor_name: transaction.donor_name,
             value: transaction.value,
             date: transaction.date,
-            currency_type_id: transaction.currency_type_id,
+            currency_id: transaction.currency_id,
             expense_id: transaction.expense_id,
         }
     }

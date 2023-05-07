@@ -1,12 +1,10 @@
-use entity::recurrence_type::{self, Entity as RecurrenceType};
+use entity::recurrences::{self, Entity as Recurrence};
 
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
-pub async fn find_recurrence_types(
-    conn: &DatabaseConnection,
-) -> Result<Vec<recurrence_type::Model>, DbErr> {
-    RecurrenceType::find().all(conn).await
+pub async fn find_recurrences(conn: &DatabaseConnection) -> Result<Vec<recurrences::Model>, DbErr> {
+    Recurrence::find().all(conn).await
 }
 
 #[cfg(test)]
@@ -28,36 +26,36 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn find_recurrence_types_all_cases() {
-        let mock_recurrence_types = vec![
-            recurrence_type::Model {
+    async fn find_recurrences_all_cases() {
+        let mock_recurrences = vec![
+            recurrences::Model {
                 id: TEST_ID,
                 name: TEST_STR.to_string(),
                 per_year: TEST_FLOAT,
             },
-            recurrence_type::Model {
+            recurrences::Model {
                 id: TEST_ID,
                 name: TEST_STR.to_string(),
                 per_year: TEST_FLOAT,
             },
-            recurrence_type::Model {
+            recurrences::Model {
                 id: TEST_ID,
                 name: TEST_STR.to_string(),
                 per_year: TEST_FLOAT,
             },
         ];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![mock_recurrence_types.clone(), vec![]])
+            .append_query_results(vec![mock_recurrences.clone(), vec![]])
             .append_query_errors(vec![test_db_error()])
             .into_connection();
 
-        let (recurrence_types, empty_vec, db_error) = tokio::join!(
-            find_recurrence_types(&conn),
-            find_recurrence_types(&conn),
-            find_recurrence_types(&conn)
+        let (recurrences, empty_vec, db_error) = tokio::join!(
+            find_recurrences(&conn),
+            find_recurrences(&conn),
+            find_recurrences(&conn)
         );
 
-        check!(recurrence_types == Ok(mock_recurrence_types));
+        check!(recurrences == Ok(mock_recurrences));
         check!(empty_vec == Ok(vec![]));
         check!(db_error == Err(test_db_error()));
     }

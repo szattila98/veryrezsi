@@ -1,4 +1,4 @@
-use entity::{currency_type, predefined_expense, recurrence_type};
+use entity::{currencies, predefined_expense, recurrences};
 
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
@@ -38,30 +38,30 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(predefined_expense::Column::CurrencyTypeId)
+                        ColumnDef::new(predefined_expense::Column::CurrencyId)
                             .big_unsigned()
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(predefined_expense::Column::RecurrenceTypeId)
+                        ColumnDef::new(predefined_expense::Column::RecurrenceId)
                             .big_unsigned()
                             .not_null(),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .name("fk_predefined_expense-currency_type")
+                            .name("fk_predefined_expense-currency")
                             .from_tbl(predefined_expense::Entity)
-                            .from_col(predefined_expense::Column::CurrencyTypeId)
-                            .to_tbl(currency_type::Entity)
-                            .to_col(currency_type::Column::Id),
+                            .from_col(predefined_expense::Column::CurrencyId)
+                            .to_tbl(currencies::Entity)
+                            .to_col(currencies::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .name("fk_predefined_expense-recurrence_type")
+                            .name("fk_predefined_expense-recurrence")
                             .from_tbl(predefined_expense::Entity)
-                            .from_col(predefined_expense::Column::RecurrenceTypeId)
-                            .to_tbl(recurrence_type::Entity)
-                            .to_col(recurrence_type::Column::Id),
+                            .from_col(predefined_expense::Column::RecurrenceId)
+                            .to_tbl(recurrences::Entity)
+                            .to_col(recurrences::Column::Id),
                     )
                     .to_owned(),
             )
@@ -73,8 +73,8 @@ impl MigrationTrait for Migration {
             name: Set("Netflix Basic".to_string()),
             description: Set("Cheapest monthly plan of Netflix".to_string()),
             value: Set(Decimal::new(249, 1)),
-            currency_type_id: Set(1),
-            recurrence_type_id: Set(1),
+            currency_id: Set(1),
+            recurrence_id: Set(1),
         }
         .insert(db)
         .await?;
@@ -83,8 +83,8 @@ impl MigrationTrait for Migration {
             name: Set("Netflix Standard".to_string()),
             description: Set("Budget monthly plan of Netflix".to_string()),
             value: Set(Decimal::new(349, 1)),
-            currency_type_id: Set(1),
-            recurrence_type_id: Set(1),
+            currency_id: Set(1),
+            recurrence_id: Set(1),
         }
         .insert(db)
         .await?;
@@ -93,8 +93,8 @@ impl MigrationTrait for Migration {
             name: Set("Netflix Premium".to_string()),
             description: Set("Fully flashed monthly plan of Netflix".to_string()),
             value: Set(Decimal::new(449, 1)),
-            currency_type_id: Set(1),
-            recurrence_type_id: Set(1),
+            currency_id: Set(1),
+            recurrence_id: Set(1),
         }
         .insert(db)
         .await?;
@@ -105,8 +105,8 @@ impl MigrationTrait for Migration {
                 "The most popular IDE of JetBrains with all of its features".to_string()
             ),
             value: Set(Decimal::new(499, 2)),
-            currency_type_id: Set(2),
-            recurrence_type_id: Set(2),
+            currency_id: Set(2),
+            recurrence_id: Set(2),
         }
         .insert(db)
         .await?;

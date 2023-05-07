@@ -2,16 +2,16 @@ use crate::auth;
 
 use super::error::ErrorMsg;
 use axum::{extract::State, Json};
-use entity::currency_type;
+use entity::currencies;
 use sea_orm::DatabaseConnection;
 use veryrezsi_core::logic::currency_operations;
 
-pub async fn get_currency_types(
+pub async fn get_currencies(
     _: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
-) -> Result<Json<Vec<currency_type::Model>>, ErrorMsg<()>> {
-    match currency_operations::find_currency_types(conn).await {
-        Ok(currency_types) => Ok(Json(currency_types)),
+) -> Result<Json<Vec<currencies::Model>>, ErrorMsg<()>> {
+    match currency_operations::find_currencies(conn).await {
+        Ok(currencies) => Ok(Json(currencies)),
         Err(e) => Err(e.into()),
     }
 }

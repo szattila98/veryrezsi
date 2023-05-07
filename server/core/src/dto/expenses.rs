@@ -20,9 +20,9 @@ pub struct NewExpenseRequest {
     ))]
     pub description: String,
 
-    pub recurrence_type_id: Id,
+    pub currency_id: Id,
 
-    pub currency_type_id: Id,
+    pub recurrence_id: Id,
 
     pub predefined_expense_id: Option<Id>,
 
@@ -46,8 +46,8 @@ pub struct NewPredefinedExpenseRequest {
     ))]
     pub description: String,
     pub value: MoneyAmount,
-    pub currency_type_id: Id,
-    pub recurrence_type_id: Id,
+    pub currency_id: Id,
+    pub recurrence_id: Id,
 }
 
 #[derive(Clone, Serialize, PartialEq, Eq)]
@@ -58,8 +58,8 @@ pub struct ExpenseResponse {
     pub value: MoneyAmount,
     pub start_date: String,
     pub user_id: Id,
-    pub currency_type_id: Id,
-    pub recurrence_type_id: Id,
+    pub currency_id: Id,
+    pub recurrence_id: Id,
     pub predefined_expense_id: Option<Id>,
     pub transactions: Vec<TransactionResponse>,
 }
@@ -73,8 +73,8 @@ impl From<(expense::Model, Vec<transaction::Model>)> for ExpenseResponse {
             value: expense.value,
             start_date: expense.start_date.to_string(),
             user_id: expense.user_id,
-            currency_type_id: expense.currency_type_id,
-            recurrence_type_id: expense.recurrence_type_id,
+            currency_id: expense.currency_id,
+            recurrence_id: expense.recurrence_id,
             predefined_expense_id: expense.predefined_expense_id,
             transactions: transactions
                 .into_iter()

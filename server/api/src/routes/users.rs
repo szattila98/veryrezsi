@@ -1,4 +1,4 @@
-use super::common::{self, ValidatedJson};
+use super::common::ValidatedJson;
 use super::error::ErrorMsg;
 use super::AppState;
 use crate::auth::{self, AUTH_COOKIE_NAME};
@@ -35,7 +35,7 @@ pub async fn login(
         ));
     };
     let mut cookie = Cookie::new(auth::AUTH_COOKIE_NAME, user.id.to_string());
-    cookie.set_path("/api");
+    cookie.set_path("/");
     Ok(cookies.add(cookie))
 }
 

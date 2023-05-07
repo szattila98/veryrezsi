@@ -1,12 +1,12 @@
 {
 	"info": {
-		"_postman_id": "b3be52ec-f147-4f89-8698-c64d91cccf69",
+		"_postman_id": "28371add-e5a2-4e83-9294-888f16f7702e",
 		"name": "veryrezsi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "users",
+			"name": "user",
 			"item": [
 				{
 					"name": "login",
@@ -136,7 +136,7 @@
 			]
 		},
 		{
-			"name": "expenses",
+			"name": "expense",
 			"item": [
 				{
 					"name": "get_expenses_of_user",
@@ -183,7 +183,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Disney+\",\r\n    \"description\": \"We need princesses and Jedis\",\r\n    \"recurrenceTypeId\": 1,\r\n    \"currencyTypeId\": 2,\r\n    \"predefinedExpenseId\": null,\r\n    \"startDate\": \"29-08-2019\",\r\n    \"value\": 14.99\r\n}",
+							"raw": "{\r\n    \"name\": \"Disney+\",\r\n    \"description\": \"We need princesses and Jedis\",\r\n    \"recurrenceId\": 1,\r\n    \"currencyId\": 2,\r\n    \"predefinedExpenseId\": null,\r\n    \"startDate\": \"29-08-2019\",\r\n    \"value\": 14.99\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -210,7 +210,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Bribes\",\r\n    \"description\": \"For whom it may concern\",\r\n    \"value\": \"500.0\",\r\n    \"currencyTypeId\": 1,\r\n    \"recurrenceTypeId\": 1\r\n}",
+							"raw": "{\r\n    \"name\": \"Bribes\",\r\n    \"description\": \"For whom it may concern\",\r\n    \"value\": \"500.0\",\r\n    \"currencyId\": 1,\r\n    \"recurrenceId\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -234,10 +234,10 @@
 			]
 		},
 		{
-			"name": "currency_types",
+			"name": "currency",
 			"item": [
 				{
-					"name": "get_currency_types",
+					"name": "get_currencies",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -257,10 +257,10 @@
 			]
 		},
 		{
-			"name": "recurrence_types",
+			"name": "recurrence",
 			"item": [
 				{
-					"name": "get_recurrence_types",
+					"name": "get_recurrences",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -280,7 +280,7 @@
 			]
 		},
 		{
-			"name": "transactions",
+			"name": "transaction",
 			"item": [
 				{
 					"name": "create_transaction",
@@ -289,7 +289,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"donorName\": \"Ralf uncle\",\r\n    \"currencyTypeId\": 1,\r\n    \"value\": 500,\r\n    \"date\": \"25-10-2022\",\r\n    \"expenseId\": 1\r\n}",
+							"raw": "{\r\n    \"donorName\": \"Ralf uncle\",\r\n    \"currencyId\": 1,\r\n    \"value\": 500,\r\n    \"date\": \"25-10-2022\",\r\n    \"expenseId\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

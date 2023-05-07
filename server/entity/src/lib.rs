@@ -1,10 +1,10 @@
 use sea_orm::prelude::Decimal;
 
 pub mod account_activation;
-pub mod currency_type;
+pub mod currencies;
 pub mod expense;
 pub mod predefined_expense;
-pub mod recurrence_type;
+pub mod recurrences;
 pub mod transaction;
 pub mod user;
 
