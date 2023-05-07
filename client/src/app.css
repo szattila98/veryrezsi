@@ -1,3 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+	--theme-rounded-base: 8px;
+}
+
+body {
+	background-color:hsla(187,33%,82%,1);
+	background-image:
+		radial-gradient(at 0% 0%, rgba(var(--color-secondary-600) / 0.33) 0px, transparent 50%),
+		radial-gradient(at 98% 1%, rgba(var(--color-primary-600) / 0.33) 0px, transparent 50%);
+}
+
+.gradient-heading {
+	@apply bg-clip-text text-transparent box-decoration-clone;
+	/* Direction */
+	@apply bg-gradient-to-br;
+	/* Color Stops */
+	@apply from-primary-500 via-tertiary-500 to-secondary-500;
+}

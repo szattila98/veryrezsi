@@ -6,10 +6,10 @@
 	import {
 		REQUIRED_VIOLATION_MSG,
 		EMAIL_VIOLATION_MSG,
-		VALIDATION_MSG,
 		TECHNICAL_ERROR_ALERT_MSG
 	} from '$shared/constants';
 	import AlertMsg from '../common/AlertMsg.svelte';
+	import ThemedValidationHint from '../common/ThemedValidationHint.svelte';
 	import { createFormState, type BaseFormStates } from '$shared/composables/createFormState';
 
 	const dispatch = createEventDispatcher<{ switchView: void }>();
@@ -78,7 +78,7 @@
 </svelte:head>
 
 <form
-	class="rounded bg-white px-8 pb-8 pt-6 shadow-md"
+	class="card variant-filled-surface p-8"
 	id="register"
 	autocomplete="on"
 	novalidate
@@ -86,9 +86,9 @@
 	on:submit|preventDefault={register}
 >
 	<div class="mb-4">
-		<label class="mb-2 block font-bold text-fontblack" for="email">Username</label>
+		<label class="label" for="email">Username</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
+			class="input"
 			id="username"
 			name="username"
 			type="text"
@@ -98,12 +98,12 @@
 			maxlength="255"
 			use:validators={[required]}
 		/>
-		<Hint for="username" on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
+		<ThemedValidationHint hintProps={{ for:"username", on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
 	</div>
 	<div class="mb-4">
-		<label class="mb-2 block font-bold text-fontblack" for="email">Email</label>
+		<label class="label" for="email">Email</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
+			class="input"
 			id="email"
 			name="email"
 			type="email"
@@ -114,14 +114,14 @@
 			use:validators={[required, email]}
 		/>
 		<HintGroup for="email">
-			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
-			<Hint on="email" hideWhenRequired class={VALIDATION_MSG}>{EMAIL_VIOLATION_MSG}</Hint>
+			<ThemedValidationHint hintProps={{ on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
+			<ThemedValidationHint hintProps={{ on: "email", hideWhenRequired: true }} msg={EMAIL_VIOLATION_MSG} />
 		</HintGroup>
 	</div>
 	<div class="mb-4">
-		<label class={`{BLACK_TEXT_COLOR} mb-2 block font-bold`} for="password">Password</label>
+		<label class="label" for="password">Password</label>
 		<input
-			class="focus:shadow-outline text-fontbalck w-full appearance-none rounded-t border px-3 py-2 leading-tight shadow focus:outline-none"
+			class="input"
 			id="password"
 			name="password"
 			type="password"
@@ -133,14 +133,17 @@
 			on:keyup={validateConfirmPassword}
 		/>
 		<HintGroup for="password">
-			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
-			<Hint on="pattern" hideWhenRequired class={VALIDATION_MSG}>It is too easy to find out.</Hint>
+			<ThemedValidationHint hintProps={{ on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
+			<ThemedValidationHint
+				hintProps={{ on: "pattern", hideWhenRequired: true }}
+				msg="It is too easy to find out."
+			/>
 		</HintGroup>
 	</div>
 	<div class="mb-6">
-		<label class="mb-2 block font-bold text-fontblack" for="password">Confirm password</label>
+		<label class="label" for="password">Confirm password</label>
 		<input
-			class="focus:shadow-outline w-full appearance-none rounded-t border px-3 py-2 leading-tight text-fontblack shadow focus:outline-none"
+			class="input"
 			id="confirmPassword"
 			name="confirmPassword"
 			type="password"
@@ -151,23 +154,24 @@
 			use:validators={[required, passwordMatch]}
 		/>
 		<HintGroup for="confirmPassword">
-			<Hint on="required" class={VALIDATION_MSG}>{REQUIRED_VIOLATION_MSG}</Hint>
-			<Hint on="passwordMatch" hideWhenRequired class={VALIDATION_MSG}
-				>It does not match the one above.</Hint
-			>
+			<ThemedValidationHint hintProps={{ on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
+			<ThemedValidationHint
+				hintProps={{ on: "passwordMatch", hideWhenRequired: true }}
+				msg="It does not match the one above."
+			/>
 		</HintGroup>
 	</div>
 	{#if $formState === 'TECHNICAL_ERROR'}
 		<AlertMsg msg={TECHNICAL_ERROR_ALERT_MSG} />
 	{/if}
-	<div class="flex items-center justify-between">
+	<div class="flex items-center justify-between mt-4">
 		<button
 			type="submit"
-			class="focus:shadow-outline rounded bg-primary px-4 py-2 font-bold text-white hover:bg-primarydark focus:outline-none"
+			class="btn variant-filled-primary"
 			>Register account</button
 		>
 		<button
-			class="focus:shadow-outline rounded bg-secondary px-4 py-2 font-bold text-white hover:bg-secondarydark focus:outline-none"
+			class="btn variant-filled-secondary"
 			on:click|preventDefault={navigateToLogin}>Go to login</button
 		>
 	</div>

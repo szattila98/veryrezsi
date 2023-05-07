@@ -16,7 +16,7 @@
 
 <div class="py-12">
 	<div class="my-10 text-center text-4xl font-light">
-		Start <span class="text-primary">Very</span>Rezsi
+		Start <span class="font-semibold">VeryRezsi</span>
 	</div>
 	{#if isRegister}
 		<div class="m-auto max-w-sm" in:scale={{ duration: 200, easing: cubicInOut }}>

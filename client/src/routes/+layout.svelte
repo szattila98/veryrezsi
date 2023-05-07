@@ -1,10 +1,17 @@
 <script lang="ts">
 	import type { LayoutServerData } from './$types';
 	import { get } from 'svelte/store';
+	
+	// -- Skeleton --
+	// Your selected Skeleton theme:
+	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
+	// This contains the bulk of Skeletons required styles:
+	import '@skeletonlabs/skeleton/styles/all.css';
+	// Finally, your application's global stylesheet (sometimes labeled 'app.css')
+	import '../app.css';
 
 	import Footer from '$lib/components/layout-base/Footer.svelte';
 	import Header from '$lib/components/layout-base/Header.svelte';
-	import '../app.css';
 	import { loginSession } from '../stores';
 
 	export let data: LayoutServerData;
