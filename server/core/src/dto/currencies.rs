@@ -1,15 +1,15 @@
-use entity::{currencies, Id};
+use entity::{currency, Id};
 use serde::Serialize;
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, PartialEq, Eq)]
 pub struct CurrencyResponse {
     pub id: Id,
     pub abbreviation: String,
     pub name: String,
 }
 
-impl From<currencies::Model> for CurrencyResponse {
-    fn from(currency: currencies::Model) -> Self {
+impl From<currency::Model> for CurrencyResponse {
+    fn from(currency: currency::Model) -> Self {
         Self {
             id: currency.id,
             abbreviation: currency.abbreviation,

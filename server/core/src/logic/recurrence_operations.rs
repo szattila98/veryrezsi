@@ -1,9 +1,9 @@
-use entity::recurrences::{self, Entity as Recurrence};
+use entity::recurrence::{self, Entity as Recurrence};
 
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
-pub async fn find_recurrences(conn: &DatabaseConnection) -> Result<Vec<recurrences::Model>, DbErr> {
+pub async fn find_recurrences(conn: &DatabaseConnection) -> Result<Vec<recurrence::Model>, DbErr> {
     Recurrence::find().all(conn).await
 }
 
@@ -28,17 +28,17 @@ mod tests {
     #[tokio::test]
     async fn find_recurrences_all_cases() {
         let mock_recurrences = vec![
-            recurrences::Model {
+            recurrence::Model {
                 id: TEST_ID,
                 name: TEST_STR.to_string(),
                 per_year: TEST_FLOAT,
             },
-            recurrences::Model {
+            recurrence::Model {
                 id: TEST_ID,
                 name: TEST_STR.to_string(),
                 per_year: TEST_FLOAT,
             },
-            recurrences::Model {
+            recurrence::Model {
                 id: TEST_ID,
                 name: TEST_STR.to_string(),
                 per_year: TEST_FLOAT,

@@ -38,15 +38,15 @@ pub enum Relation {
     #[sea_orm(has_many = "super::transaction::Entity")]
     Transaction,
     #[sea_orm(
-        belongs_to = "super::currencies::Entity",
+        belongs_to = "super::currency::Entity",
         from = "Column::CurrencyId",
-        to = "super::currencies::Column::Id"
+        to = "super::currency::Column::Id"
     )]
     Currency,
     #[sea_orm(
-        belongs_to = "super::recurrences::Entity",
+        belongs_to = "super::recurrence::Entity",
         from = "Column::RecurrenceId",
-        to = "super::recurrences::Column::Id"
+        to = "super::recurrence::Column::Id"
     )]
     Recurrence,
     #[sea_orm(
@@ -57,8 +57,32 @@ pub enum Relation {
     PredefinedExpense,
 }
 
+impl Related<super::user::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::User.def()
+    }
+}
+
 impl Related<super::transaction::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Transaction.def()
+    }
+}
+
+impl Related<super::currency::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Currency.def()
+    }
+}
+
+impl Related<super::recurrence::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Recurrence.def()
+    }
+}
+
+impl Related<super::predefined_expense::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::PredefinedExpense.def()
     }
 }

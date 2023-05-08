@@ -1,4 +1,4 @@
-use entity::currencies;
+use entity::currency;
 
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
@@ -13,22 +13,22 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(currencies::Entity)
+                    .table(currency::Entity)
                     .col(
-                        ColumnDef::new(currencies::Column::Id)
+                        ColumnDef::new(currency::Column::Id)
                             .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),
                     )
                     .col(
-                        ColumnDef::new(currencies::Column::Abbreviation)
+                        ColumnDef::new(currency::Column::Abbreviation)
                             .string_len(255)
                             .not_null()
                             .unique_key(),
                     )
                     .col(
-                        ColumnDef::new(currencies::Column::Name)
+                        ColumnDef::new(currency::Column::Name)
                             .string_len(255)
                             .not_null()
                             .unique_key(),
@@ -39,7 +39,7 @@ impl MigrationTrait for Migration {
 
         let db = manager.get_connection();
         // Chad forint
-        currencies::ActiveModel {
+        currency::ActiveModel {
             id: Set(1),
             abbreviation: Set("HUF".to_string()),
             name: Set("base.currencies.huf".to_string()),
@@ -47,7 +47,7 @@ impl MigrationTrait for Migration {
         .insert(db)
         .await?;
         // Virgin euro
-        currencies::ActiveModel {
+        currency::ActiveModel {
             id: Set(2),
             abbreviation: Set("EUR".to_string()),
             name: Set("base.currencies.eur".to_string()),
@@ -60,7 +60,7 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(currencies::Entity).to_owned())
+            .drop_table(Table::drop().table(currency::Entity).to_owned())
             .await
     }
 }

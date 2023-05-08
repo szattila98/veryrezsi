@@ -5,18 +5,24 @@ use self::errors::{
 
 use super::common;
 use super::user_operations::authorize_user;
-use crate::dto::expenses::{ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest};
+use crate::dto::expenses::{
+    ExpenseResponse, ExpenseResponseParts, NewExpenseRequest, NewPredefinedExpenseRequest,
+};
+use crate::dto::transactions::TransactionResponseParts;
 use crate::logic::common::find_entity_by_id;
 
 use entity::expense::{self, Entity as Expense};
 use entity::predefined_expense::{self, Entity as PredefinedExpense};
-use entity::transaction::Entity as Transaction;
-use entity::{currencies, recurrences, Id};
+use entity::transaction;
+use entity::{currency, recurrence, Id};
 
 use chrono::NaiveDate;
 use migration::DbErr;
 use sea_orm::ActiveValue::NotSet;
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, LoaderTrait, ModelTrait,
+    QueryFilter, Set,
+};
 
 pub async fn find_expenses_with_transactions_by_user_id(
     conn: &DatabaseConnection,
@@ -24,16 +30,88 @@ pub async fn find_expenses_with_transactions_by_user_id(
     user_id: Id,
 ) -> Result<Vec<ExpenseResponse>, FindExpensesWithTransactionsByUserIdError> {
     authorize_user(authenticated_user_id, user_id)?;
-    let expenses_with_transactions = Expense::find()
-        .find_with_related(Transaction)
+    let expenses = Expense::find()
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)
         .await?;
-    let expenses_with_transactions: Vec<ExpenseResponse> = expenses_with_transactions
+    let currencies = expenses.load_one(currency::Entity, conn).await?;
+    let recurrences = expenses.load_one(recurrence::Entity, conn).await?;
+    let predefined_expenses = expenses.load_one(predefined_expense::Entity, conn).await?;
+    let grouped_transactions = expenses.load_many(transaction::Entity, conn).await?;
+
+    assert!(
+        vec![
+            currencies.len(),
+            recurrences.len(),
+            predefined_expenses.len(),
+            grouped_transactions.len()
+        ]
+        .iter()
+        .all(|&x| x == expenses.len()),
+        "the lengths of the fetched expense related lists should be equal"
+    );
+
+    let mut expense_parts: Vec<ExpenseResponseParts> = vec![];
+    for i in 0..expenses.len() {
+        let predefined_expense_parts = match &predefined_expenses[i] {
+            Some(predefined_expense) => {
+                let currency = predefined_expense
+                    .find_related(currency::Entity)
+                    .one(conn)
+                    .await?
+                    .expect("the currency should not be missing");
+                let recurrence = predefined_expense
+                    .find_related(recurrence::Entity)
+                    .one(conn)
+                    .await?
+                    .expect("the recurrence should not be missing");
+                Some((predefined_expense, currency, recurrence))
+            }
+            None => None,
+        };
+
+        let transactions = &grouped_transactions[i];
+        let transaction_currencies = transactions.load_one(currency::Entity, conn).await?;
+
+        assert!(
+            transactions.len() == transaction_currencies.len(),
+            "the lengths of the fetched transaction related lists should be equal"
+        );
+
+        let mut transaction_parts: Vec<TransactionResponseParts> = vec![];
+        for j in 0..transactions.len() {
+            transaction_parts.push((
+                transactions[j].clone(),
+                transaction_currencies[j]
+                    .as_ref()
+                    .expect("the currency should not be missing")
+                    .clone(),
+            ));
+        }
+
+        expense_parts.push((
+            expenses[i].clone(),
+            currencies[i]
+                .as_ref()
+                .expect("the currency should not be missing")
+                .clone(),
+            recurrences[i]
+                .as_ref()
+                .expect("the recurrence should not be missing")
+                .clone(),
+            predefined_expense_parts.map(|(predefined_expense, currency, expense)| {
+                (predefined_expense.clone(), currency, expense).into()
+            }),
+            transaction_parts,
+        ));
+    }
+
+    let expense_responses = expense_parts
         .into_iter()
-        .map(|items| items.into())
+        .map(|parts| parts.into())
         .collect();
-    Ok(expenses_with_transactions)
+
+    Ok(expense_responses)
 }
 
 pub async fn create_expense(
@@ -97,8 +175,8 @@ async fn validate_recurrence_and_currency(
     recurrence_id: Id,
 ) -> Result<(), ValidateRecurrenceAndCurrencyError> {
     let (referred_recurrence, referred_currency) = tokio::join!(
-        find_entity_by_id::<recurrences::Entity>(conn, recurrence_id),
-        find_entity_by_id::<currencies::Entity>(conn, currency_id)
+        find_entity_by_id::<recurrence::Entity>(conn, recurrence_id),
+        find_entity_by_id::<currency::Entity>(conn, currency_id)
     );
     let Some(_) = referred_currency? else {
         return Err(ValidateRecurrenceAndCurrencyError::InvalidCurrency)
@@ -160,7 +238,7 @@ mod tests {
 
     use super::*;
     use assert2::check;
-    use entity::{currencies, recurrences, transaction};
+    use entity::{currency, recurrence, transaction};
     use migration::DbErr;
     use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
 
@@ -250,12 +328,12 @@ mod tests {
 
     #[tokio::test]
     async fn create_expense_happy_path() {
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
         };
-        let mock_recurrence = recurrences::Model {
+        let mock_recurrence = recurrence::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             per_year: TEST_FLOAT,
@@ -301,12 +379,12 @@ mod tests {
 
     #[tokio::test]
     async fn create_expense_happy_path_with_predefined_expense_id() {
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
         };
-        let mock_recurrence = recurrences::Model {
+        let mock_recurrence = recurrence::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             per_year: TEST_FLOAT,
@@ -361,12 +439,12 @@ mod tests {
 
     #[tokio::test]
     async fn create_expense_db_error_cases() {
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
         };
-        let mock_recurrence = recurrences::Model {
+        let mock_recurrence = recurrence::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             per_year: TEST_FLOAT,
@@ -384,12 +462,12 @@ mod tests {
             .append_query_results(vec![Vec::<predefined_expense::Model>::new()])
             // recurrence type not found
             .append_query_results(vec![vec![mock_predefined_expense.clone()]])
-            .append_query_results(vec![Vec::<recurrences::Model>::new()])
+            .append_query_results(vec![Vec::<recurrence::Model>::new()])
             .append_query_results(vec![vec![mock_currency.clone()]])
             // currency type not found
             .append_query_results(vec![vec![mock_predefined_expense.clone()]])
             .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_results(vec![Vec::<currencies::Model>::new()])
+            .append_query_results(vec![Vec::<currency::Model>::new()])
             // db error on predefined expense query
             .append_query_errors(vec![test_db_error()])
             // db error on recurrence type query
@@ -510,12 +588,12 @@ mod tests {
 
     #[tokio::test]
     async fn create_predefined_expense_happy_path() {
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
         };
-        let mock_recurrence = recurrences::Model {
+        let mock_recurrence = recurrence::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             per_year: TEST_FLOAT,
@@ -555,23 +633,23 @@ mod tests {
 
     #[tokio::test]
     async fn create_predefined_expense_error_cases() {
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
         };
-        let mock_recurrence = recurrences::Model {
+        let mock_recurrence = recurrence::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             per_year: TEST_FLOAT,
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // recurrence type not found
-            .append_query_results(vec![Vec::<recurrences::Model>::new()])
+            .append_query_results(vec![Vec::<recurrence::Model>::new()])
             .append_query_results(vec![vec![mock_currency.clone()]])
             // currency type not found
             .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_results(vec![Vec::<currencies::Model>::new()])
+            .append_query_results(vec![Vec::<currency::Model>::new()])
             // recurrence type db error
             .append_query_errors(vec![test_db_error()])
             .append_query_results(vec![vec![mock_currency.clone()]])
@@ -636,12 +714,12 @@ mod tests {
 
     #[tokio::test]
     async fn validate_recurrence_and_currency_all_cases() {
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
         };
-        let mock_recurrence = recurrences::Model {
+        let mock_recurrence = recurrence::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             per_year: TEST_FLOAT,
@@ -651,11 +729,11 @@ mod tests {
             .append_query_results(vec![vec![mock_recurrence.clone()]])
             .append_query_results(vec![vec![mock_currency.clone()]])
             // recurrence type not found
-            .append_query_results(vec![Vec::<recurrences::Model>::new()])
+            .append_query_results(vec![Vec::<recurrence::Model>::new()])
             .append_query_results(vec![vec![mock_currency.clone()]])
             // currency type not found
             .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_results(vec![Vec::<currencies::Model>::new()])
+            .append_query_results(vec![Vec::<currency::Model>::new()])
             // recurrence type db error
             .append_query_errors(vec![test_db_error()])
             .append_query_results(vec![vec![mock_currency.clone()]])

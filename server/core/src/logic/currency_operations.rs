@@ -1,9 +1,9 @@
-use entity::currencies::{self, Entity as Currency};
+use entity::currency::{self, Entity as Currency};
 
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
-pub async fn find_currencies(conn: &DatabaseConnection) -> Result<Vec<currencies::Model>, DbErr> {
+pub async fn find_currencies(conn: &DatabaseConnection) -> Result<Vec<currency::Model>, DbErr> {
     Currency::find().all(conn).await
 }
 
@@ -25,17 +25,17 @@ mod tests {
     #[tokio::test]
     async fn find_currencies_all_cases() {
         let mock_currencies = vec![
-            currencies::Model {
+            currency::Model {
                 id: TEST_ID,
                 abbreviation: TEST_STR.to_string(),
                 name: TEST_STR.to_string(),
             },
-            currencies::Model {
+            currency::Model {
                 id: TEST_ID,
                 abbreviation: TEST_STR.to_string(),
                 name: TEST_STR.to_string(),
             },
-            currencies::Model {
+            currency::Model {
                 id: TEST_ID,
                 abbreviation: TEST_STR.to_string(),
                 name: TEST_STR.to_string(),

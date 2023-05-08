@@ -1,4 +1,4 @@
-use entity::{currencies, expense, transaction};
+use entity::{currency, expense, transaction};
 
 use chrono::NaiveDate;
 use sea_orm_migration::prelude::*;
@@ -49,8 +49,8 @@ impl MigrationTrait for Migration {
                             .name("fk_transaction-currency")
                             .from_tbl(transaction::Entity)
                             .from_col(transaction::Column::CurrencyId)
-                            .to_tbl(currencies::Entity)
-                            .to_col(currencies::Column::Id),
+                            .to_tbl(currency::Entity)
+                            .to_col(currency::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()

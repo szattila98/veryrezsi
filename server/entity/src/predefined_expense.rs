@@ -26,15 +26,27 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::currencies::Entity",
+        belongs_to = "super::currency::Entity",
         from = "Column::CurrencyId",
-        to = "super::currencies::Column::Id"
+        to = "super::currency::Column::Id"
     )]
     Currency,
     #[sea_orm(
-        belongs_to = "super::recurrences::Entity",
+        belongs_to = "super::recurrence::Entity",
         from = "Column::RecurrenceId",
-        to = "super::recurrences::Column::Id"
+        to = "super::recurrence::Column::Id"
     )]
     Recurrence,
+}
+
+impl Related<super::currency::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Currency.def()
+    }
+}
+
+impl Related<super::recurrence::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Recurrence.def()
+    }
 }

@@ -26,9 +26,9 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::currencies::Entity",
+        belongs_to = "super::currency::Entity",
         from = "Column::CurrencyId",
-        to = "super::currencies::Column::Id"
+        to = "super::currency::Column::Id"
     )]
     Currency,
     #[sea_orm(
@@ -42,5 +42,11 @@ pub enum Relation {
 impl Related<super::expense::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Expense.def()
+    }
+}
+
+impl Related<super::currency::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Currency.def()
     }
 }

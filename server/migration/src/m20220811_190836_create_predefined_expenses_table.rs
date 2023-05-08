@@ -1,4 +1,4 @@
-use entity::{currencies, predefined_expense, recurrences};
+use entity::{currency, predefined_expense, recurrence};
 
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
@@ -52,16 +52,16 @@ impl MigrationTrait for Migration {
                             .name("fk_predefined_expense-currency")
                             .from_tbl(predefined_expense::Entity)
                             .from_col(predefined_expense::Column::CurrencyId)
-                            .to_tbl(currencies::Entity)
-                            .to_col(currencies::Column::Id),
+                            .to_tbl(currency::Entity)
+                            .to_col(currency::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .name("fk_predefined_expense-recurrence")
                             .from_tbl(predefined_expense::Entity)
                             .from_col(predefined_expense::Column::RecurrenceId)
-                            .to_tbl(recurrences::Entity)
-                            .to_col(recurrences::Column::Id),
+                            .to_tbl(recurrence::Entity)
+                            .to_col(recurrence::Column::Id),
                     )
                     .to_owned(),
             )

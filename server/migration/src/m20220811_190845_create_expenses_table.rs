@@ -1,4 +1,4 @@
-use entity::{currencies, expense, predefined_expense, recurrences, user};
+use entity::{currency, expense, predefined_expense, recurrence, user};
 
 use chrono::NaiveDate;
 use sea_orm_migration::prelude::*;
@@ -72,16 +72,16 @@ impl MigrationTrait for Migration {
                             .name("fk_expense-currency")
                             .from_tbl(expense::Entity)
                             .from_col(expense::Column::CurrencyId)
-                            .to_tbl(currencies::Entity)
-                            .to_col(currencies::Column::Id),
+                            .to_tbl(currency::Entity)
+                            .to_col(currency::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
                             .name("fk_expense-recurrence")
                             .from_tbl(expense::Entity)
                             .from_col(expense::Column::RecurrenceId)
-                            .to_tbl(recurrences::Entity)
-                            .to_col(recurrences::Column::Id),
+                            .to_tbl(recurrence::Entity)
+                            .to_col(recurrence::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()

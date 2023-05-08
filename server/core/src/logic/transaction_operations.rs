@@ -6,7 +6,7 @@ use crate::dto::transactions::NewTransactionRequest;
 use crate::logic::common::find_entity_by_id;
 
 use entity::transaction::{self, Entity as Transaction};
-use entity::{currencies, expense, Id};
+use entity::{currency, expense, Id};
 
 use chrono::NaiveDate;
 use sea_orm::ActiveValue::NotSet;
@@ -19,7 +19,7 @@ pub async fn create_transaction(
 ) -> Result<Id, CreateTransactionError> {
     let (expense_result, currency_result) = tokio::join!(
         find_entity_by_id::<expense::Entity>(conn, req.expense_id),
-        find_entity_by_id::<currencies::Entity>(conn, req.currency_id)
+        find_entity_by_id::<currency::Entity>(conn, req.currency_id)
     );
     let Some(expense) = expense_result? else {
         return Err(CreateTransactionError::InvalidExpenseId);
@@ -98,7 +98,7 @@ mod tests {
 
     use super::*;
     use assert2::check;
-    use entity::{currencies, expense};
+    use entity::{currency, expense};
     use migration::DbErr;
     use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
 
@@ -127,7 +127,7 @@ mod tests {
             recurrence_id: TEST_ID,
             predefined_expense_id: None,
         };
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
@@ -179,7 +179,7 @@ mod tests {
             recurrence_id: TEST_ID,
             predefined_expense_id: None,
         };
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
@@ -190,7 +190,7 @@ mod tests {
             .append_query_results(vec![vec![mock_currency.clone()]])
             // invalid currency type id
             .append_query_results(vec![vec![mock_expense.clone()]])
-            .append_query_results(vec![Vec::<currencies::Model>::new()])
+            .append_query_results(vec![Vec::<currency::Model>::new()])
             // unauthorized
             .append_query_results(vec![vec![mock_expense.clone()]])
             .append_query_results(vec![vec![mock_currency.clone()]])
@@ -234,7 +234,7 @@ mod tests {
             recurrence_id: TEST_ID,
             predefined_expense_id: None,
         };
-        let mock_currency = currencies::Model {
+        let mock_currency = currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
