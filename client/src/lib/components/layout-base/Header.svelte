@@ -1,5 +1,6 @@
 <script>
 	import { AppBar } from '@skeletonlabs/skeleton';
+	import { LightSwitch } from '@skeletonlabs/skeleton';
 
 	import FaClipboardList from 'svelte-icons/fa/FaClipboardList.svelte';
 	import FaRegUserCircle from 'svelte-icons/fa/FaRegUserCircle.svelte';
@@ -29,18 +30,14 @@
 
 <AppBar class="z-30" shadow="shadow-md">
 		<svelte:fragment slot="lead">
-			<NavEntry text="VeryRezsi" href="/" iconSize={6} class="text-lg font-semibold">
+			<NavEntry text="VeryRezsi" href="/" iconSize={6} class="text-lg font-semibold mr-4">
 				<IoMdHome />
 			</NavEntry>
+			<LightSwitch />
 		</svelte:fragment>
 		<svelte:fragment slot="trail">
 			<nav>
 				<ul class="flex space-x-4">
-					<li>
-						<NavEntry text="Dashboard" href="/dashboard" class="hover:text-white">
-							<FaClipboardList />
-						</NavEntry>
-					</li>
 					<li>
 						<NavEntry text="Profile" href="/profile" class="hover:text-white">
 							<FaRegUserCircle />
