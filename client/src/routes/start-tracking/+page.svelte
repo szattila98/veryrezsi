@@ -46,7 +46,7 @@
 			</div>
 		</div>
 		<div class="basis-1/5 flex-1">
-			<span class="badge variant-filled p-2 text-sm">Or create your own custom</span>
+			<span class="badge variant-filled p-4 text-sm">Or create a brand new</span>
 		</div>
 		<div class="basis-1/3 flex-1">asd</div>
 	</div>

@@ -9,6 +9,11 @@ body {
 		radial-gradient(at 98% 1%, rgba(var(--color-primary-600) / 0.33) 0px, transparent 50%);
 }
 
+@font-face {
+	font-family: 'Caveat';
+	src: url('/fonts/Caveat-VariableFont_wght.ttf');
+}
+
 .gradient-heading {
 	@apply bg-clip-text text-transparent box-decoration-clone;
 	/* Direction */
