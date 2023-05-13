@@ -9,7 +9,7 @@ use veryrezsi_core::logic::currency_operations;
 pub async fn get_currencies(
     _: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
-) -> Result<Json<Vec<currency::Model>>, ErrorMsg<()>> {
+) -> Result<Json<Vec<CurrencyResponse>>, ErrorMsg<()>> {
     match currency_operations::find_currencies(conn).await {
         Ok(currencies) => Ok(Json(currencies)),
         Err(e) => Err(e.into()),

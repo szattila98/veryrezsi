@@ -3,8 +3,16 @@ use entity::currency::{self, Entity as Currency};
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
-pub async fn find_currencies(conn: &DatabaseConnection) -> Result<Vec<currency::Model>, DbErr> {
-    Currency::find().all(conn).await
+use crate::dto::currencies::CurrencyResponse;
+
+pub async fn find_currencies(conn: &DatabaseConnection) -> Result<Vec<CurrencyResponse>, DbErr> {
+    let currencies = Currency::find()
+        .all(conn)
+        .await?
+        .into_iter()
+        .map(|currency| currency.into())
+        .collect();
+    Ok(currencies)
 }
 
 #[cfg(test)]

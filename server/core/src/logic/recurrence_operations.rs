@@ -3,8 +3,16 @@ use entity::recurrence::{self, Entity as Recurrence};
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
-pub async fn find_recurrences(conn: &DatabaseConnection) -> Result<Vec<recurrence::Model>, DbErr> {
-    Recurrence::find().all(conn).await
+use crate::dto::recurrences::RecurrenceResponse;
+
+pub async fn find_recurrences(conn: &DatabaseConnection) -> Result<Vec<RecurrenceResponse>, DbErr> {
+    let recurrences = Recurrence::find()
+        .all(conn)
+        .await?
+        .into_iter()
+        .map(|recurrence| recurrence.into())
+        .collect();
+    Ok(recurrences)
 }
 
 #[cfg(test)]
