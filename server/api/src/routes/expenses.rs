@@ -1,6 +1,6 @@
 use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::expenses::{
-    ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest,
+    ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest, PredefinedExpenseResponse,
 };
 use veryrezsi_core::logic::expense_operations;
 
@@ -10,7 +10,7 @@ use crate::auth;
 
 use axum::extract::{Path, State};
 use axum::Json;
-use entity::{predefined_expense, Id};
+use entity::Id;
 
 pub async fn get_expenses(
     user: auth::AuthenticatedUser,
@@ -39,7 +39,7 @@ pub async fn create_expense(
 pub async fn get_predefined_expenses(
     _: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
-) -> Result<Json<Vec<predefined_expense::Model>>, ErrorMsg<()>> {
+) -> Result<Json<Vec<PredefinedExpenseResponse>>, ErrorMsg<()>> {
     match expense_operations::find_predefined_expenses(conn).await {
         Ok(expenses) => Ok(Json(expenses)),
         Err(e) => Err(e.into()),

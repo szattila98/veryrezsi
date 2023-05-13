@@ -7,6 +7,7 @@ use super::common;
 use super::user_operations::authorize_user;
 use crate::dto::expenses::{
     ExpenseResponse, ExpenseResponseParts, NewExpenseRequest, NewPredefinedExpenseRequest,
+    PredefinedExpenseResponse,
 };
 use crate::dto::transactions::TransactionResponseParts;
 use crate::logic::common::find_entity_by_id;
@@ -147,9 +148,42 @@ pub async fn create_expense(
 
 pub async fn find_predefined_expenses(
     conn: &DatabaseConnection,
-) -> Result<Vec<predefined_expense::Model>, DbErr> {
+) -> Result<Vec<PredefinedExpenseResponse>, DbErr> {
     let predefined_expenses = PredefinedExpense::find().all(conn).await?;
-    Ok(predefined_expenses)
+    let currencies = predefined_expenses
+        .load_one(currency::Entity, conn)
+        .await?
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
+    let recurrences = predefined_expenses
+        .load_one(recurrence::Entity, conn)
+        .await?
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
+
+    assert!(
+        vec![currencies.len(), recurrences.len()]
+            .iter()
+            .all(|&x| x == predefined_expenses.len()),
+        "the lengths of the fetched predefined expense related lists should be equal"
+    );
+
+    let predefined_expense_response: Vec<PredefinedExpenseResponse> = predefined_expenses
+        .into_iter()
+        .enumerate()
+        .map(|(i, predefined_expense)| {
+            (
+                predefined_expense,
+                currencies[i].clone(),
+                recurrences[i].clone(),
+            )
+        })
+        .map(|parts| parts.into())
+        .collect();
+
+    Ok(predefined_expense_response)
 }
 
 pub async fn create_predefined_expense(

@@ -1,5 +1,4 @@
 use axum::{extract::State, Json};
-use entity::recurrence;
 use sea_orm::DatabaseConnection;
 use veryrezsi_core::{dto::recurrences::RecurrenceResponse, logic::recurrence_operations};
 

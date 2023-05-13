@@ -1,7 +1,7 @@
 use self::errors::{ActivateAccountError, AuthorizeUserError, SaveUserError};
 
 use crate::config;
-use crate::dto::users::NewUserRequest;
+use crate::dto::users::{NewUserRequest, UserResponse};
 use crate::email::{render_template, send_mail, ACTIVATION_EMAIL_TEMPLATE};
 use chrono::Duration;
 use entity::account_activation::{self, Entity as AccountActivation};
@@ -35,7 +35,7 @@ pub async fn save_user<M>(
     conn: &DatabaseConnection,
     mail_transport: Arc<M>,
     req: NewUserRequest,
-) -> Result<user::Model, SaveUserError>
+) -> Result<UserResponse, SaveUserError>
 where
     M: AsyncTransport + Send + Sync + 'static,
     <M as AsyncTransport>::Error: std::fmt::Debug,
@@ -88,7 +88,7 @@ where
             })
         })
         .await?;
-    Ok(user)
+    Ok(user.into())
 }
 
 pub async fn activate_account(

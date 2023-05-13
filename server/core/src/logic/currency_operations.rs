@@ -1,4 +1,4 @@
-use entity::currency::{self, Entity as Currency};
+use entity::currency::Entity as Currency;
 
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};

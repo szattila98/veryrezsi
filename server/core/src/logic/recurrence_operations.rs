@@ -1,4 +1,4 @@
-use entity::recurrence::{self, Entity as Recurrence};
+use entity::recurrence::Entity as Recurrence;
 
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};

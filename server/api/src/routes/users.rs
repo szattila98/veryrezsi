@@ -8,7 +8,7 @@ use axum_extra::extract::{cookie::Cookie, PrivateCookieJar};
 use entity::user;
 use pwhash::bcrypt;
 use sea_orm::DatabaseConnection;
-use veryrezsi_core::dto::users::{LoginRequest, NewUserRequest};
+use veryrezsi_core::dto::users::{LoginRequest, NewUserRequest, UserResponse};
 use veryrezsi_core::logic::{find_entity_by_id, user_operations};
 
 pub async fn login(
@@ -42,9 +42,9 @@ pub async fn login(
 pub async fn me(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
-) -> Result<Json<user::Model>, ErrorMsg<()>> {
+) -> Result<Json<UserResponse>, ErrorMsg<()>> {
     match find_entity_by_id::<user::Entity>(conn, user.id).await? {
-        Some(user) => Ok(Json(user)),
+        Some(user) => Ok(Json(user.into())),
         None => Err(ErrorMsg::new(StatusCode::NOT_FOUND, "user not found")),
     }
 }
@@ -59,7 +59,7 @@ pub async fn logout(cookies: PrivateCookieJar) -> Result<PrivateCookieJar, Error
 pub async fn register(
     State(app_state): State<AppState>,
     ValidatedJson(new_user): ValidatedJson<NewUserRequest>,
-) -> Result<Json<user::Model>, ErrorMsg<()>> {
+) -> Result<Json<UserResponse>, ErrorMsg<()>> {
     match user_operations::save_user(
         &app_state.config,
         &app_state.conn,
