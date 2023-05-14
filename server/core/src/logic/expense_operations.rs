@@ -264,7 +264,15 @@ pub mod errors {
 
 #[cfg(test)]
 mod tests {
-    use crate::logic::user_operations::errors::AuthorizeUserError;
+    use crate::{
+        logic::user_operations::errors::AuthorizeUserError,
+        dto::{
+            currencies::CurrencyResponse,
+            recurrences::RecurrenceResponse,
+            expenses::PredefinedExpenseResponse,
+            transactions::TransactionResponse
+        }
+    };
 
     use super::*;
     use assert2::check;
@@ -277,70 +285,99 @@ mod tests {
     const TEST_FLOAT: f64 = 1.0;
     const TEST_DATE: &str = "06-08-1998";
 
-    fn test_decimal() -> Decimal {
+    const TEST_EXPENSE: expense::Model = expense::Model {
+        id: TEST_ID,
+        name: TEST_STR.to_string(),
+        description: TEST_STR.to_string(),
+        value: TEST_DECIMAL(),
+        start_date: NaiveDate::MIN,
+        user_id: TEST_ID,
+        currency_id: TEST_ID,
+        recurrence_id: TEST_ID,
+        predefined_expense_id: Some(TEST_ID),
+    };
+    const TEST_PREDEFINED_EXPENSE: predefined_expense::Model = predefined_expense::Model {
+        id: TEST_ID,
+        name: TEST_STR.to_string(),
+        description: TEST_STR.to_string(),
+        value: TEST_DECIMAL(),
+        currency_id: TEST_ID,
+        recurrence_id: TEST_ID,
+    };
+    const TEST_CURRENCY: currency::Model = currency::Model {
+        id: TEST_ID,
+        name: TEST_STR.to_string(),
+        abbreviation: TEST_STR.to_string(),
+    };
+    const TEST_RECURRENCE: recurrence::Model = recurrence::Model {
+        id: TEST_ID,
+        name: TEST_STR.to_string(),
+        per_year: TEST_FLOAT,
+    };
+    const TEST_TRANSACTION: transaction::Model = transaction::Model {
+        id: TEST_ID,
+        donor_name: TEST_STR.to_string(),
+        value: TEST_DECIMAL(),
+        date: NaiveDate::MIN,
+        currency_id: TEST_ID,
+        expense_id: TEST_ID,
+    };
+    const TEST_TRANSACTION_2: transaction::Model = transaction::Model {
+        id: TEST_TRANSACTION.id + 1,
+        ..TEST_TRANSACTION
+    };
+
+    const fn TEST_DECIMAL() -> Decimal {
         Decimal::new(1, 2)
     }
 
-    fn test_db_error() -> DbErr {
+    const fn TEST_DB_ERROR() -> DbErr {
         DbErr::Custom(TEST_STR.to_string())
     }
 
     #[tokio::test]
-    async fn find_expenses_with_transactions_by_user_id_all_cases() {
-        let mock_expense = expense::Model {
+    async fn find_expenses_by_user_id_all_cases() {
+        let expected_currency: CurrencyResponse = TEST_CURRENCY.into();
+        let expected_recurrence: RecurrenceResponse = TEST_RECURRENCE.into();
+        let expected_predefined_expense: PredefinedExpenseResponse =
+            (TEST_PREDEFINED_EXPENSE, TEST_CURRENCY, TEST_RECURRENCE).into();
+        let expected_transaction: TransactionResponse = (TEST_TRANSACTION, TEST_CURRENCY).into();
+        let expected_transaction_2: TransactionResponse = (TEST_TRANSACTION_2, TEST_CURRENCY).into();
+        let expected_expenses = vec![ExpenseResponse {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: test_decimal(),
-            start_date: NaiveDate::MIN,
-            user_id: TEST_ID,
-            currency_id: TEST_ID,
-            recurrence_id: TEST_ID,
-            predefined_expense_id: Some(TEST_ID),
-        };
-
-        let mock_transaction = transaction::Model {
-            id: TEST_ID,
-            donor_name: TEST_STR.to_string(),
-            value: test_decimal(),
-            date: NaiveDate::MIN,
-            currency_id: TEST_ID,
-            expense_id: TEST_ID,
-        };
-
-        let mut mock_transaction_2 = mock_transaction.clone();
-        mock_transaction_2.id = TEST_ID + 1;
-
-        let expense_with_transaction_fixture = vec![
-            (mock_expense.clone(), mock_transaction.clone()),
-            (mock_expense.clone(), mock_transaction_2.clone()),
-        ];
-
-        let expected_result = vec![ExpenseResponse {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            description: TEST_STR.to_string(),
-            value: test_decimal(),
+            value: TEST_DECIMAL(),
             start_date: NaiveDate::MIN.to_string(),
             user_id: TEST_ID,
-            currency_id: TEST_ID,
-            recurrence_id: TEST_ID,
-            predefined_expense_id: Some(TEST_ID),
-            transactions: vec![mock_transaction.into(), mock_transaction_2.into()],
+            currency: expected_currency,
+            recurrence: expected_recurrence,
+            predefined_expense: Some(expected_predefined_expense),
+            transactions: vec![expected_transaction, expected_transaction_2],
         }];
+
+        let expenses_with_transaction_stub = vec![
+            (TEST_EXPENSE.clone(), TEST_TRANSACTION.clone()),
+            (TEST_EXPENSE.clone(), TEST_TRANSACTION_2.clone()),
+        ];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![expense_with_transaction_fixture, vec![]])
-            .append_query_errors(vec![test_db_error()])
+            .append_query_results(vec![expenses_with_transaction_stub, vec![]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             .into_connection();
 
-        let (expenses, empty_expenses, unauthorized_error, db_error) = tokio::join!(
+        let (
+            expenses,
+            empty_expenses,
+            unauthorized_error,
+            db_error
+        ) = tokio::join!(
             find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
             find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
             find_expenses_by_user_id(&conn, TEST_ID, TEST_ID + 1),
             find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
         );
 
-        check!(expenses == Ok(expected_result));
+        check!(expenses == Ok(expected_expenses));
         check!(empty_expenses == Ok(vec![]));
         check!(
             unauthorized_error
@@ -351,42 +388,21 @@ mod tests {
         check!(
             db_error
                 == Err(FindExpensesWithTransactionsByUserIdError::DatabaseError(
-                    test_db_error()
+                    TEST_DB_ERROR()
                 ))
         );
     }
 
     #[tokio::test]
     async fn create_expense_happy_path() {
-        let mock_currency = currency::Model {
-            id: TEST_ID,
-            abbreviation: TEST_STR.to_string(),
-            name: TEST_STR.to_string(),
-        };
-        let mock_recurrence = recurrence::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            per_year: TEST_FLOAT,
-        };
-        let mock_expense = expense::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            description: TEST_STR.to_string(),
-            value: test_decimal(),
-            start_date: NaiveDate::MIN,
-            user_id: TEST_ID,
-            currency_id: TEST_ID,
-            recurrence_id: TEST_ID,
-            predefined_expense_id: None,
-        };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![mock_recurrence]])
-            .append_query_results(vec![vec![mock_currency]])
+            .append_query_results(vec![vec![TEST_RECURRENCE]])
+            .append_query_results(vec![vec![TEST_CURRENCY]])
             .append_exec_results(vec![MockExecResult {
                 last_insert_id: TEST_ID,
                 rows_affected: 1,
             }])
-            .append_query_results(vec![vec![mock_expense]])
+            .append_query_results(vec![vec![TEST_EXPENSE]])
             .into_connection();
 
         let saved_expense_id = create_expense(
@@ -395,7 +411,7 @@ mod tests {
             NewExpenseRequest {
                 name: TEST_STR.to_string(),
                 description: TEST_STR.to_string(),
-                value: test_decimal(),
+                value: TEST_DECIMAL(),
                 start_date: TEST_DATE.to_string(),
                 currency_id: TEST_ID,
                 recurrence_id: TEST_ID,
@@ -409,44 +425,15 @@ mod tests {
 
     #[tokio::test]
     async fn create_expense_happy_path_with_predefined_expense_id() {
-        let mock_currency = currency::Model {
-            id: TEST_ID,
-            abbreviation: TEST_STR.to_string(),
-            name: TEST_STR.to_string(),
-        };
-        let mock_recurrence = recurrence::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            per_year: TEST_FLOAT,
-        };
-        let mock_predefined_expense = predefined_expense::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            description: TEST_STR.to_string(),
-            value: test_decimal(),
-            currency_id: TEST_ID,
-            recurrence_id: TEST_ID,
-        };
-        let mock_expense = expense::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            description: TEST_STR.to_string(),
-            value: test_decimal(),
-            start_date: NaiveDate::MIN,
-            user_id: TEST_ID,
-            currency_id: TEST_ID,
-            recurrence_id: TEST_ID,
-            predefined_expense_id: Some(TEST_ID),
-        };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![mock_predefined_expense]])
-            .append_query_results(vec![vec![mock_recurrence]])
-            .append_query_results(vec![vec![mock_currency]])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE]])
+            .append_query_results(vec![vec![TEST_RECURRENCE]])
+            .append_query_results(vec![vec![TEST_CURRENCY]])
             .append_exec_results(vec![MockExecResult {
                 last_insert_id: TEST_ID,
                 rows_affected: 1,
             }])
-            .append_query_results(vec![vec![mock_expense]])
+            .append_query_results(vec![vec![TEST_EXPENSE]])
             .into_connection();
 
         let saved_expense_id = create_expense(
@@ -455,7 +442,7 @@ mod tests {
             NewExpenseRequest {
                 name: TEST_STR.to_string(),
                 description: TEST_STR.to_string(),
-                value: test_decimal(),
+                value: TEST_DECIMAL(),
                 start_date: TEST_DATE.to_string(),
                 currency_id: TEST_ID,
                 recurrence_id: TEST_ID,
@@ -469,59 +456,41 @@ mod tests {
 
     #[tokio::test]
     async fn create_expense_db_error_cases() {
-        let mock_currency = currency::Model {
-            id: TEST_ID,
-            abbreviation: TEST_STR.to_string(),
-            name: TEST_STR.to_string(),
-        };
-        let mock_recurrence = recurrence::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            per_year: TEST_FLOAT,
-        };
-        let mock_predefined_expense = predefined_expense::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            description: TEST_STR.to_string(),
-            value: test_decimal(),
-            currency_id: TEST_ID,
-            recurrence_id: TEST_ID,
-        };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // predefined expense not found
             .append_query_results(vec![Vec::<predefined_expense::Model>::new()])
             // recurrence type not found
-            .append_query_results(vec![vec![mock_predefined_expense.clone()]])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE.clone()]])
             .append_query_results(vec![Vec::<recurrence::Model>::new()])
-            .append_query_results(vec![vec![mock_currency.clone()]])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
             // currency type not found
-            .append_query_results(vec![vec![mock_predefined_expense.clone()]])
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE.clone()]])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
             .append_query_results(vec![Vec::<currency::Model>::new()])
             // db error on predefined expense query
-            .append_query_errors(vec![test_db_error()])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             // db error on recurrence type query
-            .append_query_results(vec![vec![mock_predefined_expense.clone()]])
-            .append_query_errors(vec![test_db_error()])
-            .append_query_results(vec![vec![mock_currency.clone()]])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE.clone()]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
             // db error on currency type query
-            .append_query_results(vec![vec![mock_predefined_expense.clone()]])
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_errors(vec![test_db_error()])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE.clone()]])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             // db error on expense insertion
-            .append_query_results(vec![vec![mock_predefined_expense.clone()]])
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_results(vec![vec![mock_currency.clone()]])
-            .append_exec_errors(vec![test_db_error()])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE.clone()]])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
+            .append_exec_errors(vec![TEST_DB_ERROR()])
             // date cannot be parsed
-            .append_query_results(vec![vec![mock_predefined_expense]])
-            .append_query_results(vec![vec![mock_recurrence]])
-            .append_query_results(vec![vec![mock_currency]])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE]])
+            .append_query_results(vec![vec![TEST_RECURRENCE]])
+            .append_query_results(vec![vec![TEST_CURRENCY]])
             .into_connection();
         let mut req = NewExpenseRequest {
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: test_decimal(),
+            value: TEST_DECIMAL(),
             start_date: TEST_DATE.to_string(),
             currency_id: TEST_ID,
             recurrence_id: TEST_ID,
@@ -563,87 +532,61 @@ mod tests {
         );
         check!(let Err(CreateExpenseError::InvalidStartDate(_)) = parse_date_error);
         check!(
-            predefined_expense_db_error == Err(CreateExpenseError::DatabaseError(test_db_error()))
+            predefined_expense_db_error == Err(CreateExpenseError::DatabaseError(TEST_DB_ERROR()))
         );
         check!(
             currency_db_error
                 == Err(CreateExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyError::DatabaseError(test_db_error())
+                    ValidateRecurrenceAndCurrencyError::DatabaseError(TEST_DB_ERROR())
                 ))
         );
         check!(
             recurrence_db_error
                 == Err(CreateExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyError::DatabaseError(test_db_error())
+                    ValidateRecurrenceAndCurrencyError::DatabaseError(TEST_DB_ERROR())
                 ))
         );
-        check!(expense_insert_db_error == Err(CreateExpenseError::DatabaseError(test_db_error())));
+        check!(expense_insert_db_error == Err(CreateExpenseError::DatabaseError(TEST_DB_ERROR())));
     }
 
     #[tokio::test]
     async fn find_predefined_expenses_all_cases() {
-        let mock_predefined_expenses = vec![
-            predefined_expense::Model {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                description: TEST_STR.to_string(),
-                value: test_decimal(),
-                currency_id: TEST_ID,
-                recurrence_id: TEST_ID,
-            },
-            predefined_expense::Model {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                description: TEST_STR.to_string(),
-                value: test_decimal(),
-                currency_id: TEST_ID,
-                recurrence_id: TEST_ID,
-            },
+        let expected_predefined_expenses: Vec<PredefinedExpenseResponse> = vec![
+            (TEST_PREDEFINED_EXPENSE, TEST_CURRENCY, TEST_RECURRENCE).into(),
+            (TEST_PREDEFINED_EXPENSE, TEST_CURRENCY, TEST_RECURRENCE).into()
         ];
+
+        let predefined_expenses_stub = vec![TEST_PREDEFINED_EXPENSE, TEST_PREDEFINED_EXPENSE];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![mock_predefined_expenses.clone(), vec![]])
-            .append_query_errors(vec![test_db_error()])
+            .append_query_results(vec![predefined_expenses_stub.clone(), vec![]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             .into_connection();
 
-        let (predefined_expenses, empty_predefined_expenses, db_error) = tokio::join!(
+        let (
+            predefined_expenses,
+            empty_predefined_expenses,
+            db_error
+        ) = tokio::join!(
             find_predefined_expenses(&conn),
             find_predefined_expenses(&conn),
             find_predefined_expenses(&conn)
         );
 
-        check!(predefined_expenses == Ok(mock_predefined_expenses));
+        check!(predefined_expenses == Ok(expected_predefined_expenses));
         check!(empty_predefined_expenses == Ok(vec![]));
-        check!(db_error == Err(test_db_error()));
+        check!(db_error == Err(TEST_DB_ERROR()));
     }
 
     #[tokio::test]
     async fn create_predefined_expense_happy_path() {
-        let mock_currency = currency::Model {
-            id: TEST_ID,
-            abbreviation: TEST_STR.to_string(),
-            name: TEST_STR.to_string(),
-        };
-        let mock_recurrence = recurrence::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            per_year: TEST_FLOAT,
-        };
-        let mock_predefined_expense = predefined_expense::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            description: TEST_STR.to_string(),
-            value: test_decimal(),
-            currency_id: TEST_ID,
-            recurrence_id: TEST_ID,
-        };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![mock_recurrence]])
-            .append_query_results(vec![vec![mock_currency]])
+            .append_query_results(vec![vec![TEST_RECURRENCE]])
+            .append_query_results(vec![vec![TEST_CURRENCY]])
             .append_exec_results(vec![MockExecResult {
                 last_insert_id: TEST_ID,
                 rows_affected: 1,
             }])
-            .append_query_results(vec![vec![mock_predefined_expense]])
+            .append_query_results(vec![vec![TEST_PREDEFINED_EXPENSE]])
             .into_connection();
 
         let saved_predefined_expense_id = create_predefined_expense(
@@ -651,7 +594,7 @@ mod tests {
             NewPredefinedExpenseRequest {
                 name: TEST_STR.to_string(),
                 description: TEST_STR.to_string(),
-                value: test_decimal(),
+                value: TEST_DECIMAL(),
                 currency_id: TEST_ID,
                 recurrence_id: TEST_ID,
             },
@@ -663,38 +606,28 @@ mod tests {
 
     #[tokio::test]
     async fn create_predefined_expense_error_cases() {
-        let mock_currency = currency::Model {
-            id: TEST_ID,
-            abbreviation: TEST_STR.to_string(),
-            name: TEST_STR.to_string(),
-        };
-        let mock_recurrence = recurrence::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            per_year: TEST_FLOAT,
-        };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // recurrence type not found
             .append_query_results(vec![Vec::<recurrence::Model>::new()])
-            .append_query_results(vec![vec![mock_currency.clone()]])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
             // currency type not found
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
             .append_query_results(vec![Vec::<currency::Model>::new()])
             // recurrence type db error
-            .append_query_errors(vec![test_db_error()])
-            .append_query_results(vec![vec![mock_currency.clone()]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
             // currency type db error
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_errors(vec![test_db_error()])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             // insertion db error
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_results(vec![vec![mock_currency.clone()]])
-            .append_exec_errors(vec![test_db_error()])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
+            .append_exec_errors(vec![TEST_DB_ERROR()])
             .into_connection();
         let req = NewPredefinedExpenseRequest {
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: test_decimal(),
+            value: TEST_DECIMAL(),
             currency_id: TEST_ID,
             recurrence_id: TEST_ID,
         };
@@ -728,48 +661,38 @@ mod tests {
         check!(
             recurrence_db_error
                 == Err(CreatePredefinedExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyError::DatabaseError(test_db_error())
+                    ValidateRecurrenceAndCurrencyError::DatabaseError(TEST_DB_ERROR())
                 ))
         );
         check!(
             currency_db_error
                 == Err(CreatePredefinedExpenseError::InvalidRelatedType(
-                    ValidateRecurrenceAndCurrencyError::DatabaseError(test_db_error())
+                    ValidateRecurrenceAndCurrencyError::DatabaseError(TEST_DB_ERROR())
                 ))
         );
         check!(
-            insertion_db_error == Err(CreatePredefinedExpenseError::DatabaseError(test_db_error()))
+            insertion_db_error == Err(CreatePredefinedExpenseError::DatabaseError(TEST_DB_ERROR()))
         );
     }
 
     #[tokio::test]
     async fn validate_recurrence_and_currency_all_cases() {
-        let mock_currency = currency::Model {
-            id: TEST_ID,
-            abbreviation: TEST_STR.to_string(),
-            name: TEST_STR.to_string(),
-        };
-        let mock_recurrence = recurrence::Model {
-            id: TEST_ID,
-            name: TEST_STR.to_string(),
-            per_year: TEST_FLOAT,
-        };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // happy path
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_results(vec![vec![mock_currency.clone()]])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
             // recurrence type not found
             .append_query_results(vec![Vec::<recurrence::Model>::new()])
-            .append_query_results(vec![vec![mock_currency.clone()]])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
             // currency type not found
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
             .append_query_results(vec![Vec::<currency::Model>::new()])
             // recurrence type db error
-            .append_query_errors(vec![test_db_error()])
-            .append_query_results(vec![vec![mock_currency.clone()]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_results(vec![vec![TEST_CURRENCY.clone()]])
             // currency type db error
-            .append_query_results(vec![vec![mock_recurrence.clone()]])
-            .append_query_errors(vec![test_db_error()])
+            .append_query_results(vec![vec![TEST_RECURRENCE.clone()]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             .into_connection();
 
         let (
@@ -792,13 +715,13 @@ mod tests {
         check!(
             recurrence_db_error
                 == Err(ValidateRecurrenceAndCurrencyError::DatabaseError(
-                    test_db_error()
+                    TEST_DB_ERROR()
                 ))
         );
         check!(
             currency_db_error
                 == Err(ValidateRecurrenceAndCurrencyError::DatabaseError(
-                    test_db_error()
+                    TEST_DB_ERROR()
                 ))
         );
     }

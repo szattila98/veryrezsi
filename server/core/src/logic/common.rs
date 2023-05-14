@@ -23,7 +23,7 @@ mod tests {
     const TEST_STR: &str = "test";
     const TEST_ID: u64 = 1;
 
-    fn test_db_error() -> DbErr {
+    const fn TEST_DB_ERROR() -> DbErr {
         DbErr::Custom(TEST_STR.to_string())
     }
 
@@ -42,7 +42,7 @@ mod tests {
         let mock_model = Model { id: TEST_ID };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_model.clone()], vec![]])
-            .append_query_errors(vec![test_db_error()])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             .into_connection();
 
         let (model, not_found, db_error) = tokio::join!(
@@ -53,6 +53,6 @@ mod tests {
 
         check!(model == Ok(Some(mock_model)));
         check!(not_found == Ok(None));
-        check!(db_error == Err(test_db_error()));
+        check!(db_error == Err(TEST_DB_ERROR()));
     }
 }

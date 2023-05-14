@@ -21,7 +21,7 @@ mod tests {
 
     use super::*;
     use assert2::check;
-    use entity::Id;
+    use entity::{Id, recurrence};
     use migration::DbErr;
     use sea_orm::{DatabaseBackend, MockDatabase};
 
@@ -29,32 +29,24 @@ mod tests {
     const TEST_FLOAT: f64 = 1.0;
     const TEST_STR: &str = "test";
 
-    fn test_db_error() -> DbErr {
+    const TEST_RECURRENCE: recurrence::Model = recurrence::Model {
+        id: TEST_ID,
+        name: TEST_STR.to_string(),
+        per_year: TEST_FLOAT,
+    };
+
+    const fn TEST_DB_ERROR() -> DbErr {
         DbErr::Custom(TEST_STR.to_string())
     }
 
     #[tokio::test]
     async fn find_recurrences_all_cases() {
-        let mock_recurrences = vec![
-            recurrence::Model {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                per_year: TEST_FLOAT,
-            },
-            recurrence::Model {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                per_year: TEST_FLOAT,
-            },
-            recurrence::Model {
-                id: TEST_ID,
-                name: TEST_STR.to_string(),
-                per_year: TEST_FLOAT,
-            },
-        ];
+        let expected_recurrences: Vec<RecurrenceResponse> = vec![TEST_RECURRENCE.into(), TEST_RECURRENCE.into()];
+
+        let recurrences_stub = vec![TEST_RECURRENCE, TEST_RECURRENCE, TEST_RECURRENCE];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![mock_recurrences.clone(), vec![]])
-            .append_query_errors(vec![test_db_error()])
+            .append_query_results(vec![recurrences_stub.clone(), vec![]])
+            .append_query_errors(vec![TEST_DB_ERROR()])
             .into_connection();
 
         let (recurrences, empty_vec, db_error) = tokio::join!(
@@ -63,8 +55,8 @@ mod tests {
             find_recurrences(&conn)
         );
 
-        check!(recurrences == Ok(mock_recurrences));
+        check!(recurrences == Ok(expected_recurrences));
         check!(empty_vec == Ok(vec![]));
-        check!(db_error == Err(test_db_error()));
+        check!(db_error == Err(TEST_DB_ERROR()));
     }
 }

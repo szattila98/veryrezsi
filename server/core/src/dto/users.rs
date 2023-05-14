@@ -63,7 +63,7 @@ fn validate_password(value: &str) -> Result<(), ValidationError> {
     Ok(())
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, PartialEq)]
 pub struct UserResponse {
     pub id: Id,
     pub email: String,
