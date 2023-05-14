@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use self::errors::{
     CreateExpenseError, CreatePredefinedExpenseError, FindExpensesWithTransactionsByUserIdError,
     ValidateRecurrenceAndCurrencyError,
@@ -6,10 +8,8 @@ use self::errors::{
 use super::common;
 use super::user_operations::authorize_user;
 use crate::dto::expenses::{
-    ExpenseResponse, ExpenseResponseParts, NewExpenseRequest, NewPredefinedExpenseRequest,
-    PredefinedExpenseResponse,
+    ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest, PredefinedExpenseResponse,
 };
-use crate::dto::transactions::TransactionResponseParts;
 use crate::logic::common::find_entity_by_id;
 
 use entity::expense::{self, Entity as Expense};
@@ -21,11 +21,10 @@ use chrono::NaiveDate;
 use migration::DbErr;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, LoaderTrait, ModelTrait,
-    QueryFilter, Set,
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, LoaderTrait, QueryFilter, Set,
 };
 
-pub async fn find_expenses_with_transactions_by_user_id(
+pub async fn find_expenses_by_user_id(
     conn: &DatabaseConnection,
     authenticated_user_id: Id,
     user_id: Id,
@@ -35,77 +34,61 @@ pub async fn find_expenses_with_transactions_by_user_id(
         .filter(expense::Column::UserId.eq(user_id))
         .all(conn)
         .await?;
-    let currencies = expenses.load_one(currency::Entity, conn).await?;
-    let recurrences = expenses.load_one(recurrence::Entity, conn).await?;
-    let predefined_expenses = expenses.load_one(predefined_expense::Entity, conn).await?;
-    let grouped_transactions = expenses.load_many(transaction::Entity, conn).await?;
+    let (predefined_expenses, grouped_transactions, currencies, recurrences) = tokio::join!(
+        expenses.load_one(predefined_expense::Entity, conn),
+        expenses.load_many(transaction::Entity, conn),
+        currency::Entity::find().all(conn),
+        recurrence::Entity::find().all(conn)
+    );
+    let mut predefined_expenses: VecDeque<Option<predefined_expense::Model>> =
+        predefined_expenses?.into();
+    let mut grouped_transactions: VecDeque<Vec<transaction::Model>> =
+        grouped_transactions?.into_iter().collect();
+    let currencies = currencies?;
+    let recurrences = recurrences?;
 
     assert!(
-        vec![
-            currencies.len(),
-            recurrences.len(),
-            predefined_expenses.len(),
-            grouped_transactions.len()
-        ]
-        .iter()
-        .all(|&x| x == expenses.len()),
-        "the lengths of the fetched expense related lists should be equal"
+        vec![predefined_expenses.len(), grouped_transactions.len()]
+            .iter()
+            .all(|&x| x == expenses.len()),
+        "the lengths of the fetched expense related lists should always be equal"
     );
 
-    let mut expense_parts: Vec<ExpenseResponseParts> = vec![];
-    for i in 0..expenses.len() {
-        let predefined_expense_parts = match &predefined_expenses[i] {
+    let expense_parts = expenses.into_iter().map(|expense| {
+        let currency = find_currency(&currencies, expense.currency_id);
+        let recurrence = find_recurrence(&recurrences, expense.recurrence_id);
+
+        let predefined_expense = match predefined_expenses
+            .pop_front()
+            .expect("predefined expense queue should not be empty")
+        {
             Some(predefined_expense) => {
-                let currency = predefined_expense
-                    .find_related(currency::Entity)
-                    .one(conn)
-                    .await?
-                    .expect("the currency should not be missing");
-                let recurrence = predefined_expense
-                    .find_related(recurrence::Entity)
-                    .one(conn)
-                    .await?
-                    .expect("the recurrence should not be missing");
+                let currency = find_currency(&currencies, predefined_expense.currency_id);
+                let recurrence = find_recurrence(&recurrences, predefined_expense.recurrence_id);
                 Some((predefined_expense, currency, recurrence))
             }
             None => None,
         };
 
-        let transactions = &grouped_transactions[i];
-        let transaction_currencies = transactions.load_one(currency::Entity, conn).await?;
+        let transactions = grouped_transactions
+            .pop_front()
+            .expect("grouped transactions queue should not be empty");
+        let transaction_parts = transactions
+            .into_iter()
+            .map(|transaction| {
+                let transaction_currency = find_currency(&currencies, transaction.currency_id);
+                (transaction, transaction_currency)
+            })
+            .collect();
 
-        assert!(
-            transactions.len() == transaction_currencies.len(),
-            "the lengths of the fetched transaction related lists should be equal"
-        );
-
-        let mut transaction_parts: Vec<TransactionResponseParts> = vec![];
-        for j in 0..transactions.len() {
-            transaction_parts.push((
-                transactions[j].clone(),
-                transaction_currencies[j]
-                    .as_ref()
-                    .expect("the currency should not be missing")
-                    .clone(),
-            ));
-        }
-
-        expense_parts.push((
-            expenses[i].clone(),
-            currencies[i]
-                .as_ref()
-                .expect("the currency should not be missing")
-                .clone(),
-            recurrences[i]
-                .as_ref()
-                .expect("the recurrence should not be missing")
-                .clone(),
-            predefined_expense_parts.map(|(predefined_expense, currency, expense)| {
-                (predefined_expense.clone(), currency, expense).into()
-            }),
+        (
+            expense,
+            currency,
+            recurrence,
+            predefined_expense,
             transaction_parts,
-        ));
-    }
+        )
+    });
 
     let expense_responses = expense_parts
         .into_iter()
@@ -150,18 +133,12 @@ pub async fn find_predefined_expenses(
     conn: &DatabaseConnection,
 ) -> Result<Vec<PredefinedExpenseResponse>, DbErr> {
     let predefined_expenses = PredefinedExpense::find().all(conn).await?;
-    let currencies = predefined_expenses
-        .load_one(currency::Entity, conn)
-        .await?
-        .into_iter()
-        .flatten()
-        .collect::<Vec<_>>();
-    let recurrences = predefined_expenses
-        .load_one(recurrence::Entity, conn)
-        .await?
-        .into_iter()
-        .flatten()
-        .collect::<Vec<_>>();
+    let (currencies, recurrences) = tokio::join!(
+        predefined_expenses.load_one(currency::Entity, conn),
+        predefined_expenses.load_one(recurrence::Entity, conn)
+    );
+    let mut currencies: VecDeque<currency::Model> = currencies?.into_iter().flatten().collect();
+    let mut recurrences: VecDeque<recurrence::Model> = recurrences?.into_iter().flatten().collect();
 
     assert!(
         vec![currencies.len(), recurrences.len()]
@@ -170,14 +147,17 @@ pub async fn find_predefined_expenses(
         "the lengths of the fetched predefined expense related lists should be equal"
     );
 
-    let predefined_expense_response: Vec<PredefinedExpenseResponse> = predefined_expenses
+    let predefined_expense_response = predefined_expenses
         .into_iter()
-        .enumerate()
-        .map(|(i, predefined_expense)| {
+        .map(|predefined_expense| {
             (
                 predefined_expense,
-                currencies[i].clone(),
-                recurrences[i].clone(),
+                currencies
+                    .pop_front()
+                    .expect("currency queue should not be empty"),
+                recurrences
+                    .pop_front()
+                    .expect("recurrence queue should not be empty"),
             )
         })
         .map(|parts| parts.into())
@@ -219,6 +199,22 @@ async fn validate_recurrence_and_currency(
         return Err(ValidateRecurrenceAndCurrencyError::InvalidRecurrence)
     };
     Ok(())
+}
+
+fn find_currency(currencies: &Vec<currency::Model>, id: Id) -> currency::Model {
+    currencies
+        .iter()
+        .find(|currency| currency.id == id)
+        .expect("the currency should be in the database")
+        .clone()
+}
+
+fn find_recurrence(recurrences: &Vec<recurrence::Model>, id: Id) -> recurrence::Model {
+    recurrences
+        .iter()
+        .find(|recurrence| recurrence.id == id)
+        .expect("the currency should be in the database")
+        .clone()
 }
 
 pub mod errors {
@@ -338,10 +334,10 @@ mod tests {
             .into_connection();
 
         let (expenses, empty_expenses, unauthorized_error, db_error) = tokio::join!(
-            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID),
-            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID),
-            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID + 1),
-            find_expenses_with_transactions_by_user_id(&conn, TEST_ID, TEST_ID)
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID + 1),
+            find_expenses_by_user_id(&conn, TEST_ID, TEST_ID)
         );
 
         check!(expenses == Ok(expected_result));

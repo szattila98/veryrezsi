@@ -76,9 +76,9 @@ pub async fn register(
 pub async fn activate_account(
     State(ref conn): State<DatabaseConnection>,
     Path(token): Path<String>,
-) -> Result<&'static str, ErrorMsg<()>> {
+) -> Result<(), ErrorMsg<()>> {
     match user_operations::activate_account(conn, token).await {
-        Ok(_) => Ok("Account activated!"),
+        Ok(_) => Ok(()),
         Err(e) => Err(e.into()),
     }
 }
