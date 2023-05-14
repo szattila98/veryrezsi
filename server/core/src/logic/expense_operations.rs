@@ -201,7 +201,7 @@ async fn validate_recurrence_and_currency(
     Ok(())
 }
 
-fn find_currency(currencies: &Vec<currency::Model>, id: Id) -> currency::Model {
+fn find_currency(currencies: &[currency::Model], id: Id) -> currency::Model {
     currencies
         .iter()
         .find(|currency| currency.id == id)
@@ -209,7 +209,7 @@ fn find_currency(currencies: &Vec<currency::Model>, id: Id) -> currency::Model {
         .clone()
 }
 
-fn find_recurrence(recurrences: &Vec<recurrence::Model>, id: Id) -> recurrence::Model {
+fn find_recurrence(recurrences: &[recurrence::Model], id: Id) -> recurrence::Model {
     recurrences
         .iter()
         .find(|recurrence| recurrence.id == id)

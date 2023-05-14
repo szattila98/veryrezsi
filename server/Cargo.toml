@@ -24,16 +24,16 @@ documentation = "https://github.com/szattila98/veryrezsi"
 description = "Expense and subscription calculator web-server."
 
 [workspace.dependencies]
-chrono = "0.4.23"
+chrono = "0.4.24"
 sea-orm = "0.11.3"
-serde = "1.0.152" 
-serde_json = "1.0.91"
-tokio = "1.24.2" 
+serde = "1.0.163" 
+serde_json = "1.0.96"
+tokio = "1.28.1" 
 tracing = "0.1.37"
-tracing-subscriber = "0.3.16"
+tracing-subscriber = "0.3.17"
 pwhash = "1.0.0"
 validator = "0.16.0" 
-assert2 = "0.3.8"
+assert2 = "0.3.10"
 
 [dependencies]
 veryrezsi-api = { path = "./api" }
