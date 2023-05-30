@@ -19,31 +19,20 @@ pub async fn find_recurrences(conn: &DatabaseConnection) -> Result<Vec<Recurrenc
 mod tests {
     use std::vec;
 
-    use super::*;
-    use assert2::check;
-    use entity::{Id, recurrence};
-    use migration::DbErr;
-    use sea_orm::{DatabaseBackend, MockDatabase};
-
-    const TEST_ID: Id = 1;
-    const TEST_FLOAT: f64 = 1.0;
-    const TEST_STR: &str = "test";
-
-    const TEST_RECURRENCE: recurrence::Model = recurrence::Model {
-        id: TEST_ID,
-        name: TEST_STR.to_string(),
-        per_year: TEST_FLOAT,
+    use crate::logic::common::tests::{
+        TEST_DB_ERROR,
+        TEST_RECURRENCE,
     };
 
-    const fn TEST_DB_ERROR() -> DbErr {
-        DbErr::Custom(TEST_STR.to_string())
-    }
+    use super::*;
+    use assert2::check;
+    use sea_orm::{DatabaseBackend, MockDatabase};
 
     #[tokio::test]
     async fn find_recurrences_all_cases() {
-        let expected_recurrences: Vec<RecurrenceResponse> = vec![TEST_RECURRENCE.into(), TEST_RECURRENCE.into()];
+        let expected_recurrences: Vec<RecurrenceResponse> = vec![TEST_RECURRENCE().into(), TEST_RECURRENCE().into()];
 
-        let recurrences_stub = vec![TEST_RECURRENCE, TEST_RECURRENCE, TEST_RECURRENCE];
+        let recurrences_stub = vec![TEST_RECURRENCE(), TEST_RECURRENCE(), TEST_RECURRENCE()];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![recurrences_stub.clone(), vec![]])
             .append_query_errors(vec![TEST_DB_ERROR()])

@@ -11,20 +11,86 @@ pub async fn find_entity_by_id<E: EntityTrait>(
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use assert2::check;
-    use entity::Id;
+    use chrono::NaiveDate;
+    use entity::{Id, currency, recurrence, expense, predefined_expense, transaction};
     use migration::DbErr;
     use sea_orm::entity::prelude::*;
     use sea_orm::{DatabaseBackend, DeriveActiveModelBehavior, DeriveEntityModel, MockDatabase};
 
     use crate::logic::find_entity_by_id;
 
-    const TEST_STR: &str = "test";
-    const TEST_ID: u64 = 1;
+    pub const TEST_STR: &str = "test";
+    pub const TEST_ID: u64 = 1;
+    pub const TEST_FLOAT: f64 = 1.0;
+    pub const TEST_DATE: &str = "06-08-1998";
 
-    const fn TEST_DB_ERROR() -> DbErr {
+    pub fn TEST_DB_ERROR() -> DbErr {
         DbErr::Custom(TEST_STR.to_string())
+    }
+
+    pub fn TEST_CURRENCY() -> currency::Model {
+        return currency::Model {
+            id: TEST_ID,
+            abbreviation: TEST_STR.to_string(),
+            name: TEST_STR.to_string(),
+        }
+    }
+
+    pub fn TEST_RECURRENCE() -> recurrence::Model {
+        return recurrence::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            per_year: TEST_FLOAT,
+        }
+    }
+
+    pub fn TEST_EXPENSE() -> expense::Model {
+        return expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: TEST_DECIMAL(),
+            start_date: NaiveDate::MIN,
+            user_id: TEST_ID,
+            currency_id: TEST_ID,
+            recurrence_id: TEST_ID,
+            predefined_expense_id: Some(TEST_ID),
+        }   
+    }
+
+    pub fn TEST_PREDEFINED_EXPENSE() -> predefined_expense::Model {
+        return predefined_expense::Model {
+            id: TEST_ID,
+            name: TEST_STR.to_string(),
+            description: TEST_STR.to_string(),
+            value: TEST_DECIMAL(),
+            currency_id: TEST_ID,
+            recurrence_id: TEST_ID,
+        }
+    }
+
+    pub fn TEST_TRANSACTION() -> transaction::Model {
+        return transaction::Model {
+            id: TEST_ID,
+            donor_name: TEST_STR.to_string(),
+            value: TEST_DECIMAL(),
+            date: NaiveDate::MIN,
+            currency_id: TEST_ID,
+            expense_id: TEST_ID,
+        }
+    }
+
+    pub fn TEST_TRANSACTION_2() -> transaction::Model {
+        return transaction::Model {
+            id: TEST_TRANSACTION().id + 1,
+            ..TEST_TRANSACTION()
+        }
+    }
+
+    pub fn TEST_DECIMAL() -> Decimal {
+        Decimal::new(1, 2)
     }
 
     #[derive(Clone, Debug, PartialEq, Eq, DeriveActiveModelBehavior, DeriveEntityModel)]

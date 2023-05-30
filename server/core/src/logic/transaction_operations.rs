@@ -94,25 +94,22 @@ pub mod errors {
 mod tests {
     use std::vec;
 
-    use crate::logic::user_operations::errors::AuthorizeUserError;
+    use crate::logic::{
+        user_operations::errors::AuthorizeUserError,
+        common::tests::{
+            TEST_ID,
+            TEST_STR,
+            TEST_DATE,
+            TEST_DECIMAL,
+            TEST_DB_ERROR,
+            TEST_RECURRENCE,
+        }
+    };
 
     use super::*;
     use assert2::check;
     use entity::{currency, expense};
-    use migration::DbErr;
-    use sea_orm::{prelude::Decimal, DatabaseBackend, MockDatabase, MockExecResult};
-
-    const TEST_STR: &str = "test";
-    const TEST_ID: u64 = 1;
-    const TEST_DATE: &str = "06-08-1998";
-
-    const fn TEST_DECIMAL() -> Decimal {
-        Decimal::new(1, 2)
-    }
-
-    const fn TEST_DB_ERROR() -> DbErr {
-        DbErr::Custom(TEST_STR.to_string())
-    }
+    use sea_orm::{DatabaseBackend, MockDatabase, MockExecResult};
 
     #[tokio::test]
     async fn create_transaction_happy_path() {
