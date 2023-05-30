@@ -100,9 +100,8 @@ mod tests {
             TEST_ID,
             TEST_STR,
             TEST_DATE,
-            TEST_DECIMAL,
-            TEST_DB_ERROR,
-            TEST_RECURRENCE,
+            test_decimal,
+            test_db_error,
         }
     };
 
@@ -117,7 +116,7 @@ mod tests {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             start_date: NaiveDate::MIN,
             user_id: TEST_ID,
             currency_id: TEST_ID,
@@ -132,7 +131,7 @@ mod tests {
         let mock_transaction = transaction::Model {
             id: TEST_ID,
             donor_name: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             date: NaiveDate::MIN,
             currency_id: TEST_ID,
             expense_id: TEST_ID,
@@ -153,7 +152,7 @@ mod tests {
             NewTransactionRequest {
                 donor_name: TEST_STR.to_string(),
                 currency_id: TEST_ID,
-                value: TEST_DECIMAL(),
+                value: test_decimal(),
                 date: TEST_DATE.to_string(),
                 expense_id: TEST_ID,
             },
@@ -169,7 +168,7 @@ mod tests {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             start_date: NaiveDate::MIN,
             user_id: TEST_ID,
             currency_id: TEST_ID,
@@ -199,7 +198,7 @@ mod tests {
         let req = NewTransactionRequest {
             donor_name: TEST_STR.to_string(),
             currency_id: TEST_ID,
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             date: "wrong_date".to_string(),
             expense_id: TEST_ID,
         };
@@ -224,7 +223,7 @@ mod tests {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             start_date: NaiveDate::MIN,
             user_id: TEST_ID,
             currency_id: TEST_ID,
@@ -238,21 +237,21 @@ mod tests {
         };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // expense query db error
-            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_errors(vec![test_db_error()])
             .append_query_results(vec![vec![mock_currency.clone()]])
             // currency type query db error
             .append_query_results(vec![vec![mock_expense.clone()]])
-            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_errors(vec![test_db_error()])
             // transaction insert db error
             .append_query_results(vec![vec![mock_expense.clone()]])
             .append_query_results(vec![vec![mock_currency.clone()]])
-            .append_exec_errors(vec![TEST_DB_ERROR()])
+            .append_exec_errors(vec![test_db_error()])
             .into_connection();
 
         let req = NewTransactionRequest {
             donor_name: TEST_STR.to_string(),
             currency_id: TEST_ID,
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             date: TEST_DATE.to_string(),
             expense_id: TEST_ID,
         };
@@ -262,7 +261,7 @@ mod tests {
             create_transaction(&conn, TEST_ID, req),
         );
 
-        let db_error = Err(CreateTransactionError::DatabaseError(TEST_DB_ERROR()));
+        let db_error = Err(CreateTransactionError::DatabaseError(test_db_error()));
         check!(expense_db_error == db_error);
         check!(currency_db_error == db_error);
         check!(transaction_insert_db_error == db_error);
@@ -272,7 +271,7 @@ mod tests {
     async fn delete_transaction_all_cases() {
         let mock_transaction = transaction::Model {
             id: TEST_ID,
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             currency_id: TEST_ID,
             expense_id: TEST_ID,
             date: NaiveDate::MIN,
@@ -282,7 +281,7 @@ mod tests {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             start_date: NaiveDate::MIN,
             user_id: TEST_ID,
             currency_id: TEST_ID,
@@ -306,14 +305,14 @@ mod tests {
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .append_query_results(vec![vec![mock_expense.clone()]])
             // transaction query db error
-            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_errors(vec![test_db_error()])
             // expense query db error
             .append_query_results(vec![vec![mock_transaction.clone()]])
-            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_errors(vec![test_db_error()])
             // transaction delete db error
             .append_query_results(vec![vec![mock_transaction.clone()]])
             .append_query_results(vec![vec![mock_expense]])
-            .append_exec_errors(vec![TEST_DB_ERROR()])
+            .append_exec_errors(vec![test_db_error()])
             .into_connection();
 
         let (
@@ -334,7 +333,7 @@ mod tests {
             delete_transaction_by_id(&conn, TEST_ID, TEST_ID),
         );
 
-        let db_error = Err(DeleteTransactionByIdError::DatabaseError(TEST_DB_ERROR()));
+        let db_error = Err(DeleteTransactionByIdError::DatabaseError(test_db_error()));
         check!(happy_case == Ok(()));
         check!(transaction_not_found == Err(DeleteTransactionByIdError::InvalidTransaction));
         check!(expense_not_found == Err(DeleteTransactionByIdError::InvalidTransaction));

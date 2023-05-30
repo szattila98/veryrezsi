@@ -12,25 +12,30 @@ pub async fn find_entity_by_id<E: EntityTrait>(
 
 #[cfg(test)]
 pub mod tests {
+    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
     use assert2::check;
-    use chrono::NaiveDate;
-    use entity::{Id, currency, recurrence, expense, predefined_expense, transaction};
+    use chrono::{NaiveDate, Duration};
+    use entity::{Id, currency, recurrence, expense, predefined_expense, transaction, user, account_activation};
     use migration::DbErr;
     use sea_orm::entity::prelude::*;
     use sea_orm::{DatabaseBackend, DeriveActiveModelBehavior, DeriveEntityModel, MockDatabase};
 
-    use crate::logic::find_entity_by_id;
+    use crate::{
+        config::{AppConfig, MailConfig},
+        logic::find_entity_by_id
+    };
 
     pub const TEST_STR: &str = "test";
+    pub const TEST_EMAIL: &str = "test@test.com";
     pub const TEST_ID: u64 = 1;
     pub const TEST_FLOAT: f64 = 1.0;
     pub const TEST_DATE: &str = "06-08-1998";
 
-    pub fn TEST_DB_ERROR() -> DbErr {
+    pub fn test_db_error() -> DbErr {
         DbErr::Custom(TEST_STR.to_string())
     }
 
-    pub fn TEST_CURRENCY() -> currency::Model {
+    pub fn test_currency() -> currency::Model {
         return currency::Model {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
@@ -38,7 +43,7 @@ pub mod tests {
         }
     }
 
-    pub fn TEST_RECURRENCE() -> recurrence::Model {
+    pub fn test_recurrence() -> recurrence::Model {
         return recurrence::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
@@ -46,12 +51,12 @@ pub mod tests {
         }
     }
 
-    pub fn TEST_EXPENSE() -> expense::Model {
+    pub fn test_expense() -> expense::Model {
         return expense::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             start_date: NaiveDate::MIN,
             user_id: TEST_ID,
             currency_id: TEST_ID,
@@ -60,36 +65,70 @@ pub mod tests {
         }   
     }
 
-    pub fn TEST_PREDEFINED_EXPENSE() -> predefined_expense::Model {
+    pub fn test_predefined_expense() -> predefined_expense::Model {
         return predefined_expense::Model {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             description: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             currency_id: TEST_ID,
             recurrence_id: TEST_ID,
         }
     }
 
-    pub fn TEST_TRANSACTION() -> transaction::Model {
+    pub fn test_transaction() -> transaction::Model {
         return transaction::Model {
             id: TEST_ID,
             donor_name: TEST_STR.to_string(),
-            value: TEST_DECIMAL(),
+            value: test_decimal(),
             date: NaiveDate::MIN,
             currency_id: TEST_ID,
             expense_id: TEST_ID,
         }
     }
 
-    pub fn TEST_TRANSACTION_2() -> transaction::Model {
+    pub fn test_transaction_2() -> transaction::Model {
         return transaction::Model {
-            id: TEST_TRANSACTION().id + 1,
-            ..TEST_TRANSACTION()
+            id: test_transaction().id + 1,
+            ..test_transaction()
         }
     }
 
-    pub fn TEST_DECIMAL() -> Decimal {
+    pub fn test_user() -> user::Model {
+        return user::Model {
+            id: TEST_ID,
+            email: TEST_EMAIL.to_string(),
+            username: TEST_STR.to_string(),
+            pw_hash: TEST_STR.to_string(),
+            activated: true,
+        }
+    }
+
+    pub fn test_account_activation() -> account_activation::Model {
+        return account_activation::Model {
+            id: TEST_ID,
+            user_id: TEST_ID,
+            expiration: chrono::Local::now().checked_add_signed(Duration::days(1)).unwrap(),
+            token: TEST_STR.to_string(),
+        }
+    }
+
+    pub fn test_app_config() -> AppConfig {
+        return AppConfig {
+            server_address: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8080),
+            database_url: TEST_STR.to_string(),
+            cookie_key: TEST_STR.to_string(),
+            log_level: crate::config::LogLevel::Trace,
+            mail_config: MailConfig {
+                smtp_address: TEST_STR.to_string(),
+                smtp_port: 7777,
+                smtp_username: TEST_STR.to_string(),
+                smtp_password: TEST_STR.to_string(),
+            },
+        }   
+    }
+
+    pub fn test_decimal() -> Decimal {
         Decimal::new(1, 2)
     }
 
@@ -108,7 +147,7 @@ pub mod tests {
         let mock_model = Model { id: TEST_ID };
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![mock_model.clone()], vec![]])
-            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (model, not_found, db_error) = tokio::join!(
@@ -119,6 +158,6 @@ pub mod tests {
 
         check!(model == Ok(Some(mock_model)));
         check!(not_found == Ok(None));
-        check!(db_error == Err(TEST_DB_ERROR()));
+        check!(db_error == Err(test_db_error()));
     }
 }

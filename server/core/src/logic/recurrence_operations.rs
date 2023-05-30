@@ -20,8 +20,8 @@ mod tests {
     use std::vec;
 
     use crate::logic::common::tests::{
-        TEST_DB_ERROR,
-        TEST_RECURRENCE,
+        test_db_error,
+        test_recurrence,
     };
 
     use super::*;
@@ -30,12 +30,12 @@ mod tests {
 
     #[tokio::test]
     async fn find_recurrences_all_cases() {
-        let expected_recurrences: Vec<RecurrenceResponse> = vec![TEST_RECURRENCE().into(), TEST_RECURRENCE().into()];
+        let expected_recurrences: Vec<RecurrenceResponse> = vec![test_recurrence().into(), test_recurrence().into()];
 
-        let recurrences_stub = vec![TEST_RECURRENCE(), TEST_RECURRENCE(), TEST_RECURRENCE()];
+        let recurrences_stub = vec![test_recurrence(), test_recurrence()];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![recurrences_stub.clone(), vec![]])
-            .append_query_errors(vec![TEST_DB_ERROR()])
+            .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (recurrences, empty_vec, db_error) = tokio::join!(
@@ -46,6 +46,6 @@ mod tests {
 
         check!(recurrences == Ok(expected_recurrences));
         check!(empty_vec == Ok(vec![]));
-        check!(db_error == Err(TEST_DB_ERROR()));
+        check!(db_error == Err(test_db_error()));
     }
 }
