@@ -40,5 +40,5 @@ async function callWhoAmIApi(sessionId: string): Promise<User | null> {
 		return Promise.resolve(null);
 	}
 
-	return response.json();
+	return response.json() as Promise<User | null>;
 }

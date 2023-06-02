@@ -1,0 +1,711 @@
+{
+	"info": {
+		"_postman_id": "fad986e7-46c3-47a4-803e-62965daa10d1",
+		"name": "veryrezsi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22217881"
+	},
+	"item": [
+		{
+			"name": "server",
+			"item": [
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "login",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"bob@ross.com\",\n\t\"password\": \"admin\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/user/auth",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"user",
+										"auth"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "me",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/user/me",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"user",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "logout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/user/logout",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"user",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "register",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"Password123!\",\n    \"confirmPassword\": \"Password123!\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/user/register",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "activate",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/user/activate/:token",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"user",
+										"activate",
+										":token"
+									],
+									"variable": [
+										{
+											"key": "token",
+											"value": "168bd775-59dd-48b6-ab7d-fcf572fc7165"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "expenses",
+					"item": [
+						{
+							"name": "get_expenses_of_user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/expense/1",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"expense",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_predefined_expenses",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/expense/predefined",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"expense",
+										"predefined"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create_expense",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Disney+\",\r\n    \"description\": \"We need princesses and Jedis\",\r\n    \"recurrenceTypeId\": 1,\r\n    \"currencyTypeId\": 2,\r\n    \"predefinedExpenseId\": null,\r\n    \"startDate\": \"29-08-2019\",\r\n    \"value\": 14.99\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/expense",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"expense"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create_predefined_expense",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Bribes\",\r\n    \"description\": \"For whom it may concern\",\r\n    \"value\": \"500.0\",\r\n    \"currencyTypeId\": 1,\r\n    \"recurrenceTypeId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/expense/predefined",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"expense",
+										"predefined"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "currencies",
+					"item": [
+						{
+							"name": "get_currencies",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/currency",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"currency"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "recurrences",
+					"item": [
+						{
+							"name": "get_recurrences",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/recurrence",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"recurrence"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "transactions",
+					"item": [
+						{
+							"name": "create_transaction",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"donorName\": \"Ralf uncle\",\r\n    \"currencyTypeId\": 1,\r\n    \"value\": 500,\r\n    \"date\": \"25-10-2022\",\r\n    \"expenseId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/transaction",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"transaction"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_transaction",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{port}}{{apiBase}}/transaction/1",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{port}}{{apiBase}}",
+									"path": [
+										"transaction",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "proxy",
+			"item": [
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "login",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"bob@ross.com\",\n\t\"password\": \"admin\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/user/login",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "me",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/user/me",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"user",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "logout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/user/logout",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"user",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "register",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"username@password.com\",\n\t\"username\": \"username\",\n\t\"password\": \"Password123!\",\n    \"confirmPassword\": \"Password123!\"\n}"
+								},
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/user/register",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "activate",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/user/activate?token=19ab0c1b-5e1e-4570-886a-4dd6d294c0e6",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"user",
+										"activate"
+									],
+									"query": [
+										{
+											"key": "token",
+											"value": "19ab0c1b-5e1e-4570-886a-4dd6d294c0e6"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "expenses",
+					"item": [
+						{
+							"name": "get_expenses_of_user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense/1",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"expense",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_predefined_expenses",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense/predefined",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"expense",
+										"predefined"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create_expense",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Disney+\",\r\n    \"description\": \"We need princesses and Jedis\",\r\n    \"recurrenceTypeId\": 1,\r\n    \"currencyTypeId\": 2,\r\n    \"predefinedExpenseId\": null,\r\n    \"startDate\": \"29-08-2019\",\r\n    \"value\": 14.99\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"expense"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create_predefined_expense",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Bribes\",\r\n    \"description\": \"For whom it may concern\",\r\n    \"value\": \"500.0\",\r\n    \"currencyTypeId\": 1,\r\n    \"recurrenceTypeId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/expense/predefined",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"expense",
+										"predefined"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "currencies",
+					"item": [
+						{
+							"name": "get_currencies",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/currency",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"currency"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "recurrences",
+					"item": [
+						{
+							"name": "get_recurrences",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/recurrence",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"recurrence"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "transactions",
+					"item": [
+						{
+							"name": "create_transaction",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"donorName\": \"Ralf uncle\",\r\n    \"currencyTypeId\": 1,\r\n    \"value\": 500,\r\n    \"date\": \"25-10-2022\",\r\n    \"expenseId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/transaction",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"transaction"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_transaction",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}:{{proxyPort}}{{apiBase}}/transaction/5",
+									"host": [
+										"{{host}}"
+									],
+									"port": "{{proxyPort}}{{apiBase}}",
+									"path": [
+										"transaction",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "8000",
+			"type": "string"
+		},
+		{
+			"key": "apiBase",
+			"value": "/api",
+			"type": "string"
+		},
+		{
+			"key": "proxyPort",
+			"value": "4000",
+			"type": "string"
+		}
+	]
+}
