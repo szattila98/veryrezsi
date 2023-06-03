@@ -10,5 +10,5 @@ Refer to [DEV.md](../main/DEV.md) file.
 
 ## Special thanks
 ### For helping us with front-end development
+- [Skeleton UI toolkit & all of its tools](https://www.skeleton.dev/)
 - [Tailwind Starter Kit](https://github.com/creativetimofficial/tailwind-starter-kit)
-- [coolors](https://coolors.co/)
