@@ -201,7 +201,7 @@ async fn validate_recurrence_and_currency(
     Ok(())
 }
 
-fn find_currency(currencies: &Vec<currency::Model>, id: Id) -> currency::Model {
+fn find_currency(currencies: &[currency::Model], id: Id) -> currency::Model {
     currencies
         .iter()
         .find(|currency| currency.id == id)
@@ -209,7 +209,7 @@ fn find_currency(currencies: &Vec<currency::Model>, id: Id) -> currency::Model {
         .clone()
 }
 
-fn find_recurrence(recurrences: &Vec<recurrence::Model>, id: Id) -> recurrence::Model {
+fn find_recurrence(recurrences: &[recurrence::Model], id: Id) -> recurrence::Model {
     recurrences
         .iter()
         .find(|recurrence| recurrence.id == id)
@@ -265,28 +265,18 @@ pub mod errors {
 #[cfg(test)]
 mod tests {
     use crate::{
-        logic::{
-            user_operations::errors::AuthorizeUserError,
-            common::tests::{
-                TEST_ID,
-                TEST_STR,
-                TEST_DATE,
-                test_decimal,
-                test_db_error,
-                test_currency,
-                test_recurrence,
-                test_expense,
-                test_predefined_expense,
-                test_transaction,
-                test_transaction_2
-            }
-        },
         dto::{
-            currencies::CurrencyResponse,
-            recurrences::RecurrenceResponse,
-            expenses::PredefinedExpenseResponse,
-            transactions::TransactionResponse
-        }
+            currencies::CurrencyResponse, expenses::PredefinedExpenseResponse,
+            recurrences::RecurrenceResponse, transactions::TransactionResponse,
+        },
+        logic::{
+            common::tests::{
+                test_currency, test_db_error, test_decimal, test_expense, test_predefined_expense,
+                test_recurrence, test_transaction, test_transaction_2, TEST_DATE, TEST_ID,
+                TEST_STR,
+            },
+            user_operations::errors::AuthorizeUserError,
+        },
     };
 
     use super::*;
@@ -298,10 +288,16 @@ mod tests {
     async fn find_expenses_by_user_id_all_cases() {
         let expected_currency: CurrencyResponse = test_currency().into();
         let expected_recurrence: RecurrenceResponse = test_recurrence().into();
-        let expected_predefined_expense: PredefinedExpenseResponse =
-            (test_predefined_expense(), test_currency(), test_recurrence()).into();
-        let expected_transaction: TransactionResponse = (test_transaction(), test_currency()).into();
-        let expected_transaction_2: TransactionResponse = (test_transaction_2(), test_currency()).into();
+        let expected_predefined_expense: PredefinedExpenseResponse = (
+            test_predefined_expense(),
+            test_currency(),
+            test_recurrence(),
+        )
+            .into();
+        let expected_transaction: TransactionResponse =
+            (test_transaction(), test_currency()).into();
+        let expected_transaction_2: TransactionResponse =
+            (test_transaction_2(), test_currency()).into();
         let expected_expenses = vec![ExpenseResponse {
             id: TEST_ID,
             name: TEST_STR.to_string(),
@@ -337,12 +333,7 @@ mod tests {
             .append_query_errors(vec![test_db_error()])
             .into_connection();
 
-        let (
-            expenses,
-            empty_expenses,
-            unauthorized_error,
-            db_error
-        ) = tokio::join!(
+        let (expenses, empty_expenses, unauthorized_error, db_error) = tokio::join!(
             find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
             find_expenses_by_user_id(&conn, TEST_ID, TEST_ID),
             find_expenses_by_user_id(&conn, TEST_ID, TEST_ID + 1),
@@ -524,8 +515,18 @@ mod tests {
     #[tokio::test]
     async fn find_predefined_expenses_all_cases() {
         let expected_predefined_expenses: Vec<PredefinedExpenseResponse> = vec![
-            (test_predefined_expense(), test_currency(), test_recurrence()).into(),
-            (test_predefined_expense(), test_currency(), test_recurrence()).into()
+            (
+                test_predefined_expense(),
+                test_currency(),
+                test_recurrence(),
+            )
+                .into(),
+            (
+                test_predefined_expense(),
+                test_currency(),
+                test_recurrence(),
+            )
+                .into(),
         ];
 
         let predefined_expenses_stub = vec![test_predefined_expense(), test_predefined_expense()];
@@ -544,11 +545,7 @@ mod tests {
             .append_query_errors(vec![test_db_error()])
             .into_connection();
 
-        let (
-            predefined_expenses,
-            empty_predefined_expenses,
-            db_error
-        ) = tokio::join!(
+        let (predefined_expenses, empty_predefined_expenses, db_error) = tokio::join!(
             find_predefined_expenses(&conn),
             find_predefined_expenses(&conn),
             find_predefined_expenses(&conn)

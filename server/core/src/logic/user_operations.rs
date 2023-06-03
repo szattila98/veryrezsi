@@ -201,22 +201,16 @@ mod tests {
     use crate::{
         dto::users::NewUserRequest,
         logic::{
-            user_operations::{
-            activate_account, authorize_user,
-            errors::{ActivateAccountError, AuthorizeUserError, SaveUserError},
-            find_user_by_email, save_user,
-            },
             common::tests::{
-                TEST_ID,
-                TEST_STR,
-                TEST_EMAIL,
-                test_user,
-                test_account_activation,
-                test_app_config,
-                test_db_error,
-            }
-        }
-        
+                test_account_activation, test_app_config, test_db_error, test_user, TEST_EMAIL,
+                TEST_ID, TEST_STR,
+            },
+            user_operations::{
+                activate_account, authorize_user,
+                errors::{ActivateAccountError, AuthorizeUserError, SaveUserError},
+                find_user_by_email, save_user,
+            },
+        },
     };
 
     #[tokio::test]
@@ -298,11 +292,31 @@ mod tests {
             user_insert_db_error,
             activation_insert_db_error,
         ) = tokio::join!(
-            save_user(app_config, &conn, ok_mail_transport.clone(), request.clone()),
-            save_user(app_config, &conn, ok_mail_transport.clone(), request.clone()),
+            save_user(
+                app_config,
+                &conn,
+                ok_mail_transport.clone(),
+                request.clone()
+            ),
+            save_user(
+                app_config,
+                &conn,
+                ok_mail_transport.clone(),
+                request.clone()
+            ),
             save_user(app_config, &conn, error_mail_transport, request.clone()),
-            save_user(app_config, &conn, ok_mail_transport.clone(), request.clone()),
-            save_user(app_config, &conn, ok_mail_transport.clone(), request.clone()),
+            save_user(
+                app_config,
+                &conn,
+                ok_mail_transport.clone(),
+                request.clone()
+            ),
+            save_user(
+                app_config,
+                &conn,
+                ok_mail_transport.clone(),
+                request.clone()
+            ),
             save_user(app_config, &conn, ok_mail_transport, request),
         );
 

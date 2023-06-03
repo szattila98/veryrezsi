@@ -17,7 +17,7 @@ pub async fn find_currencies(conn: &DatabaseConnection) -> Result<Vec<CurrencyRe
 
 #[cfg(test)]
 mod tests {
-    use crate::logic::common::tests::{test_db_error, test_currency};
+    use crate::logic::common::tests::{test_currency, test_db_error};
 
     use super::*;
     use assert2::check;
@@ -25,7 +25,8 @@ mod tests {
 
     #[tokio::test]
     async fn find_currencies_all_cases() {
-        let expected_currencies: Vec<CurrencyResponse> = vec![test_currency().into(), test_currency().into()];
+        let expected_currencies: Vec<CurrencyResponse> =
+            vec![test_currency().into(), test_currency().into()];
 
         let currencies_stub = vec![test_currency(), test_currency()];
         let conn = MockDatabase::new(DatabaseBackend::MySql)

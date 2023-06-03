@@ -19,10 +19,7 @@ pub async fn find_recurrences(conn: &DatabaseConnection) -> Result<Vec<Recurrenc
 mod tests {
     use std::vec;
 
-    use crate::logic::common::tests::{
-        test_db_error,
-        test_recurrence,
-    };
+    use crate::logic::common::tests::{test_db_error, test_recurrence};
 
     use super::*;
     use assert2::check;
@@ -30,7 +27,8 @@ mod tests {
 
     #[tokio::test]
     async fn find_recurrences_all_cases() {
-        let expected_recurrences: Vec<RecurrenceResponse> = vec![test_recurrence().into(), test_recurrence().into()];
+        let expected_recurrences: Vec<RecurrenceResponse> =
+            vec![test_recurrence().into(), test_recurrence().into()];
 
         let recurrences_stub = vec![test_recurrence(), test_recurrence()];
         let conn = MockDatabase::new(DatabaseBackend::MySql)

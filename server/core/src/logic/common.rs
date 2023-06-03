@@ -12,17 +12,20 @@ pub async fn find_entity_by_id<E: EntityTrait>(
 
 #[cfg(test)]
 pub mod tests {
-    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
     use assert2::check;
-    use chrono::{NaiveDate, Duration};
-    use entity::{Id, currency, recurrence, expense, predefined_expense, transaction, user, account_activation};
+    use chrono::{Duration, NaiveDate};
+    use entity::{
+        account_activation, currency, expense, predefined_expense, recurrence, transaction, user,
+        Id,
+    };
     use migration::DbErr;
     use sea_orm::entity::prelude::*;
     use sea_orm::{DatabaseBackend, DeriveActiveModelBehavior, DeriveEntityModel, MockDatabase};
+    use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
     use crate::{
         config::{AppConfig, MailConfig},
-        logic::find_entity_by_id
+        logic::find_entity_by_id,
     };
 
     pub const TEST_STR: &str = "test";
@@ -40,7 +43,7 @@ pub mod tests {
             id: TEST_ID,
             abbreviation: TEST_STR.to_string(),
             name: TEST_STR.to_string(),
-        }
+        };
     }
 
     pub fn test_recurrence() -> recurrence::Model {
@@ -48,7 +51,7 @@ pub mod tests {
             id: TEST_ID,
             name: TEST_STR.to_string(),
             per_year: TEST_FLOAT,
-        }
+        };
     }
 
     pub fn test_expense() -> expense::Model {
@@ -62,7 +65,7 @@ pub mod tests {
             currency_id: TEST_ID,
             recurrence_id: TEST_ID,
             predefined_expense_id: Some(TEST_ID),
-        }   
+        };
     }
 
     pub fn test_predefined_expense() -> predefined_expense::Model {
@@ -73,7 +76,7 @@ pub mod tests {
             value: test_decimal(),
             currency_id: TEST_ID,
             recurrence_id: TEST_ID,
-        }
+        };
     }
 
     pub fn test_transaction() -> transaction::Model {
@@ -84,14 +87,14 @@ pub mod tests {
             date: NaiveDate::MIN,
             currency_id: TEST_ID,
             expense_id: TEST_ID,
-        }
+        };
     }
 
     pub fn test_transaction_2() -> transaction::Model {
         return transaction::Model {
             id: test_transaction().id + 1,
             ..test_transaction()
-        }
+        };
     }
 
     pub fn test_user() -> user::Model {
@@ -101,16 +104,18 @@ pub mod tests {
             username: TEST_STR.to_string(),
             pw_hash: TEST_STR.to_string(),
             activated: true,
-        }
+        };
     }
 
     pub fn test_account_activation() -> account_activation::Model {
         return account_activation::Model {
             id: TEST_ID,
             user_id: TEST_ID,
-            expiration: chrono::Local::now().checked_add_signed(Duration::days(1)).unwrap(),
+            expiration: chrono::Local::now()
+                .checked_add_signed(Duration::days(1))
+                .unwrap(),
             token: TEST_STR.to_string(),
-        }
+        };
     }
 
     pub fn test_app_config() -> AppConfig {
@@ -125,7 +130,7 @@ pub mod tests {
                 smtp_username: TEST_STR.to_string(),
                 smtp_password: TEST_STR.to_string(),
             },
-        }   
+        };
     }
 
     pub fn test_decimal() -> Decimal {

@@ -69,7 +69,7 @@ pub type PredefinedExpenseResponseParts = (
     currency::Model,
     recurrence::Model,
 );
-impl<'a> From<PredefinedExpenseResponseParts> for PredefinedExpenseResponse {
+impl From<PredefinedExpenseResponseParts> for PredefinedExpenseResponse {
     fn from((predefined_expense, currency, recurrence): PredefinedExpenseResponseParts) -> Self {
         Self {
             id: predefined_expense.id,

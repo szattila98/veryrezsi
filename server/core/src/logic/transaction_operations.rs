@@ -95,14 +95,8 @@ mod tests {
     use std::vec;
 
     use crate::logic::{
+        common::tests::{test_db_error, test_decimal, TEST_DATE, TEST_ID, TEST_STR},
         user_operations::errors::AuthorizeUserError,
-        common::tests::{
-            TEST_ID,
-            TEST_STR,
-            TEST_DATE,
-            test_decimal,
-            test_db_error,
-        }
     };
 
     use super::*;
