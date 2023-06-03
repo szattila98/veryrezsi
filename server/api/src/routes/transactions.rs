@@ -8,7 +8,7 @@ use crate::auth;
 use veryrezsi_core::Id;
 
 use axum::extract::{Path, State};
-use axum::{http::StatusCode, Json};
+use axum::Json;
 
 pub async fn create_transaction(
     user: auth::AuthenticatedUser,
@@ -25,9 +25,9 @@ pub async fn delete_transaction(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
     Path(transaction_id): Path<Id>,
-) -> Result<StatusCode, ErrorMsg<()>> {
+) -> Result<(), ErrorMsg<()>> {
     match transaction_operations::delete_transaction_by_id(conn, user.id, transaction_id).await {
-        Ok(_) => Ok(StatusCode::NO_CONTENT),
+        Ok(_) => Ok(()),
         Err(e) => Err(e.into()),
     }
 }

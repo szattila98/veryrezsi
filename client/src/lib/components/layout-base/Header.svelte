@@ -8,7 +8,7 @@
 
 	async function logout() {
 		try {
-			const res = await fetch('/api/logout', {
+			const res = await fetch('/api/user/logout', {
 				method: 'POST'
 			});
 			if (res.ok) {
@@ -26,7 +26,7 @@
 	}
 </script>
 
-<header class={`mb-4 py-4 px-6 text-gray-100 ${GRADIENT}`}>
+<header class={`mb-4 px-6 py-4 text-gray-100 ${GRADIENT}`}>
 	<div class="flex flex-col items-center justify-between sm:flex-row">
 		<NavEntry text="Veryrezsi" href="/" iconSize={8} class="text-xl font-semibold">
 			<FaHome />

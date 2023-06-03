@@ -1,6 +1,10 @@
 # Stage BUILD
 FROM node:18-alpine as builder
 
+# Build-time variables
+ARG backend_url=http://localhost:8000/api
+ENV REZSI_API_BASE_URL=$backend_url
+
 WORKDIR /app
 COPY . ./
 
