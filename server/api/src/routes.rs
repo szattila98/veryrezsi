@@ -4,8 +4,8 @@ use axum::{
 };
 use axum_extra::extract::cookie::Key;
 use axum_macros::FromRef;
-use sea_orm::DatabaseConnection;
 use std::sync::Arc;
+use veryrezsi_core::DatabaseConnection;
 use veryrezsi_core::{config::AppConfig, email::MailTransport};
 
 pub mod common;

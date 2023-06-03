@@ -2,7 +2,7 @@ use crate::auth;
 
 use super::error::ErrorMsg;
 use axum::{extract::State, Json};
-use sea_orm::DatabaseConnection;
+use veryrezsi_core::DatabaseConnection;
 use veryrezsi_core::{dto::currencies::CurrencyResponse, logic::currency_operations};
 
 pub async fn get_currencies(

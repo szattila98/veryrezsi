@@ -1,5 +1,5 @@
 use axum::{extract::State, Json};
-use sea_orm::DatabaseConnection;
+use veryrezsi_core::DatabaseConnection;
 use veryrezsi_core::{dto::recurrences::RecurrenceResponse, logic::recurrence_operations};
 
 use crate::auth;

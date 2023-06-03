@@ -1,8 +1,8 @@
-use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::expenses::{
     ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest, PredefinedExpenseResponse,
 };
 use veryrezsi_core::logic::expense_operations;
+use veryrezsi_core::DatabaseConnection;
 
 use super::common::ValidatedJson;
 use super::error::ErrorMsg;
@@ -10,7 +10,7 @@ use crate::auth;
 
 use axum::extract::{Path, State};
 use axum::Json;
-use entity::Id;
+use veryrezsi_core::Id;
 
 pub async fn get_expenses(
     user: auth::AuthenticatedUser,

@@ -1,11 +1,11 @@
-use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::transactions::NewTransactionRequest;
 use veryrezsi_core::logic::transaction_operations;
+use veryrezsi_core::DatabaseConnection;
 
 use super::common::ValidatedJson;
 use super::error::ErrorMsg;
 use crate::auth;
-use entity::Id;
+use veryrezsi_core::Id;
 
 use axum::extract::{Path, State};
 use axum::{http::StatusCode, Json};

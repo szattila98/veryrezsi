@@ -23,10 +23,8 @@ pub mod tests {
     use sea_orm::{DatabaseBackend, DeriveActiveModelBehavior, DeriveEntityModel, MockDatabase};
     use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-    use crate::{
-        config::{AppConfig, MailConfig},
-        logic::find_entity_by_id,
-    };
+    use crate::config::{AppConfig, MailConfig};
+    use crate::logic::common::find_entity_by_id;
 
     pub const TEST_STR: &str = "test";
     pub const TEST_EMAIL: &str = "test@test.com";

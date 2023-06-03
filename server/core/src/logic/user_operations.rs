@@ -1,33 +1,52 @@
-use self::errors::{ActivateAccountError, AuthorizeUserError, SaveUserError};
+use self::errors::{ActivateAccountError, AuthorizeUserError, SaveUserError, VerifyLoginError};
 
 use crate::config;
-use crate::dto::users::{NewUserRequest, UserResponse};
+use crate::dto::users::{LoginRequest, NewUserRequest, UserResponse};
 use crate::email::{render_template, send_mail, ACTIVATION_EMAIL_TEMPLATE};
 use chrono::Duration;
 use entity::account_activation::{self, Entity as AccountActivation};
 use entity::user::{self, Entity as User};
 use entity::Id;
 use lettre::AsyncTransport;
-use migration::DbErr;
 use pwhash::bcrypt;
 use sea_orm::prelude::Uuid;
 use sea_orm::ActiveValue::NotSet;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter,
-    Set, TransactionTrait,
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, IntoActiveModel,
+    QueryFilter, Set, TransactionTrait,
 };
 use std::collections::HashMap;
 use std::sync::Arc;
 
-pub async fn find_user_by_email(
+use super::common::find_entity_by_id;
+
+pub async fn find_user_by_id(
     conn: &DatabaseConnection,
-    email: String,
-) -> Result<Option<user::Model>, DbErr> {
-    let user = User::find()
-        .filter(user::Column::Email.eq(email.clone()))
-        .one(conn)
-        .await?;
+    user_id: Id,
+) -> Result<Option<UserResponse>, DbErr> {
+    let user = find_entity_by_id::<user::Entity>(conn, user_id)
+        .await?
+        .map(|user| user.into());
     Ok(user)
+}
+
+pub async fn verify_login(
+    conn: &DatabaseConnection,
+    req: LoginRequest,
+) -> Result<Id, VerifyLoginError> {
+    let Some(user) = User::find()
+        .filter(user::Column::Email.eq(&req.email))
+        .one(conn)
+        .await? else {
+            return Err( VerifyLoginError::IncorrectCredentials);
+        };
+    if !user.activated {
+        return Err(VerifyLoginError::AccountNotActivated);
+    };
+    if !bcrypt::verify(req.password, &user.pw_hash) {
+        return Err(VerifyLoginError::IncorrectCredentials);
+    };
+    Ok(user.id)
 }
 
 pub async fn save_user<M>(
@@ -40,9 +59,12 @@ where
     M: AsyncTransport + Send + Sync + 'static,
     <M as AsyncTransport>::Error: std::fmt::Debug,
 {
-    let None = find_user_by_email(conn, req.email.clone()).await? else {
-        return Err(SaveUserError::UserAlreadyExists)
-    };
+    let None = User::find()
+        .filter(user::Column::Email.eq(&req.email))
+        .one(conn)
+        .await? else {
+            return Err(SaveUserError::UserAlreadyExists)
+        };
 
     let pw_hash = match bcrypt::hash(req.password) {
         Ok(hashed) => hashed,
@@ -145,6 +167,16 @@ pub mod errors {
     use thiserror::Error;
 
     #[derive(Error, Debug, PartialEq, Eq)]
+    pub enum VerifyLoginError {
+        #[error("account not activated")]
+        AccountNotActivated,
+        #[error("incorrect credentials")]
+        IncorrectCredentials,
+        #[error("database error: '{0}'")]
+        DatabaseError(#[from] DbErr),
+    }
+
+    #[derive(Error, Debug, PartialEq, Eq)]
     pub enum SaveUserError {
         #[error("user already exists")]
         UserAlreadyExists,
@@ -198,6 +230,7 @@ mod tests {
     use sea_orm::{DatabaseBackend, MockDatabase, MockExecResult};
 
     use crate::dto::users::UserResponse;
+    use crate::logic::user_operations::find_user_by_id;
     use crate::{
         dto::users::NewUserRequest,
         logic::{
@@ -208,25 +241,25 @@ mod tests {
             user_operations::{
                 activate_account, authorize_user,
                 errors::{ActivateAccountError, AuthorizeUserError, SaveUserError},
-                find_user_by_email, save_user,
+                save_user,
             },
         },
     };
 
     #[tokio::test]
-    async fn find_by_email_all_cases() {
+    async fn find_user_by_id_all_cases() {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             .append_query_results(vec![vec![test_user()], vec![]])
             .append_query_errors(vec![test_db_error()])
             .into_connection();
 
         let (user, not_found, db_error) = tokio::join!(
-            find_user_by_email(&conn, TEST_EMAIL.to_string()),
-            find_user_by_email(&conn, TEST_EMAIL.to_string()),
-            find_user_by_email(&conn, TEST_EMAIL.to_string())
+            find_user_by_id(&conn, TEST_ID),
+            find_user_by_id(&conn, TEST_ID),
+            find_user_by_id(&conn, TEST_ID)
         );
 
-        check!(user == Ok(Some(test_user())));
+        check!(user == Ok(Some(test_user().into())));
         check!(not_found == Ok(None));
         check!(db_error == Err(test_db_error()));
     }
