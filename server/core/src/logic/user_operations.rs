@@ -222,7 +222,7 @@ mod tests {
     #[tokio::test]
     async fn find_by_email_all_cases() {
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![test_user().clone()], vec![]])
+            .append_query_results(vec![vec![test_user()], vec![]])
             .append_query_errors(vec![test_db_error()])
             .into_connection();
 

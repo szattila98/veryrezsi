@@ -319,20 +319,20 @@ mod tests {
         let predefined_expenses_stub = vec![test_predefined_expense()];
         let transactions_stub = vec![test_transaction(), test_transaction_2()];
         let currencies_stub = vec![test_currency()];
-        let recurrencies_stub = vec![test_recurrence()];
+        let recurrences_stub = vec![test_recurrence()];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // expenses
             .append_query_results(vec![expenses_stub])
             .append_query_results(vec![predefined_expenses_stub])
             .append_query_results(vec![transactions_stub])
             .append_query_results(vec![currencies_stub.clone()])
-            .append_query_results(vec![recurrencies_stub.clone()])
+            .append_query_results(vec![recurrences_stub.clone()])
             // empty_expenses
             .append_query_results(vec![Vec::<expense::Model>::new()])
             .append_query_results(vec![Vec::<predefined_expense::Model>::new()])
             .append_query_results(vec![Vec::<transaction::Model>::new()])
             .append_query_results(vec![currencies_stub])
-            .append_query_results(vec![recurrencies_stub])
+            .append_query_results(vec![recurrences_stub])
             // db_error
             .append_query_errors(vec![test_db_error()])
             .into_connection();
@@ -530,12 +530,12 @@ mod tests {
 
         let predefined_expenses_stub = vec![test_predefined_expense(), test_predefined_expense()];
         let currencies_stub = vec![test_currency()];
-        let recurrencies_stub = vec![test_recurrence()];
+        let recurrences_stub = vec![test_recurrence()];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
             // predefined_expenses
             .append_query_results(vec![predefined_expenses_stub])
             .append_query_results(vec![currencies_stub])
-            .append_query_results(vec![recurrencies_stub])
+            .append_query_results(vec![recurrences_stub])
             // empty_predefined_expenses
             .append_query_results(vec![Vec::<predefined_expense::Model>::new()])
             .append_query_results(vec![Vec::<currency::Model>::new()])
