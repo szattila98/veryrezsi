@@ -19,30 +19,29 @@ export interface Currency {
 export type Transaction = {
 	id: number;
 	donorName: string;
-	currency: Currency;
 	value: number;
 	date: string;
-	expenseId: number;
+	currency: Currency;
 };
 
 export interface PredefinedExpense {
 	id: number;
 	name: string;
 	description: string;
-	recurrence: Recurrence;
-	currency: Currency;
 	value: number;
+	currency: Currency;
+	recurrence: Recurrence;
 }
 
 export interface Expense {
 	id: number;
 	name: string;
 	description: string;
-	recurrence: Recurrence;
-	currency: Currency;
-	predefinedExpenseId: number | null;
-	startDate: string;
 	value: string;
+	startDate: string;
 	userId: number;
+	currency: Currency;
+	recurrence: Recurrence;
+	predefinedExpenseId: number | null;
 	transactions: Transaction[];
 }
