@@ -30,7 +30,7 @@ thiserror = "1.0.40"
 lettre = { version = "0.10.4", default-features = false, features = ["builder", "smtp-transport", "pool", "tokio1-rustls-tls"] }
 handlebars = "4.3.7"
 confique = { version = "0.2.3", default-features = false, features = ["toml"] }
-uuid = { version = "1.3.2", features = ["v4"] }
+uuid = { version = "1.3.3", features = ["v4"] }
 
 [dev-dependencies]
 assert2 = { workspace = true }
