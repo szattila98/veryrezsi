@@ -11,7 +11,7 @@ lazy_static! {
             .expect("incorrect password regex");
 }
 
-#[derive(Deserialize, Validate)]
+#[derive(Deserialize, Validate, Clone)]
 pub struct LoginRequest {
     #[validate(length(
         min = 1,

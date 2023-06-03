@@ -227,10 +227,12 @@ mod tests {
     use chrono::Duration;
     use entity::{account_activation, user};
     use lettre::transport::stub::AsyncStubTransport;
+    use pwhash::bcrypt;
     use sea_orm::{DatabaseBackend, MockDatabase, MockExecResult};
 
-    use crate::dto::users::UserResponse;
-    use crate::logic::user_operations::find_user_by_id;
+    use crate::dto::users::{LoginRequest, UserResponse};
+    use crate::logic::user_operations::errors::VerifyLoginError;
+    use crate::logic::user_operations::{find_user_by_id, verify_login};
     use crate::{
         dto::users::NewUserRequest,
         logic::{
@@ -262,6 +264,42 @@ mod tests {
         check!(user == Ok(Some(test_user().into())));
         check!(not_found == Ok(None));
         check!(db_error == Err(test_db_error()));
+    }
+
+    #[tokio::test]
+    async fn verify_login_all_cases() {
+        let test_password = bcrypt::hash(TEST_STR.to_string()).unwrap();
+        let mut test_user_good_password = test_user();
+        test_user_good_password.pw_hash = test_password;
+        let mut test_user_not_activated = test_user();
+        test_user_not_activated.activated = false;
+        let test_user_bad_password = test_user();
+        let conn = MockDatabase::new(DatabaseBackend::MySql)
+            .append_query_results(vec![vec![test_user_good_password], vec![]])
+            .append_query_errors(vec![test_db_error()])
+            .append_query_results(vec![
+                vec![test_user_not_activated],
+                vec![test_user_bad_password],
+            ])
+            .into_connection();
+        let req = LoginRequest {
+            email: TEST_EMAIL.to_string(),
+            password: TEST_STR.to_string(),
+        };
+
+        let (success, incorrect_credentials, db_error, user_not_activated, bad_password) = tokio::join!(
+            verify_login(&conn, req.clone()),
+            verify_login(&conn, req.clone()),
+            verify_login(&conn, req.clone()),
+            verify_login(&conn, req.clone()),
+            verify_login(&conn, req)
+        );
+
+        check!(success == Ok(TEST_ID));
+        check!(incorrect_credentials == Err(VerifyLoginError::IncorrectCredentials));
+        check!(db_error == Err(VerifyLoginError::DatabaseError(test_db_error())));
+        check!(user_not_activated == Err(VerifyLoginError::AccountNotActivated));
+        check!(bad_password == Err(VerifyLoginError::IncorrectCredentials));
     }
 
     #[tokio::test]
