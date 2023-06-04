@@ -1,6 +1,7 @@
+use entity::{user, Id};
 use fancy_regex::Regex;
 use lazy_static::lazy_static;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationError};
 
 lazy_static! {
@@ -10,7 +11,7 @@ lazy_static! {
             .expect("incorrect password regex");
 }
 
-#[derive(Deserialize, Validate)]
+#[derive(Deserialize, Validate, Clone)]
 pub struct LoginRequest {
     #[validate(length(
         min = 1,
@@ -60,4 +61,21 @@ fn validate_password(value: &str) -> Result<(), ValidationError> {
         return Err(ValidationError::new("password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character"));
     }
     Ok(())
+}
+
+#[derive(Clone, Serialize, PartialEq)]
+pub struct UserResponse {
+    pub id: Id,
+    pub email: String,
+    pub username: String,
+}
+
+impl From<user::Model> for UserResponse {
+    fn from(user: user::Model) -> Self {
+        Self {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+        }
+    }
 }

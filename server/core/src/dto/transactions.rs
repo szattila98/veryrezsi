@@ -1,6 +1,9 @@
-use entity::{Id, MoneyAmount};
-use serde::Deserialize;
+use entity::{currency, transaction, Id, MoneyAmount};
+use sea_orm::entity::prelude::*;
+use serde::{Deserialize, Serialize};
 use validator::Validate;
+
+use super::currencies::CurrencyResponse;
 
 #[derive(Deserialize, Validate, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -12,11 +15,33 @@ pub struct NewTransactionRequest {
     ))]
     pub donor_name: String,
 
-    pub currency_type_id: Id,
+    pub currency_id: Id,
 
     pub value: MoneyAmount,
 
     pub date: String,
 
     pub expense_id: Id,
+}
+
+#[derive(Clone, Serialize, PartialEq, Eq)]
+pub struct TransactionResponse {
+    pub id: Id,
+    pub donor_name: String,
+    pub value: MoneyAmount,
+    pub date: Date,
+    pub currency: CurrencyResponse,
+}
+
+pub type TransactionResponseParts = (transaction::Model, currency::Model);
+impl From<TransactionResponseParts> for TransactionResponse {
+    fn from((transaction, currency): TransactionResponseParts) -> Self {
+        Self {
+            id: transaction.id,
+            donor_name: transaction.donor_name,
+            value: transaction.value,
+            date: transaction.date,
+            currency: currency.into(),
+        }
+    }
 }

@@ -19,18 +19,18 @@ pub struct Model {
     pub donor_name: String,
     pub value: MoneyAmount,
     pub date: Date,
-    pub currency_type_id: Id,
+    pub currency_id: Id,
     pub expense_id: Id,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::currency_type::Entity",
-        from = "Column::CurrencyTypeId",
-        to = "super::currency_type::Column::Id"
+        belongs_to = "super::currency::Entity",
+        from = "Column::CurrencyId",
+        to = "super::currency::Column::Id"
     )]
-    CurrencyType,
+    Currency,
     #[sea_orm(
         belongs_to = "super::expense::Entity",
         from = "Column::ExpenseId",
@@ -42,5 +42,11 @@ pub enum Relation {
 impl Related<super::expense::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Expense.def()
+    }
+}
+
+impl Related<super::currency::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Currency.def()
     }
 }

@@ -1,4 +1,4 @@
-use entity::{currency_type, expense, predefined_expense, recurrence_type, user};
+use entity::{currency, expense, predefined_expense, recurrence, user};
 
 use chrono::NaiveDate;
 use sea_orm_migration::prelude::*;
@@ -45,12 +45,12 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(expense::Column::CurrencyTypeId)
+                        ColumnDef::new(expense::Column::CurrencyId)
                             .big_unsigned()
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(expense::Column::RecurrenceTypeId)
+                        ColumnDef::new(expense::Column::RecurrenceId)
                             .big_unsigned()
                             .not_null(),
                     )
@@ -69,19 +69,19 @@ impl MigrationTrait for Migration {
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .name("fk_expense-currency_type")
+                            .name("fk_expense-currency")
                             .from_tbl(expense::Entity)
-                            .from_col(expense::Column::CurrencyTypeId)
-                            .to_tbl(currency_type::Entity)
-                            .to_col(currency_type::Column::Id),
+                            .from_col(expense::Column::CurrencyId)
+                            .to_tbl(currency::Entity)
+                            .to_col(currency::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .name("fk_expense-recurrence_type")
+                            .name("fk_expense-recurrence")
                             .from_tbl(expense::Entity)
-                            .from_col(expense::Column::RecurrenceTypeId)
-                            .to_tbl(recurrence_type::Entity)
-                            .to_col(recurrence_type::Column::Id),
+                            .from_col(expense::Column::RecurrenceId)
+                            .to_tbl(recurrence::Entity)
+                            .to_col(recurrence::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
@@ -103,8 +103,8 @@ impl MigrationTrait for Migration {
             value: Set(Decimal::new(2490, 2)),
             start_date: Set(NaiveDate::from_ymd_opt(2022, 9, 24).unwrap()),
             user_id: Set(1),
-            currency_type_id: Set(1),
-            recurrence_type_id: Set(1),
+            currency_id: Set(1),
+            recurrence_id: Set(1),
             predefined_expense_id: Set(Some(1)),
         }
         .insert(db)
@@ -116,8 +116,8 @@ impl MigrationTrait for Migration {
             value: Set(Decimal::new(3499, 2)),
             start_date: Set(NaiveDate::from_ymd_opt(2022, 3, 15).unwrap()),
             user_id: Set(1),
-            currency_type_id: Set(2),
-            recurrence_type_id: Set(2),
+            currency_id: Set(2),
+            recurrence_id: Set(2),
             predefined_expense_id: Set(None),
         }
         .insert(db)

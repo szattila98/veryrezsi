@@ -5,7 +5,7 @@ use serde::{self, Deserialize, Serialize};
 #[derive(
     Clone, Debug, PartialEq, DeriveEntityModel, DeriveActiveModelBehavior, Deserialize, Serialize,
 )]
-#[sea_orm(table_name = "recurrence_types")]
+#[sea_orm(table_name = "recurrences")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Id,

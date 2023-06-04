@@ -7,8 +7,8 @@ use axum::{
     http::{request::Parts, StatusCode},
 };
 use axum_extra::extract::cookie::{Key, PrivateCookieJar};
-use entity::Id;
 use tracing::debug;
+use veryrezsi_core::Id;
 
 /// Defines the name of the cookie used to authenticate users.
 pub const AUTH_COOKIE_NAME: &str = "JSESSIONID";

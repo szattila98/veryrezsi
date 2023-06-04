@@ -1,6 +1,6 @@
 use crate::Id;
 use sea_orm::entity::prelude::*;
-use serde::{self, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(
     Clone,
@@ -19,10 +19,8 @@ pub struct Model {
     #[sea_orm(unique)]
     pub email: String,
     pub username: String,
-    #[serde(skip_serializing)]
     pub pw_hash: String,
     #[sea_orm(default_value = "false")]
-    #[serde(skip_serializing)]
     pub activated: bool,
 }
 

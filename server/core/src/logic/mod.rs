@@ -1,4 +1,4 @@
-mod common;
+pub mod common;
 pub mod currency_operations;
 pub mod expense_operations;
 pub mod recurrence_operations;

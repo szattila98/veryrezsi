@@ -1,8 +1,8 @@
-use sea_orm::DatabaseConnection;
 use veryrezsi_core::dto::expenses::{
-    ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest,
+    ExpenseResponse, NewExpenseRequest, NewPredefinedExpenseRequest, PredefinedExpenseResponse,
 };
 use veryrezsi_core::logic::expense_operations;
+use veryrezsi_core::DatabaseConnection;
 
 use super::common::ValidatedJson;
 use super::error::ErrorMsg;
@@ -10,16 +10,14 @@ use crate::auth;
 
 use axum::extract::{Path, State};
 use axum::Json;
-use entity::{predefined_expense, Id};
+use veryrezsi_core::Id;
 
 pub async fn get_expenses(
     user: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
     Path(user_id): Path<Id>,
-) -> Result<Json<ExpenseResponse>, ErrorMsg<()>> {
-    match expense_operations::find_expenses_with_transactions_by_user_id(conn, user.id, user_id)
-        .await
-    {
+) -> Result<Json<Vec<ExpenseResponse>>, ErrorMsg<()>> {
+    match expense_operations::find_expenses_by_user_id(conn, user.id, user_id).await {
         Ok(expenses_with_transactions) => Ok(Json(expenses_with_transactions)),
         Err(e) => Err(e.into()),
     }
@@ -39,7 +37,7 @@ pub async fn create_expense(
 pub async fn get_predefined_expenses(
     _: auth::AuthenticatedUser,
     State(ref conn): State<DatabaseConnection>,
-) -> Result<Json<Vec<predefined_expense::Model>>, ErrorMsg<()>> {
+) -> Result<Json<Vec<PredefinedExpenseResponse>>, ErrorMsg<()>> {
     match expense_operations::find_predefined_expenses(conn).await {
         Ok(expenses) => Ok(Json(expenses)),
         Err(e) => Err(e.into()),

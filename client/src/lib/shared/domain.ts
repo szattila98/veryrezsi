@@ -4,13 +4,13 @@ export type User = {
 	username: string;
 };
 
-export interface RecurrenceType {
+export interface Recurrence {
 	id: number;
 	name: string;
 	perYear: number;
 }
 
-export interface CurrencyType {
+export interface Currency {
 	id: number;
 	abbreviation: string;
 	name: string;
@@ -19,10 +19,9 @@ export interface CurrencyType {
 export type Transaction = {
 	id: number;
 	donorName: string;
-	currencyTypeId: number;
 	value: number;
 	date: string;
-	expenseId: number;
+	currency: Currency;
 };
 
 export interface PredefinedExpense {
@@ -30,8 +29,8 @@ export interface PredefinedExpense {
 	name: string;
 	description: string;
 	value: number;
-	recurrenceTypeId: number;
-	currencyTypeId: number;
+	currency: Currency;
+	recurrence: Recurrence;
 }
 
 export interface Expense {
@@ -41,8 +40,8 @@ export interface Expense {
 	value: string;
 	startDate: string;
 	userId: number;
-	recurrenceTypeId: number;
-	currencyTypeId: number;
+	currency: Currency;
+	recurrence: Recurrence;
 	predefinedExpenseId: number | null;
 	transactions: Transaction[];
 }

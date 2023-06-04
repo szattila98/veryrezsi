@@ -1,93 +1,47 @@
-use entity::{
-    currency_type::{self, Entity as CurrencyType},
-    Id,
-};
+use entity::currency::Entity as Currency;
 
 use migration::DbErr;
 use sea_orm::{DatabaseConnection, EntityTrait};
 
-pub async fn find_currency_types(
-    conn: &DatabaseConnection,
-) -> Result<Vec<currency_type::Model>, DbErr> {
-    CurrencyType::find().all(conn).await
-}
+use crate::dto::currencies::CurrencyResponse;
 
-pub async fn find_currency_type_by_id(
-    conn: &DatabaseConnection,
-    id: Id,
-) -> Result<Option<currency_type::Model>, DbErr> {
-    CurrencyType::find_by_id(id).one(conn).await
+pub async fn find_currencies(conn: &DatabaseConnection) -> Result<Vec<CurrencyResponse>, DbErr> {
+    let currencies = Currency::find()
+        .all(conn)
+        .await?
+        .into_iter()
+        .map(|currency| currency.into())
+        .collect();
+    Ok(currencies)
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::logic::common::tests::{test_currency, test_db_error};
+
     use super::*;
     use assert2::check;
-    use migration::DbErr;
     use sea_orm::{DatabaseBackend, MockDatabase};
 
-    const TEST_ID: Id = 1;
-    const TEST_STR: &str = "test";
-
-    fn test_db_error() -> DbErr {
-        DbErr::Custom(TEST_STR.to_string())
-    }
-
     #[tokio::test]
-    async fn find_currency_types_all_cases() {
-        let mock_currency_types = vec![
-            currency_type::Model {
-                id: TEST_ID,
-                abbreviation: TEST_STR.to_string(),
-                name: TEST_STR.to_string(),
-            },
-            currency_type::Model {
-                id: TEST_ID,
-                abbreviation: TEST_STR.to_string(),
-                name: TEST_STR.to_string(),
-            },
-            currency_type::Model {
-                id: TEST_ID,
-                abbreviation: TEST_STR.to_string(),
-                name: TEST_STR.to_string(),
-            },
-        ];
+    async fn find_currencies_all_cases() {
+        let expected_currencies: Vec<CurrencyResponse> =
+            vec![test_currency().into(), test_currency().into()];
+
+        let currencies_stub = vec![test_currency(), test_currency()];
         let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![mock_currency_types.clone(), vec![]])
+            .append_query_results(vec![currencies_stub.clone(), vec![]])
             .append_query_errors(vec![test_db_error()])
             .into_connection();
 
-        let (currency_types, empty_vec, db_error) = tokio::join!(
-            find_currency_types(&conn),
-            find_currency_types(&conn),
-            find_currency_types(&conn)
+        let (currencies, empty_vec, db_error) = tokio::join!(
+            find_currencies(&conn),
+            find_currencies(&conn),
+            find_currencies(&conn)
         );
 
-        check!(currency_types == Ok(mock_currency_types));
+        check!(currencies == Ok(expected_currencies));
         check!(empty_vec == Ok(vec![]));
-        check!(db_error == Err(test_db_error()));
-    }
-
-    #[tokio::test]
-    async fn find_currency_type_by_id_all_cases() {
-        let mock_currency_type = currency_type::Model {
-            id: TEST_ID,
-            abbreviation: TEST_STR.to_string(),
-            name: TEST_STR.to_string(),
-        };
-        let conn = MockDatabase::new(DatabaseBackend::MySql)
-            .append_query_results(vec![vec![mock_currency_type.clone()], vec![]])
-            .append_query_errors(vec![test_db_error()])
-            .into_connection();
-
-        let (currency_type, none, db_error) = tokio::join!(
-            find_currency_type_by_id(&conn, TEST_ID),
-            find_currency_type_by_id(&conn, TEST_ID),
-            find_currency_type_by_id(&conn, TEST_ID)
-        );
-
-        check!(currency_type == Ok(Some(mock_currency_type)));
-        check!(none == Ok(None));
         check!(db_error == Err(test_db_error()));
     }
 }

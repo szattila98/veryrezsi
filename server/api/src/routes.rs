@@ -4,15 +4,15 @@ use axum::{
 };
 use axum_extra::extract::cookie::Key;
 use axum_macros::FromRef;
-use sea_orm::DatabaseConnection;
 use std::sync::Arc;
+use veryrezsi_core::DatabaseConnection;
 use veryrezsi_core::{config::AppConfig, email::MailTransport};
 
 pub mod common;
-pub mod currency_types;
+pub mod currencies;
 pub mod error;
 pub mod expenses;
-pub mod recurrence_types;
+pub mod recurrences;
 pub mod transactions;
 pub mod users;
 
@@ -48,9 +48,9 @@ pub fn init(
         .route("/", post(transactions::create_transaction))
         .route("/:transaction_id", delete(transactions::delete_transaction));
 
-    let currency_api = Router::new().route("/", get(currency_types::get_currency_types));
+    let currency_api = Router::new().route("/", get(currencies::get_currencies));
 
-    let recurrence_api = Router::new().route("/", get(recurrence_types::get_recurrence_types));
+    let recurrence_api = Router::new().route("/", get(recurrences::get_recurrences));
 
     let api = Router::new()
         .route("/", get(|| async {}))

@@ -12,7 +12,7 @@ use serde::{self, Deserialize, Serialize};
     Deserialize,
     Serialize,
 )]
-#[sea_orm(table_name = "currency_types")]
+#[sea_orm(table_name = "currencies")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: Id,

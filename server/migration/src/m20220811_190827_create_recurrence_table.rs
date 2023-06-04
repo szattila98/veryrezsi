@@ -1,4 +1,4 @@
-use entity::currency_type;
+use entity::recurrence;
 
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::sea_orm::entity::ActiveModelTrait;
@@ -13,44 +13,48 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(currency_type::Entity)
+                    .table(recurrence::Entity)
                     .col(
-                        ColumnDef::new(currency_type::Column::Id)
+                        ColumnDef::new(recurrence::Column::Id)
                             .big_unsigned()
                             .not_null()
                             .primary_key()
                             .auto_increment(),
                     )
                     .col(
-                        ColumnDef::new(currency_type::Column::Abbreviation)
+                        ColumnDef::new(recurrence::Column::Name)
                             .string_len(255)
                             .not_null()
                             .unique_key(),
                     )
                     .col(
-                        ColumnDef::new(currency_type::Column::Name)
-                            .string_len(255)
-                            .not_null()
-                            .unique_key(),
+                        ColumnDef::new(recurrence::Column::PerYear)
+                            .double()
+                            .not_null(),
                     )
                     .to_owned(),
             )
             .await?;
 
         let db = manager.get_connection();
-        // Chad forint
-        currency_type::ActiveModel {
+        recurrence::ActiveModel {
             id: Set(1),
-            abbreviation: Set("HUF".to_string()),
-            name: Set("base.currencies.huf".to_string()),
+            name: Set("Monthly".to_string()),
+            per_year: Set(12.0),
         }
         .insert(db)
         .await?;
-        // Virgin euro
-        currency_type::ActiveModel {
+        recurrence::ActiveModel {
             id: Set(2),
-            abbreviation: Set("EUR".to_string()),
-            name: Set("base.currencies.eur".to_string()),
+            name: Set("Annual".to_string()),
+            per_year: Set(1.0),
+        }
+        .insert(db)
+        .await?;
+        recurrence::ActiveModel {
+            id: Set(3),
+            name: Set("Two yearly".to_string()),
+            per_year: Set(0.5),
         }
         .insert(db)
         .await?;
@@ -60,7 +64,7 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(currency_type::Entity).to_owned())
+            .drop_table(Table::drop().table(recurrence::Entity).to_owned())
             .await
     }
 }

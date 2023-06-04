@@ -12,7 +12,7 @@ use veryrezsi_core::logic::{
         CreateExpenseError, CreatePredefinedExpenseError, FindExpensesWithTransactionsByUserIdError,
     },
     transaction_operations::errors::{CreateTransactionError, DeleteTransactionByIdError},
-    user_operations::errors::{ActivateAccountError, SaveUserError},
+    user_operations::errors::{ActivateAccountError, SaveUserError, VerifyLoginError},
 };
 
 /// A struct that can be returned from route handlers on error.
@@ -86,6 +86,20 @@ impl<D: Serialize> From<DbErr> for ErrorMsg<D> {
     }
 }
 
+impl<D: Serialize> From<VerifyLoginError> for ErrorMsg<D> {
+    fn from(e: VerifyLoginError) -> Self {
+        match e {
+            VerifyLoginError::AccountNotActivated => {
+                Self::new(StatusCode::BAD_REQUEST, e.to_string())
+            }
+            VerifyLoginError::IncorrectCredentials => {
+                Self::new(StatusCode::UNAUTHORIZED, e.to_string())
+            }
+            VerifyLoginError::DatabaseError(db_error) => db_error.into(),
+        }
+    }
+}
+
 impl<D: Serialize> From<SaveUserError> for ErrorMsg<D> {
     fn from(e: SaveUserError) -> Self {
         match e {
@@ -150,8 +164,7 @@ impl<D: Serialize> From<CreatePredefinedExpenseError> for ErrorMsg<D> {
 impl<D: Serialize> From<CreateTransactionError> for ErrorMsg<D> {
     fn from(e: CreateTransactionError) -> Self {
         match e {
-            CreateTransactionError::InvalidExpenseId
-            | CreateTransactionError::InvalidCurrencyType => {
+            CreateTransactionError::InvalidExpenseId | CreateTransactionError::InvalidCurrency => {
                 Self::new(StatusCode::NOT_FOUND, e.to_string())
             }
             CreateTransactionError::UserUnauthorized(_) => {

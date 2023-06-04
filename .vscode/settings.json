@@ -11,9 +11,10 @@
     "svelte"
   ],
   "eslint.workingDirectories": [
-    "./client" // replace {PATH_TO_CLIENT} with you own path
+    "./client"
   ],
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+  "files.insertFinalNewline": true
 }

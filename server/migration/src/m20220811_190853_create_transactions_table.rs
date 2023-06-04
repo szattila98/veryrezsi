@@ -1,4 +1,4 @@
-use entity::{currency_type, expense, transaction};
+use entity::{currency, expense, transaction};
 
 use chrono::NaiveDate;
 use sea_orm_migration::prelude::*;
@@ -35,7 +35,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(transaction::Column::Date).date().not_null())
                     .col(
-                        ColumnDef::new(transaction::Column::CurrencyTypeId)
+                        ColumnDef::new(transaction::Column::CurrencyId)
                             .big_unsigned()
                             .not_null(),
                     )
@@ -46,11 +46,11 @@ impl MigrationTrait for Migration {
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
-                            .name("fk_transaction-currency_type")
+                            .name("fk_transaction-currency")
                             .from_tbl(transaction::Entity)
-                            .from_col(transaction::Column::CurrencyTypeId)
-                            .to_tbl(currency_type::Entity)
-                            .to_col(currency_type::Column::Id),
+                            .from_col(transaction::Column::CurrencyId)
+                            .to_tbl(currency::Entity)
+                            .to_col(currency::Column::Id),
                     )
                     .foreign_key(
                         ForeignKeyCreateStatement::new()
@@ -70,7 +70,7 @@ impl MigrationTrait for Migration {
             donor_name: Set("Kate".to_string()),
             value: Set(Decimal::new(5, 2)),
             date: Set(NaiveDate::from_ymd_opt(2022, 9, 29).unwrap()),
-            currency_type_id: Set(2),
+            currency_id: Set(2),
             expense_id: Set(1),
         }
         .insert(db)
@@ -80,7 +80,7 @@ impl MigrationTrait for Migration {
             donor_name: Set("David".to_string()),
             value: Set(Decimal::new(7, 0)),
             date: Set(NaiveDate::from_ymd_opt(2022, 10, 23).unwrap()),
-            currency_type_id: Set(2),
+            currency_id: Set(2),
             expense_id: Set(1),
         }
         .insert(db)
@@ -90,7 +90,7 @@ impl MigrationTrait for Migration {
             donor_name: Set("Wifey".to_string()),
             value: Set(Decimal::new(50, 0)),
             date: Set(NaiveDate::from_ymd_opt(2022, 4, 12).unwrap()),
-            currency_type_id: Set(2),
+            currency_id: Set(2),
             expense_id: Set(2),
         }
         .insert(db)
@@ -100,7 +100,7 @@ impl MigrationTrait for Migration {
             donor_name: Set("My colleague who use exotic Hungarian Forint".to_string()),
             value: Set(Decimal::new(1000, 0)),
             date: Set(NaiveDate::from_ymd_opt(2022, 5, 13).unwrap()),
-            currency_type_id: Set(1),
+            currency_id: Set(1),
             expense_id: Set(2),
         }
         .insert(db)
