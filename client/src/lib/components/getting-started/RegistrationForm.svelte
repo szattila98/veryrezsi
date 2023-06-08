@@ -98,7 +98,10 @@
 			maxlength="255"
 			use:validators={[required]}
 		/>
-		<ThemedValidationHint hintProps={{ for:"username", on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
+		<ThemedValidationHint
+			hintProps={{ for: 'username', on: 'required' }}
+			msg={REQUIRED_VIOLATION_MSG}
+		/>
 	</div>
 	<div class="mb-4">
 		<label class="label" for="email">Email</label>
@@ -114,8 +117,11 @@
 			use:validators={[required, email]}
 		/>
 		<HintGroup for="email">
-			<ThemedValidationHint hintProps={{ on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
-			<ThemedValidationHint hintProps={{ on: "email", hideWhenRequired: true }} msg={EMAIL_VIOLATION_MSG} />
+			<ThemedValidationHint hintProps={{ on: 'required' }} msg={REQUIRED_VIOLATION_MSG} />
+			<ThemedValidationHint
+				hintProps={{ on: 'email', hideWhenRequired: true }}
+				msg={EMAIL_VIOLATION_MSG}
+			/>
 		</HintGroup>
 	</div>
 	<div class="mb-4">
@@ -133,9 +139,9 @@
 			on:keyup={validateConfirmPassword}
 		/>
 		<HintGroup for="password">
-			<ThemedValidationHint hintProps={{ on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
+			<ThemedValidationHint hintProps={{ on: 'required' }} msg={REQUIRED_VIOLATION_MSG} />
 			<ThemedValidationHint
-				hintProps={{ on: "pattern", hideWhenRequired: true }}
+				hintProps={{ on: 'pattern', hideWhenRequired: true }}
 				msg="It is too easy to find out."
 			/>
 		</HintGroup>
@@ -154,9 +160,9 @@
 			use:validators={[required, passwordMatch]}
 		/>
 		<HintGroup for="confirmPassword">
-			<ThemedValidationHint hintProps={{ on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
+			<ThemedValidationHint hintProps={{ on: 'required' }} msg={REQUIRED_VIOLATION_MSG} />
 			<ThemedValidationHint
-				hintProps={{ on: "passwordMatch", hideWhenRequired: true }}
+				hintProps={{ on: 'passwordMatch', hideWhenRequired: true }}
 				msg="It does not match the one above."
 			/>
 		</HintGroup>
@@ -164,15 +170,10 @@
 	{#if $formState === 'TECHNICAL_ERROR'}
 		<AlertMsg msg={TECHNICAL_ERROR_ALERT_MSG} />
 	{/if}
-	<div class="flex items-center justify-between mt-4">
-		<button
-			type="submit"
-			class="btn variant-filled-primary"
-			>Register account</button
-		>
-		<button
-			class="btn variant-filled-secondary"
-			on:click|preventDefault={navigateToLogin}>Go to login</button
+	<div class="mt-4 flex items-center justify-between">
+		<button type="submit" class="btn variant-filled-primary">Register account</button>
+		<button class="btn variant-filled-secondary" on:click|preventDefault={navigateToLogin}
+			>Go to login</button
 		>
 	</div>
 </form>

@@ -29,26 +29,26 @@
 </script>
 
 <AppBar class="z-30" shadow="shadow-md">
-		<svelte:fragment slot="lead">
-			<NavEntry text="VeryRezsi" href="/" iconSize={6} class="text-lg font-semibold mr-4">
-				<IoMdHome />
-			</NavEntry>
-			<LightSwitch />
-		</svelte:fragment>
-		<svelte:fragment slot="trail">
-			<nav>
-				<ul class="flex space-x-4">
-					<li>
-						<NavEntry text="Profile" href="/profile" class="hover:text-white">
-							<FaRegUserCircle />
-						</NavEntry>
-					</li>
-					<li>
-						<NavEntry text="Logout" callOnClick={logout} class="hover:text-white">
-							<IoIosLogOut />
-						</NavEntry>
-					</li>
-				</ul>
-			</nav>
-		</svelte:fragment>
+	<svelte:fragment slot="lead">
+		<NavEntry text="VeryRezsi" href="/" iconSize={6} class="mr-4 text-lg font-semibold">
+			<IoMdHome />
+		</NavEntry>
+		<LightSwitch />
+	</svelte:fragment>
+	<svelte:fragment slot="trail">
+		<nav>
+			<ul class="flex space-x-4">
+				<li>
+					<NavEntry text="Profile" href="/profile" class="hover:text-white">
+						<FaRegUserCircle />
+					</NavEntry>
+				</li>
+				<li>
+					<NavEntry text="Logout" callOnClick={logout} class="hover:text-white">
+						<IoIosLogOut />
+					</NavEntry>
+				</li>
+			</ul>
+		</nav>
+	</svelte:fragment>
 </AppBar>

@@ -90,8 +90,11 @@
 			use:validators={[required, email]}
 		/>
 		<HintGroup for="email">
-			<ThemedValidationHint hintProps={{ on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
-			<ThemedValidationHint hintProps={{ on: "email", hideWhenRequired: true }} msg={EMAIL_VIOLATION_MSG} />
+			<ThemedValidationHint hintProps={{ on: 'required' }} msg={REQUIRED_VIOLATION_MSG} />
+			<ThemedValidationHint
+				hintProps={{ on: 'email', hideWhenRequired: true }}
+				msg={EMAIL_VIOLATION_MSG}
+			/>
 		</HintGroup>
 	</div>
 	<div class="mb-6">
@@ -107,23 +110,21 @@
 			maxlength="120"
 			use:validators={[required]}
 		/>
-		<ThemedValidationHint hintProps={{ for:"password", on: "required" }} msg={REQUIRED_VIOLATION_MSG} />
+		<ThemedValidationHint
+			hintProps={{ for: 'password', on: 'required' }}
+			msg={REQUIRED_VIOLATION_MSG}
+		/>
 	</div>
-	{#if  $formState === 'INVALID_CREDENTIALS'}
+	{#if $formState === 'INVALID_CREDENTIALS'}
 		<AlertMsg msg={UNSUCCESFUL_LOGIN_ALERT_MSG} />
 	{/if}
 	{#if $formState === 'TECHNICAL_ERROR'}
 		<AlertMsg msg={TECHNICAL_ERROR_ALERT_MSG} />
 	{/if}
-	<div class="flex items-center justify-between mt-4">
-		<button
-			type="submit"
-			class="btn variant-filled-primary"
-			>Sign In
-		</button>
-		<button
-			class="btn variant-filled-secondary"
-			on:click|preventDefault={navigateToRegister}>Go to registration</button
+	<div class="mt-4 flex items-center justify-between">
+		<button type="submit" class="btn variant-filled-primary">Sign In </button>
+		<button class="btn variant-filled-secondary" on:click|preventDefault={navigateToRegister}
+			>Go to registration</button
 		>
 	</div>
 </form>
