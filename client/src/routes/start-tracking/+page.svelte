@@ -1,9 +1,6 @@
 <script lang="ts">
-	import type { LayoutServerData } from '../$types';
 	import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import { Autocomplete } from '@skeletonlabs/skeleton';
-
-	export let data: LayoutServerData;
 
 	let selectedPredefinedExpenseLabel = '';
 

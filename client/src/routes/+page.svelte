@@ -1,8 +1,4 @@
 <script lang="ts">
-	import type { LayoutServerData } from './$types';
-
-	export let data: LayoutServerData;
-
 	// TODO:
 	export let newUser: boolean = true;
 </script>
