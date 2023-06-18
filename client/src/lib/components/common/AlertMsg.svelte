@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { ALERT_MSG } from '$shared/constants';
-
 	export let msg: string;
 </script>
 
-<div role="alert" class={ALERT_MSG}>
-	{msg}
+<div role="alert" class="alert variant-filled-warning">
+	<div class="alert-message">
+		{msg}
+	</div>
 </div>

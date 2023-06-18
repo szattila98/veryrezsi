@@ -1,10 +1,12 @@
 <script>
-	import FaHome from 'svelte-icons/fa/FaHome.svelte';
+	import { AppBar } from '@skeletonlabs/skeleton';
+	import { LightSwitch } from '@skeletonlabs/skeleton';
+
 	import FaClipboardList from 'svelte-icons/fa/FaClipboardList.svelte';
 	import FaRegUserCircle from 'svelte-icons/fa/FaRegUserCircle.svelte';
+	import IoMdHome from 'svelte-icons/io/IoMdHome.svelte';
 	import IoIosLogOut from 'svelte-icons/io/IoIosLogOut.svelte';
 	import NavEntry from './NavEntry.svelte';
-	import { GRADIENT } from '$lib/shared/constants';
 
 	async function logout() {
 		try {
@@ -26,18 +28,16 @@
 	}
 </script>
 
-<header class={`mb-4 px-6 py-4 text-gray-100 ${GRADIENT}`}>
-	<div class="flex flex-col items-center justify-between sm:flex-row">
-		<NavEntry text="Veryrezsi" href="/" iconSize={8} class="text-xl font-semibold">
-			<FaHome />
+<AppBar class="z-30" shadow="shadow-md">
+	<svelte:fragment slot="lead">
+		<NavEntry text="VeryRezsi" href="/" iconSize={6} class="mr-4 text-lg font-semibold">
+			<IoMdHome />
 		</NavEntry>
+		<LightSwitch />
+	</svelte:fragment>
+	<svelte:fragment slot="trail">
 		<nav>
 			<ul class="flex space-x-4">
-				<li>
-					<NavEntry text="Dashboard" href="/dashboard" class="hover:text-white">
-						<FaClipboardList />
-					</NavEntry>
-				</li>
 				<li>
 					<NavEntry text="Profile" href="/profile" class="hover:text-white">
 						<FaRegUserCircle />
@@ -50,5 +50,5 @@
 				</li>
 			</ul>
 		</nav>
-	</div>
-</header>
+	</svelte:fragment>
+</AppBar>

@@ -39,7 +39,7 @@ You can supply it with the following arguments:
 ## Starting mailhog
 
 - Mailhog may be needed for some functionalities (registration), although if not present it only causes error messages in the log.
-- Run it locally or by adding `mailhog` to the end of your `docker-compose up -d` command.
+- Run it locally or by adding `smtp` to the end of your `docker-compose up -d` command.
 
 ## Running server
 
