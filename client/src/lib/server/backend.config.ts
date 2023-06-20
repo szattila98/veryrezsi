@@ -1,8 +1,8 @@
-import { REZSI_API_BASE_URL } from '$env/static/private';
+import { ORIGIN } from '$env/static/private';
 
 export default {
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-	baseUrl: REZSI_API_BASE_URL as string,
+	baseUrl: (ORIGIN as string) + '/api',
 	baseHeaders: {
 		'Content-Type': 'application/json'
 	},
