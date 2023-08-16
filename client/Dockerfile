@@ -1,3 +1,5 @@
+ARG client_url=http://localhost:3000
+
 # Stage BUILD
 FROM node:18-alpine as builder
 
@@ -13,6 +15,9 @@ RUN npm run build
 
 # Stage RUN
 FROM node:18-alpine
+
+ARG client_url
+ENV ORIGIN=$client_url
 
 WORKDIR /app
 
