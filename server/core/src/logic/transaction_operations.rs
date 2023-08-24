@@ -47,10 +47,12 @@ pub async fn delete_transaction_by_id(
     user_id: Id,
     transaction_id: Id,
 ) -> Result<(), DeleteTransactionByIdError> {
-    let Some(transaction) = find_entity_by_id::<transaction::Entity>(conn, transaction_id).await? else {
+    let Some(transaction) = find_entity_by_id::<transaction::Entity>(conn, transaction_id).await?
+    else {
         return Err(DeleteTransactionByIdError::InvalidTransaction);
     };
-    let Some(expense) = find_entity_by_id::<expense::Entity>(conn, transaction.expense_id).await? else {
+    let Some(expense) = find_entity_by_id::<expense::Entity>(conn, transaction.expense_id).await?
+    else {
         return Err(DeleteTransactionByIdError::InvalidTransaction);
     };
     authorize_user(user_id, expense.user_id)?;

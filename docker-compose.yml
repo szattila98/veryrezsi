@@ -26,6 +26,12 @@ services:
       - 1025:1025 # smtp server
       - 8025:8025 # web ui
 
+  prometheus:
+    container_name: veryrezsi_prometheus
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+
   server:
     container_name: veryrezsi_server
     build:
@@ -45,4 +51,4 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"

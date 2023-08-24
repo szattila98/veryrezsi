@@ -1,7 +1,8 @@
-use std::net::SocketAddr;
+use std::{future::ready, net::SocketAddr};
 
-use axum::{Router, Server};
+use axum::{routing::get, Router, Server};
 use axum_extra::extract::cookie::Key;
+use metrics_exporter_prometheus::{Matcher, PrometheusBuilder, PrometheusHandle};
 use tokio::signal;
 use tracing::info;
 use veryrezsi_core::config::AppConfig;
@@ -11,6 +12,10 @@ pub mod routes;
 
 #[tokio::main]
 pub async fn start() {
+    let (_main_server, _metrics_server) = tokio::join!(start_main_server(), start_metrics_server());
+}
+
+pub async fn start_main_server() {
     let (server_address, router) = init().await;
     info!("Server is listening on {}...", server_address);
     let _ = Server::bind(&server_address)
@@ -18,6 +23,15 @@ pub async fn start() {
         .with_graceful_shutdown(shutdown_signal())
         .await;
     info!("Shutting down...");
+}
+
+pub async fn start_metrics_server() {
+    let (metrics_address, metrics_router) = metrics_init();
+    info!("Metrics is listening on {}...", metrics_address);
+    axum::Server::bind(&metrics_address)
+        .serve(metrics_router.into_make_service())
+        .await
+        .unwrap()
 }
 
 /// Initializes every part of the application.
@@ -52,6 +66,29 @@ async fn init() -> (SocketAddr, Router) {
     info!("Successfully created api routes with extensions");
 
     (config.server_address, router)
+}
+
+fn metrics_init() -> (SocketAddr, Router) {
+    let config = AppConfig::init();
+    let recorder_handle = setup_metrics_recorder();
+    let router = Router::new().route("/metrics", get(move || ready(recorder_handle.render())));
+
+    (config.metrics_address, router)
+}
+
+fn setup_metrics_recorder() -> PrometheusHandle {
+    const EXPONENTIAL_SECONDS: &[f64] = &[
+        0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0,
+    ];
+
+    PrometheusBuilder::new()
+        .set_buckets_for_metric(
+            Matcher::Full("http_requests_duration_seconds".to_string()),
+            EXPONENTIAL_SECONDS,
+        )
+        .unwrap()
+        .install_recorder()
+        .unwrap()
 }
 
 fn print_logo() {

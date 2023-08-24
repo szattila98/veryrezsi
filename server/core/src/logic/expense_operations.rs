@@ -193,10 +193,10 @@ async fn validate_recurrence_and_currency(
         find_entity_by_id::<currency::Entity>(conn, currency_id)
     );
     let Some(_) = referred_currency? else {
-        return Err(ValidateRecurrenceAndCurrencyError::InvalidCurrency)
+        return Err(ValidateRecurrenceAndCurrencyError::InvalidCurrency);
     };
     let Some(_) = referred_recurrence? else {
-        return Err(ValidateRecurrenceAndCurrencyError::InvalidRecurrence)
+        return Err(ValidateRecurrenceAndCurrencyError::InvalidRecurrence);
     };
     Ok(())
 }

@@ -1,4 +1,5 @@
 server_address = "127.0.0.1:8000"
+metrics_address = "127.0.0.1:3001"
 database_url = "mysql://veryrezsi:password@localhost:3306/veryrezsi"
 cookie_key = "tQ2FiMTuOFcBHyrEyWcqlRmliXXDhX0V9SH4LSFUxkvYPFuRgscJ1g2wDLq4qdeB"
 log_level = "debug"

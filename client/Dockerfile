@@ -29,5 +29,5 @@ COPY --from=builder /app/build ./
 # clean install dependencies, no devDependencies, no prepare script
 RUN npm ci --omit=dev --ignore-scripts --no-audit
 
-EXPOSE 3000
+EXPOSE 4000
 CMD ["node", "./index.js"]
