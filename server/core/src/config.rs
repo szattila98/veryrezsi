@@ -7,8 +7,6 @@ use tracing::metadata::LevelFilter;
 pub struct AppConfig {
     #[config(env = "SERVER_ADDRESS")]
     pub server_address: SocketAddr,
-    #[config(env = "METRICS_ADDRESS")]
-    pub metrics_address: SocketAddr,
     #[config(env = "DATABASE_URL")]
     pub database_url: String,
     #[config(env = "COOKIE_KEY")]
@@ -17,6 +15,8 @@ pub struct AppConfig {
     pub log_level: LogLevel,
     #[config(nested)]
     pub mail_config: MailConfig,
+    #[config(nested)]
+    pub metrics_config: MetricsConfig,
 }
 
 #[derive(Debug, Clone, Config)]
@@ -29,6 +29,12 @@ pub struct MailConfig {
     pub smtp_username: String,
     #[config(env = "SMTP_PASSWORD")]
     pub smtp_password: String,
+}
+
+#[derive(Debug, Clone, Config)]
+pub struct MetricsConfig {
+    #[config(env = "METRICS_ADDRESS")]
+    pub metrics_address: SocketAddr,
 }
 
 impl AppConfig {

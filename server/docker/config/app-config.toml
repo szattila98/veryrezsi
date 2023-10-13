@@ -8,3 +8,6 @@ smtp_address = "veryrezsi_smtp"
 smtp_port = 1025
 smtp_username = ""
 smtp_password = ""
+
+[metrics_config]
+metrics_address = "127.0.0.1:3001"

@@ -1,4 +1,4 @@
-ARG client_url=http://localhost:3000
+ARG client_url=http://localhost:4000
 ARG backend_url=http://veryrezsi_server:8000/api
 
 # Stage BUILD

@@ -12,11 +12,12 @@ pub mod routes;
 
 #[tokio::main]
 pub async fn start() {
-    let (_main_server, _metrics_server) = tokio::join!(start_main_server(), start_metrics_server());
+    let config = AppConfig::init();
+    let (_main_server, _metrics_server) = tokio::join!(start_main_server(&config), start_metrics_server(&config));
 }
 
-pub async fn start_main_server() {
-    let (server_address, router) = init().await;
+pub async fn start_main_server(config: &AppConfig) {
+    let (server_address, router) = init(config).await;
     info!("Server is listening on {}...", server_address);
     let _ = Server::bind(&server_address)
         .serve(router.into_make_service())
@@ -25,8 +26,8 @@ pub async fn start_main_server() {
     info!("Shutting down...");
 }
 
-pub async fn start_metrics_server() {
-    let (metrics_address, metrics_router) = metrics_init();
+pub async fn start_metrics_server(config: &AppConfig) {
+    let (metrics_address, metrics_router) = metrics_init(config);
     info!("Metrics is listening on {}...", metrics_address);
     axum::Server::bind(&metrics_address)
         .serve(metrics_router.into_make_service())
@@ -35,9 +36,8 @@ pub async fn start_metrics_server() {
 }
 
 /// Initializes every part of the application.
-async fn init() -> (SocketAddr, Router) {
+async fn init(config: &AppConfig) -> (SocketAddr, Router) {
     print_logo();
-    let config = AppConfig::init();
 
     info!("Initializing logging...");
     tracing_subscriber::fmt()
@@ -68,12 +68,11 @@ async fn init() -> (SocketAddr, Router) {
     (config.server_address, router)
 }
 
-fn metrics_init() -> (SocketAddr, Router) {
-    let config = AppConfig::init();
+fn metrics_init(config: &AppConfig) -> (SocketAddr, Router) {
     let recorder_handle = setup_metrics_recorder();
     let router = Router::new().route("/metrics", get(move || ready(recorder_handle.render())));
 
-    (config.metrics_address, router)
+    (config.metrics_config.metrics_address, router)
 }
 
 fn setup_metrics_recorder() -> PrometheusHandle {
