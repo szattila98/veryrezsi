@@ -10,4 +10,4 @@ smtp_username = ""
 smtp_password = ""
 
 [metrics_config]
-metrics_address = "127.0.0.1:3001"
+metrics_address = "0.0.0.0:3001"

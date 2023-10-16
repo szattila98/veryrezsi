@@ -29,6 +29,9 @@ services:
   prometheus:
     container_name: veryrezsi_prometheus
     image: prom/prometheus
+    volumes:
+      - ./.prometheus:/etc/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090
 
@@ -39,6 +42,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+      - "3001:3001"
     depends_on:
       smtp:
         condition: service_started
