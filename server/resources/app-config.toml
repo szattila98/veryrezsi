@@ -9,3 +9,6 @@ smtp_port = 1025
 # Credentials are not in use on dev environment
 smtp_username = ""
 smtp_password = ""
+
+[metrics_config]
+metrics_address = "127.0.0.1:3001"

@@ -1,4 +1,4 @@
-ARG client_url=http://localhost:3000
+ARG client_url=http://localhost:4000
 ARG backend_url=http://veryrezsi_server:8000/api
 
 # Stage BUILD
@@ -29,5 +29,5 @@ COPY --from=builder /app/build ./
 # clean install dependencies, no devDependencies, no prepare script
 RUN npm ci --omit=dev --ignore-scripts --no-audit
 
-EXPOSE 3000
+EXPOSE 4000
 CMD ["node", "./index.js"]

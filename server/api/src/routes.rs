@@ -1,10 +1,16 @@
 use axum::{
+    extract::MatchedPath,
+    http::Request,
+    middleware::{self, Next},
+    response::IntoResponse,
     routing::{delete, get, post},
     Router,
 };
 use axum_extra::extract::cookie::Key;
 use axum_macros::FromRef;
-use std::sync::Arc;
+use std::{sync::Arc, time::Instant};
+use tower_http::trace::{self, TraceLayer};
+use tracing::Level;
 use veryrezsi_core::DatabaseConnection;
 use veryrezsi_core::{config::AppConfig, email::MailTransport};
 
@@ -67,5 +73,39 @@ pub fn init(
         mail_transport: Arc::new(mail_transport),
     };
 
-    Router::new().nest("/api", api).with_state(state)
+    Router::new()
+        .nest("/api", api)
+        .route_layer(middleware::from_fn(track_metrics))
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
+        )
+        .with_state(state)
+}
+
+async fn track_metrics<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
+    let start = Instant::now();
+    let path = if let Some(matched_path) = req.extensions().get::<MatchedPath>() {
+        matched_path.as_str().to_owned()
+    } else {
+        req.uri().path().to_owned()
+    };
+    let method = req.method().clone();
+
+    let response = next.run(req).await;
+
+    let latency = start.elapsed().as_secs_f64();
+    let status = response.status().as_u16().to_string();
+
+    let labels = [
+        ("method", method.to_string()),
+        ("path", path),
+        ("status", status),
+    ];
+
+    metrics::increment_counter!("http_requests_total", &labels);
+    metrics::histogram!("http_requests_duration_seconds", latency, &labels);
+
+    response
 }

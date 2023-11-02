@@ -37,9 +37,10 @@ pub async fn verify_login(
     let Some(user) = User::find()
         .filter(user::Column::Email.eq(&req.email))
         .one(conn)
-        .await? else {
-            return Err( VerifyLoginError::IncorrectCredentials);
-        };
+        .await?
+    else {
+        return Err(VerifyLoginError::IncorrectCredentials);
+    };
     if !user.activated {
         return Err(VerifyLoginError::AccountNotActivated);
     };
@@ -62,9 +63,10 @@ where
     let None = User::find()
         .filter(user::Column::Email.eq(&req.email))
         .one(conn)
-        .await? else {
-            return Err(SaveUserError::UserAlreadyExists)
-        };
+        .await?
+    else {
+        return Err(SaveUserError::UserAlreadyExists);
+    };
 
     let pw_hash = match bcrypt::hash(req.password) {
         Ok(hashed) => hashed,
@@ -120,7 +122,8 @@ pub async fn activate_account(
     let Some(account_activation) = AccountActivation::find()
         .filter(account_activation::Column::Token.eq(token.clone()))
         .one(conn)
-        .await? else {
+        .await?
+    else {
         return Err(ActivateAccountError::InvalidToken);
     };
 
@@ -130,7 +133,8 @@ pub async fn activate_account(
 
     let Some(user) = User::find_by_id(account_activation.user_id)
         .one(conn)
-        .await? else {
+        .await?
+    else {
         return Err(ActivateAccountError::InvalidToken);
     };
 

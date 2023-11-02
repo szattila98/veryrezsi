@@ -55,7 +55,9 @@ pub struct NewUserRequest {
 /// Password validation function supplied to `NewUserRequest`.
 fn validate_password(value: &str) -> Result<(), ValidationError> {
     let Ok(result) = PASSWORD_REGEX.is_match(value) else {
-        return Err(ValidationError::new("password cannot be matched against regex"));
+        return Err(ValidationError::new(
+            "password cannot be matched against regex",
+        ));
     };
     if !result {
         return Err(ValidationError::new("password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character"));

@@ -23,7 +23,7 @@ pub mod tests {
     use sea_orm::{DatabaseBackend, DeriveActiveModelBehavior, DeriveEntityModel, MockDatabase};
     use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-    use crate::config::{AppConfig, MailConfig};
+    use crate::config::{AppConfig, MailConfig, MetricsConfig};
     use crate::logic::common::find_entity_by_id;
 
     pub const TEST_STR: &str = "test";
@@ -127,6 +127,9 @@ pub mod tests {
                 smtp_port: 7777,
                 smtp_username: TEST_STR.to_string(),
                 smtp_password: TEST_STR.to_string(),
+            },
+            metrics_config: MetricsConfig {
+                metrics_address: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 3001),
             },
         };
     }
