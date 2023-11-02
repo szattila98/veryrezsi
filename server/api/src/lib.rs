@@ -47,7 +47,7 @@ async fn init(config: &AppConfig) -> (SocketAddr, Router) {
     info!("Successfully initialized logging");
 
     info!("Establishing database connection...");
-    let conn = veryrezsi_core::database::init(&config).await;
+    let conn = veryrezsi_core::database::init(config).await;
     info!("Successfully established database connection");
 
     info!(
