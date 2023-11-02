@@ -129,8 +129,8 @@ pub mod tests {
                 smtp_password: TEST_STR.to_string(),
             },
             metrics_config: MetricsConfig {
-                metrics_address: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 3001)
-            }
+                metrics_address: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 3001),
+            },
         };
     }
 
