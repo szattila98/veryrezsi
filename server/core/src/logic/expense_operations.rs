@@ -48,7 +48,7 @@ pub async fn find_expenses_by_user_id(
     let recurrences = recurrences?;
 
     assert!(
-        vec![predefined_expenses.len(), grouped_transactions.len()]
+        [predefined_expenses.len(), grouped_transactions.len()]
             .iter()
             .all(|&x| x == expenses.len()),
         "the lengths of the fetched expense related lists should always be equal"
@@ -141,7 +141,7 @@ pub async fn find_predefined_expenses(
     let mut recurrences: VecDeque<recurrence::Model> = recurrences?.into_iter().flatten().collect();
 
     assert!(
-        vec![currencies.len(), recurrences.len()]
+        [currencies.len(), recurrences.len()]
             .iter()
             .all(|&x| x == predefined_expenses.len()),
         "the lengths of the fetched predefined expense related lists should be equal"
