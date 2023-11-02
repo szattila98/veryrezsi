@@ -13,7 +13,8 @@ pub mod routes;
 #[tokio::main]
 pub async fn start() {
     let config = AppConfig::init();
-    let (_main_server, _metrics_server) = tokio::join!(start_main_server(&config), start_metrics_server(&config));
+    let (_main_server, _metrics_server) =
+        tokio::join!(start_main_server(&config), start_metrics_server(&config));
 }
 
 pub async fn start_main_server(config: &AppConfig) {

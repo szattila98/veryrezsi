@@ -55,4 +55,4 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "4000:3000"
